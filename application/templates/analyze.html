@@ -1,0 +1,100 @@
+{% extends "layout.html" %}
+
+{% block content %}
+    
+    <link rel="stylesheet" href="{{ url_for('static',filename='css/table.css') }}"/>
+    <!-- <canvas class="analyze-graph" id="testCanvas" width="1500" height="900"></canvas> -->
+    <!--<img class="analyze-img" src="{{ graphData.img }}">-->
+    <div class="analyze-content-container">
+	
+		<div class="analyze-product-description">
+			<table class="analyze-product-description-table">
+				{% for item in graphData.descriptiveTableData %}
+					<tr>
+						<td class="analyze-product-description-title">{{ item.title }}</td>
+						{% if item.value %}
+							<td class="analyze-product-description-item">{{ item.value }}</td>
+						{% endif %}
+						{% if item.title == "Title" %}
+							<td rowspan="6" class="analyze-product-description-item">
+								<img class="analyze-img" src="{{ graphData.img }}">
+							</td>
+						{% endif %}
+					</tr>
+				{% endfor %}
+				<!-- <tr>
+					<td colspan="2" class="analyze-product-description-item">
+						<canvas class="analyze-graph" id="testCanvas" width="1500vh" height="900vh"></canvas>
+					</td>
+				
+					<td class="analyze-product-description-item">
+						<div id="tableContainer" class="tableContainer">
+							<table border="0" cellpadding="0" cellspacing="0" width="100%" class="scrollTable">
+								<thead class="fixedHeader">
+									<tr>
+										<th>Date</th>
+										<th>Price</th>
+										<th>Comparative unit price</th>
+										<th>Availability</th>
+									</tr>
+								</thead>
+								<tbody class="scrollContent">
+								{% for item in graphData.tableData %}
+									<tr>
+										<td>{{ item.date }}</td>
+										<td>{{ item.price }}</td>
+										<td>{{ item.comparative_unit_price }}</td>
+										<td>{{ item.active }}</td>
+									</tr>
+								{% endfor %}
+								</tbody>
+							</table>
+						</div>
+					</td>
+				</tr> -->
+				
+			</table>
+		</div>
+	</div>
+	
+	<canvas class="analyze-graph" id="testCanvas" width="1500vh" height="900vh"></canvas>
+    
+    <div id="tableContainer" class="tableContainer">
+			<table border="0" cellpadding="0" cellspacing="0" width="100%" class="scrollTable">
+				<thead class="fixedHeader">
+					<tr>
+						<th>Date</th>
+						<th>Price</th>
+						<th>Comparative unit price</th>
+						<th>Availability</th>
+					</tr>
+				</thead>
+				<tbody class="scrollContent">
+				{% for item in graphData.tableData %}
+					<tr>
+						<td {% if item.highlight %} class="highlight-{{ item.highlight }}" {% endif %}>{{ item.date }}</td>
+						<td {% if item.highlight %} class="highlight-{{ item.highlight }}" {% endif %}>{{ item.price }}</td>
+						<td {% if item.highlight %} class="highlight-{{ item.highlight }}" {% endif %}>{{ item.comparative_unit_price }}</td>
+						<td {% if item.highlight %} class="highlight-{{ item.highlight }}" {% endif %}>{{ item.active }}</td>
+					</tr>
+				{% endfor %}
+				</tbody>
+			</table>
+		</div>
+
+
+    <script src="{{ url_for('static',filename='script/graph.js') }}"></script>
+    
+    <script>
+		var graphData = {{ graphData|tojson }};
+	</script>
+	<div class="hidden indicator" id="priceIndicator" ></div>
+    <div class="hidden" id="YLine" ></div>
+    <div class="hidden indicator" id="dateIndicator" ></div>
+    <div class="hidden" id="XLine" ></div>
+	<script src="{{ url_for('static',filename='script/analyze.js') }}"></script>
+        
+        
+        
+    
+{% endblock %}

@@ -1,0 +1,14 @@
+<!-- <a href="https://www.freepnglogos.com/pics/robot">Robot from freepnglogos.com</a> -->
+<header>
+    <nav>
+        <li class="nav-item"><a href="{{ url_for('index') }}" class="nav-link {% if index %}active{% endif %}">Home</a></li>
+        <li class="nav-item"><a href="{{ url_for('products') }}" class="nav-link {% if products %}active{% endif %}">Products</a></li>
+        <li class="nav-item"><a href="/api" class="nav-link">API</a></li>
+        <li class="nav-item"><a href="{{ url_for('about') }}" class="nav-link {% if about %}active{% endif %}">About</a></li>
+        <div class="nav-db-stats">
+            product count={{ navData.productCount }}
+            <br>
+            day count={{ navData.dbAge }}
+        </div>
+    </nav>
+</header>

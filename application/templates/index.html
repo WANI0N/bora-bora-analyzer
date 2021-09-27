@@ -1,0 +1,168 @@
+{% extends "layout.html" %}
+
+{% block content %}
+    
+    <link rel="stylesheet" href="{{ url_for('static',filename='css/index.css') }}"/>
+    <script>
+		var dbGraphCanvasData = {{ graphData|tojson }};
+        var pieChartData = {{ pieChartData|tojson }};
+	</script>
+    <canvas id="dbGraphCanvas" width="1800" height="300" style="width:90%;height:10%"></canvas>
+    
+    <!-- <div  id="graphDescription" >ASD</div> -->
+    
+    <div id="anyCharts">
+        <div id="container" ></div>
+        <div id="container2" ></div>
+    </div>
+
+    <script src="https://cdn.anychart.com/releases/8.10.0/js/anychart-base.min.js"></script>
+
+    <script src="{{ url_for('static',filename='script/pieCharts.js') }}"></script>
+    <script src="{{ url_for('static',filename='script/graph.js') }}"></script>
+    <script src="{{ url_for('static',filename='script/db_graph.js') }}"></script>
+    <script src="{{ url_for('static',filename='script/index.js') }}"></script>
+
+    <table class="index-table">
+        
+        <tr class="index-table-H1-row">
+            <th class="index-table-H1-cell" colspan="11">Today Price Tops (lowest and highest for product's history)</th>
+        </tr>
+        <tr class="index-table-H2-row">
+            <th class="index-table-H2-cell-left" colspan="5">Cheapest Today</th>
+            <th class="index-table-empty"></th>
+            <th class="index-table-H2-cell-right" colspan="5">Most Expensive Today</th>
+        </tr>
+        <tr class="index-table-H3-row">
+            <th class="index-table-H3-cell">Product</th>
+            <th class="index-table-H3-cell" colspan="2">Price</th>
+            <th class="index-table-H3-cell">🤖</th>
+            <th class="index-table-H3-cell">link</th>
+            <th class="index-table-empty"></th>
+            <th class="index-table-H3-cell">Product</th>
+            <th class="index-table-H3-cell" colspan="2">Price</th>
+            <th class="index-table-H3-cell">🤖</th>
+            <th class="index-table-H3-cell">link</th>
+        </tr>
+        
+        {% set count = [] %}
+        {% for item in data.topToday.lows %}
+            <tr>
+                <td class="index-table-data-cell allignLeft">{{ item.title }}</td>
+                <td class="index-table-data-cell" colspan="2">{{ item.value }}</td>
+                <td class="index-table-data-cell">
+                    <a href="/analyze?id={{ item.id }}">🔎</a>
+                </td>
+                <td class="index-table-data-cell">
+                    <a class="index-barboraLink" href="{{ item.link }}">B__</a>
+                </td>
+                <td class="index-table-empty"></td>
+                <td class="index-table-data-cell allignLeft">{{ data.topToday.tops[ count|length ]["title"] }}</td>
+                <td class="index-table-data-cell" colspan="2">{{ data.topToday.tops[ count|length ]["value"] }}</td>
+                <td class="index-table-data-cell">
+                    <a href="/analyze?id={{ data.topToday.tops[ count|length ]['id'] }}">🔎</a>
+                </td>
+                <td class="index-table-data-cell">
+                    <a class="index-barboraLink" href="{{ data.topToday.tops[ count|length ]['link'] }}"> B__ </a>
+                </td>
+            </tr>
+            {% set __ = count.append(1) %} 
+        {% endfor %}
+        
+        <tr class="index-table-empty-vertical" colspan="9" ></tr>
+        
+        <tr class="index-table-H1-row">
+            <th class="index-table-H1-cell" colspan="11">Volatility</th>
+        </tr>
+        <tr class="index-table-H2-row">
+            <th class="index-table-H2-cell-left" colspan="5">Least volatile</th>
+            <th class="index-table-empty"></th>
+            <th class="index-table-H2-cell-right" colspan="5">Most volatile</th>
+        </tr>
+        <tr class="index-table-H3-row">
+            <th class="index-table-H3-cell">Product</th>
+            <th class="index-table-H3-cell">Variance (%)</th>
+            <th class="index-table-H3-cell">Std.Dev (€)</th>
+            <th class="index-table-H3-cell">🤖</th>
+            <th class="index-table-H3-cell">link</th>
+            <th class="index-table-empty"></th>
+            <th class="index-table-H3-cell">Product</th>
+            <th class="index-table-H3-cell">Variance (%)</th>
+            <th class="index-table-H3-cell">Std.Dev (€)</th>
+            <th class="index-table-H3-cell">🤖</th>
+            <th class="index-table-H3-cell">link</th>
+        </tr>
+        
+        {% set count = [] %}
+        {% for item in data.var_perc.lows %}
+            <tr>
+                <td class="index-table-data-cell allignLeft">{{ item.title }}</td>
+                <td class="index-table-data-cell">{{ item.value }}</td>
+                <td class="index-table-data-cell">{{ item.stdDev }}</td>
+                <td class="index-table-data-cell">
+                    <a href="/analyze?id={{ item.id }}">🔎</a>
+                </td>
+                <td class="index-table-data-cell">
+                    <a class="index-barboraLink" href="{{ item.link }}">B__</a>
+                </td>
+                <td class="index-table-empty"></td>
+                <td class="index-table-data-cell allignLeft">{{ data.var_perc.tops[ count|length ]["title"] }}</td>
+                <td class="index-table-data-cell">{{ data.var_perc.tops[ count|length ]["value"] }}</td>
+                <td class="index-table-data-cell">{{ data.var_perc.tops[ count|length ]["stdDev"] }}</td>
+                <td class="index-table-data-cell">
+                    <a href="/analyze?id={{ data.var_perc.tops[ count|length ]['id'] }}">🔎</a>
+                </td>
+                <td class="index-table-data-cell">
+                    <a class="index-barboraLink" href="{{ data.var_perc.tops[ count|length ]['link'] }}"> B__ </a>
+                </td>
+            </tr>
+            {% set __ = count.append(1) %} 
+        {% endfor %}
+
+        <tr class="index-table-empty-vertical" colspan="9" ></tr>
+
+        <tr class="index-table-H1-row">
+            <th class="index-table-H1-cell" colspan="11">Availability</th>
+        </tr>
+        <tr class="index-table-H2-row">
+            <th class="index-table-H2-cell-left" colspan="5">Least available</th>
+            <th class="index-table-empty"></th>
+            <th class="index-table-H2-cell-right" colspan="5">Most available</th>
+        </tr>
+        <tr class="index-table-H3-row">
+            <th class="index-table-H3-cell">Product</th>
+            <th class="index-table-H3-cell" colspan="2">Availability (%)</th>
+            <th class="index-table-H3-cell">🤖</th>
+            <th class="index-table-H3-cell">link</th>
+            <th class="index-table-empty"></th>
+            <th class="index-table-H3-cell">Product</th>
+            <th class="index-table-H3-cell" colspan="2">Availability (%)</th>
+            <th class="index-table-H3-cell">🤖</th>
+            <th class="index-table-H3-cell">link</th>
+        </tr>
+        
+        {% set count = [] %}
+        {% for item in data.availability_perc.lows %}
+            <tr>
+                <td class="index-table-data-cell allignLeft">{{ item.title }}</td>
+                <td class="index-table-data-cell" colspan="2">{{ item.value }}</td>
+                <td class="index-table-data-cell">
+                    <a href="/analyze?id={{ item.id }}">🔎</a>
+                </td>
+                <td class="index-table-data-cell">
+                    <a class="index-barboraLink" href="{{ item.link }}">B__</a>
+                </td>
+                <td class="index-table-empty"></td>
+                <td class="index-table-data-cell allignLeft">{{ data.availability_perc.tops[ count|length ]["title"] }}</td>
+                <td class="index-table-data-cell" colspan="2">{{ data.availability_perc.tops[ count|length ]["value"] }}</td>
+                <td class="index-table-data-cell">
+                    <a href="/analyze?id={{ data.availability_perc.tops[ count|length ]['id'] }}">🔎</a>
+                </td>
+                <td class="index-table-data-cell">
+                    <a class="index-barboraLink" href="{{ data.availability_perc.tops[ count|length ]['link'] }}"> B__ </a>
+                </td>
+            </tr>
+            {% set __ = count.append(1) %} 
+        {% endfor %}
+    </table>
+{% endblock %}

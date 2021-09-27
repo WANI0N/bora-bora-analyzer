@@ -1,0 +1,766 @@
+{
+	"Bakal\u0117ja": {
+		"Aliejus ir actas": [
+			"Actas",
+			"Alyvuogi\u0173 aliejus",
+			"Kitas aliejus",
+			"Raps\u0173 aliejus",
+			"Saul\u0117gr\u0105\u017e\u0173 aliejus"
+		],
+		"Ank\u0161tiniai": [
+			"L\u0119\u0161iai",
+			"Pupel\u0117s",
+			"\u017dirniai ir avin\u017eirniai"
+		],
+		"Greitai paruo\u0161iamas maistas": [
+			"Greitai paruo\u0161iami makaronai",
+			"Greitai paruo\u0161iamos ko\u0161\u0117s",
+			"Greitai paruo\u0161iamos sriubos"
+		],
+		"Gr\u016bd\u0173 dribsniai, ko\u0161\u0117s ir baton\u0117liai": [
+			"Dribsniai be pried\u0173",
+			"Dribsniai ko\u0161\u0117ms",
+			"Dribsniai su priedais",
+			"Javaini\u0173 baton\u0117liai",
+			"Sausi pusry\u010diai"
+		],
+		"Kava, kakava ir arbata": [
+			"Juodoji arbata",
+			"Kavos ir arbatos kapsul\u0117s DOLCE GUSTO\u00ae aparatams",
+			"Kavos kapsul\u0117s NESPRESSO\u00ae aparatams",
+			"Kavos pupel\u0117s",
+			"Kita arbata",
+			"Malta kava",
+			"Tirpi kava, kakava ir kar\u0161tas \u0161okoladas",
+			"Vaisin\u0117 arbata",
+			"\u017dalioji arbata",
+			"\u017doleli\u0173 arbata"
+		],
+		"Konservuotas maistas": [
+			"Juodosios ir kitos alyvuog\u0117s",
+			"Kitos konservuotos ank\u0161tin\u0117s dar\u017eov\u0117s",
+			"Kitos konservuotos dar\u017eov\u0117s",
+			"Konservuoti agurkai",
+			"Konservuoti burok\u0117liai",
+			"Konservuoti dar\u017eovi\u0173 mi\u0161iniai",
+			"Konservuoti grybai",
+			"Konservuoti kukur\u016bzai",
+			"Konservuoti pomidorai",
+			"Konservuoti vaisiai ir uogos",
+			"Konservuoti \u017eirneliai",
+			"Konservuotos paprikos",
+			"Konservuotos pupel\u0117s",
+			"Konservuotos sriubos",
+			"Medus",
+			"Uogien\u0117s ir d\u017eemai",
+			"\u017daliosios alyvuog\u0117s"
+		],
+		"Kruopos": [
+			"Grikiai",
+			"Kitos kruopos",
+			"Kvietin\u0117s ir mie\u017ein\u0117s kruopos",
+			"Man\u0173 kruopos",
+			"Perlin\u0117s kruopos"
+		],
+		"Makaronai": [
+			"Ilgieji makaronai",
+			"Makaronai su kiau\u0161iniais",
+			"Pilno gr\u016bdo makaronai",
+			"Smulkieji makaronai",
+			"Trumpieji makaronai",
+			"\u0160vie\u017ei makaronai"
+		],
+		"Miltai": [
+			"Kiti miltai",
+			"Kvietiniai miltai",
+			"Miltiniai mi\u0161iniai"
+		],
+		"Pada\u017eai ir u\u017etep\u0117l\u0117s": [
+			"Desertiniai pada\u017eai",
+			"Garsty\u010dios",
+			"Ke\u010dupai",
+			"Kiti pada\u017eai",
+			"Krienai",
+			"Majoneziniai pada\u017eai",
+			"Pada\u017eai makaronams",
+			"Pada\u017eai salotoms",
+			"Pomidor\u0173 pada\u017eai ir pasta",
+			"Soj\u0173 pada\u017eai",
+			"U\u017etep\u0117l\u0117s"
+		],
+		"Pasaulio virtuv\u0117s": [
+			"Japonijos virtuv\u0117",
+			"Kinijos virtuv\u0117",
+			"Kitos virtuv\u0117s ",
+			"Meksikos virtuv\u0117",
+			"Tailando virtuv\u0117"
+		],
+		"Priedai maistui ruo\u0161ti": [
+			"Cukrus ir druska",
+			"Kepini\u0173 papuo\u0161imai",
+			"Kepini\u0173 priedai",
+			"Sirupai",
+			"Sultiniai",
+			"\u017del\u0117 ir kisielius"
+		],
+		"Prieskoniai": [
+			"Grynieji prieskoniai",
+			"Prieskoni\u0173 mi\u0161iniai ",
+			"Prieskoni\u0173 ruo\u0161iniai patiekalams"
+		],
+		"Rie\u0161utai, s\u0117klos, d\u017eiovinti vaisiai, uogos ir dar\u017eov\u0117s": [
+			"Abrikosai ir slyvos",
+			"Anakard\u017eiai ir pistacijos",
+			"D\u017eiovinti vaisiai ir uogos",
+			"D\u017eiovintos dar\u017eov\u0117s ir grybai",
+			"Kiti rie\u0161utai",
+			"Lazdyn\u0173 ir graikiniai rie\u0161utai",
+			"Migdol\u0173 rie\u0161utai",
+			"Razinos ir spanguol\u0117s",
+			"Rie\u0161ut\u0173 ir d\u017eiovint\u0173 vaisi\u0173, uog\u0173 mi\u0161iniai",
+			"Rie\u0161ut\u0173 mi\u0161iniai",
+			"S\u0117klos",
+			"\u0160altyje d\u017eiovinti vaisiai, uogos, dar\u017eov\u0117s",
+			"\u017dem\u0117s rie\u0161utai"
+		],
+		"Ry\u017eiai": [
+			"Basmati ir kvapieji ry\u017eiai",
+			"Daugiary\u017eio ry\u017eiai",
+			"Ilgagr\u016bd\u017eiai ry\u017eiai",
+			"Plikyti ry\u017eiai",
+			"Rudieji ir laukiniai ry\u017eiai",
+			"Trumpagr\u016bd\u017eiai ry\u017eiai"
+		],
+		"Saldumynai": [
+			"Baton\u0117liai",
+			"Dra\u017e\u0117",
+			"Guminukai",
+			"Kiti saldumynai",
+			"Kramtomieji saldainiai",
+			"Pastil\u0117s, ledinukai ir kramtomoji guma",
+			"Saldainiai",
+			"Saldaini\u0173 rinkiniai",
+			"Sausainiai",
+			"Vafliai",
+			"Zefyrai",
+			"\u0160okolado ir rie\u0161ut\u0173 kremai",
+			"\u0160okolado plytel\u0117s"
+		],
+		"Specialusis maistas": [
+			"Diabetinis maistas",
+			"Funkcinis maistas",
+			"Sojos produktai"
+		],
+		"S\u0117lenos ir s\u0117menys": [
+			"S\u0117lenos ir s\u0117menys"
+		],
+		"U\u017ekand\u017eiai": [
+			"Bulvi\u0173 tra\u0161ku\u010diai",
+			"Kepta duona ir duonos tra\u0161ku\u010diai",
+			"Kiti u\u017ekand\u017eiai",
+			"Krekeriai ir s\u016br\u016bs sausainiai",
+			"Kukur\u016bz\u0173 lazdel\u0117s ir sprag\u0117siai"
+		]
+	},
+	"Dar\u017eov\u0117s ir vaisiai": {
+		"Dar\u017eov\u0117s": [
+			"Agurkai ir pomidorai",
+			"Bulv\u0117s, morkos ir kop\u016bstai",
+			"Burok\u0117liai ir kiti \u0161akniavaisiai",
+			"Kukur\u016bzai, \u017eirniai, pupel\u0117s ir smidrai",
+			"Marinuotos, raugintos ir s\u016bdytos dar\u017eov\u0117s",
+			"Moli\u016bgai ir cukinijos",
+			"Paprikos ir bakla\u017eanai",
+			"Prieskonin\u0117s dar\u017eov\u0117s ir \u017eolel\u0117s",
+			"Salotos ir j\u0173 mi\u0161iniai",
+			"Svog\u016bnai, porai ir \u010desnakai"
+		],
+		"Grybai": [
+			"Grybai"
+		],
+		"MANG\u0172 MANGAS": [
+			" D\u017eiovinti vaisiai ir rie\u0161utai",
+			"\u0160vie\u017ei vaisiai"
+		],
+		"Vaisiai ir uogos": [
+			"Avokadai",
+			"Bananai",
+			"Citrusiniai vaisiai",
+			"Egzotiniai vaisiai ",
+			"Kaulavaisiai",
+			"Melionai ir arb\u016bzai",
+			"Obuoliai ir kriau\u0161\u0117s",
+			"Vynuog\u0117s ir uogos"
+		]
+	},
+	"Duonos gaminiai ir konditerija": {
+		"Bandel\u0117s ir spurgos": [
+			"Nesald\u017eios bandel\u0117s",
+			"Sald\u017eios bandel\u0117s",
+			"Spurgos"
+		],
+		"Duona": [
+			"Batonas",
+			"Duona be glitimo",
+			"Sumu\u0161tini\u0173 duona ir duonel\u0117s",
+			"Tamsi duona",
+			"Tamsi duona su pagardais",
+			"\u0160viesi duona",
+			"\u0160viesi duona su pagardais"
+		],
+		"Duonos pakaitalai": [
+			"Duoniukai",
+			"Duonos lazdel\u0117s",
+			"Kiti duonos gaminiai",
+			"Trapu\u010diai ir kiti paplot\u0117liai"
+		],
+		"Duonos pyragai, keksai ir keksiukai": [
+			"Duonos pyragai",
+			"Keksai ir keksiukai"
+		],
+		"D\u017ei\u016bv\u0117siai, riestainiai, meduoliai ir javinukai": [
+			"D\u017ei\u016bv\u0117siai ir javinukai",
+			"Meduoliai",
+			"Riestainiai"
+		],
+		"Konditerijos gaminiai": [
+			"Plok\u0161tainiai ir vyniotiniai",
+			"Pyragai\u010diai ir desertai",
+			"Tortai",
+			"\u0160ako\u010diai ir skruzd\u0117lynai"
+		],
+		"\u0160vie\u017eiai kepti duonos gaminiai": [
+			"\u0160vie\u017eiai kepta tamsi duona",
+			"\u0160vie\u017eiai kepta \u0161viesi duona",
+			"\u0160vie\u017eiai kepta \u0161viesi duona su pagardais",
+			"\u0160vie\u017eiai keptas batonas",
+			"\u0160vie\u017eiai kepti u\u017ekand\u017eiai",
+			"\u0160vie\u017eiai keptos nesald\u017eios bandel\u0117s",
+			"\u0160vie\u017eiai keptos sald\u017eios bandel\u0117s"
+		]
+	},
+	"G\u0117rimai": {
+		"Alus": [
+			"Alaus kokteiliai",
+			"Alaus pakuot\u0117s",
+			"Kvietinis alus",
+			"Ma\u017e\u0173j\u0173 darykl\u0173 alus",
+			"Tamsus alus",
+			"\u0160viesus alus"
+		],
+		"Gaivieji g\u0117rimai": [
+			"Energiniai g\u0117rimai",
+			"Gazuoti vaisvandeniai",
+			"Gira",
+			"Izotoniniai g\u0117rimai",
+			"Kiti g\u0117rimai",
+			"Negazuoti vaisvandeniai",
+			"\u0160altoji arbata"
+		],
+		"Nealkoholiniai g\u0117rimai": [
+			"Nealkoholinis alus",
+			"Nealkoholinis putojantis vynas",
+			"Nealkoholinis sidras",
+			"Nealkoholinis vynas"
+		],
+		"Sidras ir kokteiliai": [
+			"Kokteiliai",
+			"Sidras"
+		],
+		"Stiprieji alkoholiniai g\u0117rimai": [
+			"Brendis",
+			"Degtin\u0117",
+			"D\u017einas",
+			"Konjakas",
+			"Romas",
+			"Tekila",
+			"Trauktin\u0117 ir likeris",
+			"Viskis"
+		],
+		"Sultys, nektarai ir sul\u010di\u0173 g\u0117rimai": [
+			"Nektarai",
+			"Sultys",
+			"Sul\u010di\u0173 g\u0117rimai",
+			"Vaisi\u0173 tyr\u0117s ir kokteiliai"
+		],
+		"Vanduo": [
+			"Gazuotas vanduo",
+			"Negazuotas vanduo"
+		],
+		"Vynas": [
+			"Baltas vynas",
+			"Putojantis vynas",
+			"Raudonas vynas",
+			"Rausvas vynas",
+			"Vermutas",
+			"Vyno g\u0117rimas",
+			"\u0160ampanas"
+		]
+	},
+	"Kosmetika ir higiena": {
+		"Burnos higienos priemon\u0117s": [
+			"Burnos skalavimo skys\u010diai",
+			"Dant\u0173 pastos",
+			"Dant\u0173 protez\u0173 prie\u017ei\u016bra",
+			"Dant\u0173 si\u016blai ir krap\u0161tukai",
+			"Dant\u0173 \u0161epet\u0117liai"
+		],
+		"Dekoratyvin\u0117 kosmetika": [
+			"Aki\u0173 ir antaki\u0173 pie\u0161tukai ",
+			"Blakstien\u0173 tu\u0161ai",
+			"L\u016bp\u0173 da\u017eai",
+			"Makia\u017eo pagrindai, pudros ir maskuokliai "
+		],
+		"Dezodorantai": [
+			"Pie\u0161tukiniai dezodorantai moterims",
+			"Pie\u0161tukiniai dezodorantai vyrams",
+			"Pur\u0161kiamieji dezodorantai moterims",
+			"Pur\u0161kiamieji dezodorantai vyrams",
+			"Rutuliniai ir pie\u0161tukiniai dezodorantai moterims",
+			"Rutuliniai ir pie\u0161tukiniai dezodorantai vyrams"
+		],
+		"Intymios higienos prek\u0117s": [
+			"Higieniniai paketai",
+			"Higieniniai \u012fklotai",
+			"Intymios higienos prausikliai ir servet\u0117l\u0117s",
+			"Intymios higienos servet\u0117l\u0117s",
+			"Menstruacin\u0117s taurel\u0117s",
+			"Sauskeln\u0117s suaugusiems",
+			"Tamponai",
+			"\u012eklotai nelaikantiems \u0161lapimo"
+		],
+		"Kojin\u0117s ir p\u0117dkeln\u0117s": [
+			"Moteri\u0161kos kojin\u0117s",
+			"P\u0117dkeln\u0117s",
+			"Vaiki\u0161kos p\u0117dkeln\u0117s",
+			"Vyri\u0161kos kojin\u0117s"
+		],
+		"K\u016bno prie\u017ei\u016bros priemon\u0117s": [
+			"Dr\u0117gnosios servet\u0117l\u0117s",
+			"Du\u0161o \u017eel\u0117",
+			"Eteriniai aliejai",
+			"Gabalinis tualetinis muilas",
+			"K\u016bno odos prie\u017ei\u016bros priemon\u0117s ",
+			"Pirties reikmenys",
+			"Skystas tualetinis muilas",
+			"Vonios putos ir druska"
+		],
+		"Medicinos prek\u0117s": [
+			"Dezinfekcijos priemon\u0117s",
+			"Kitos medicinin\u0117s prek\u0117s",
+			"Pleistrai",
+			"Prezervatyvai"
+		],
+		"Plauk\u0173 prie\u017ei\u016bros priemon\u0117s": [
+			"Plauk\u0173 balzamai",
+			"Plauk\u0173 da\u017eai",
+			"Plauk\u0173 kauk\u0117s, serumai ir aliejus",
+			"Plauk\u0173 lakas",
+			"Plauk\u0173 \u0161amp\u016bnai",
+			"Sausi plauk\u0173 \u0161amp\u016bnai",
+			"\u0160ukos ir \u0161epe\u010diai",
+			"\u0160ukuosenos formavimo priemon\u0117s "
+		],
+		"Popieriniai gaminiai": [
+			"Popieriniai rank\u0161luos\u010diai",
+			"Popierin\u0117s nosinait\u0117s",
+			"Tualetinis popierius "
+		],
+		"Rank\u0173 ir p\u0117d\u0173 odos prie\u017ei\u016bros priemon\u0117s": [
+			"Maniki\u016bro ir pediki\u016bro reikmenys",
+			"P\u0117d\u0173 odos prie\u017ei\u016bros priemon\u0117s",
+			"Rank\u0173 odos prie\u017ei\u016bros priemon\u0117s"
+		],
+		"Skutimosi prek\u0117s": [
+			"Depiliacin\u0117s priemon\u0117s",
+			"Losjonai ir kremai po skutimosi",
+			"Skustuvai , skutimosi peiliukai ir priedai ",
+			"Skutimosi putos ir \u017eel\u0117"
+		],
+		"Urban Earth Lovers": [
+			"Higiena be plastiko",
+			"Nat\u016bralus gro\u017eis"
+		],
+		"Veido prie\u017ei\u016bros priemon\u0117s": [
+			"Kosmetin\u0117 vata ir krap\u0161tukai",
+			"L\u016bp\u0173 prie\u017ei\u016bros priemon\u0117s",
+			"Makia\u017eo valikliai ir veido prausikliai",
+			"Naktiniai veido kremai",
+			"Veido kauk\u0117s",
+			"Veido kremai",
+			"Veido serumai ir paaki\u0173 kremai"
+		]
+	},
+	"K\u016bdiki\u0173 ir vaik\u0173 prek\u0117s": {
+		"K\u016bdiki\u0173 ir vaik\u0173 \u017eaislai": [
+			"Auto ir veiksmo \u017eaidimai",
+			"Kiti \u017eaislai",
+			"K\u016bdiki\u0173 ir lavinamieji \u017eaislai ",
+			"K\u016brybiniai ir interaktyv\u016bs \u017eaislai",
+			"L\u0117l\u0117s ir j\u0173 priedai",
+			"Stalo \u017eaidimai "
+		],
+		"K\u016bdiki\u0173 ko\u0161\u0117s ir u\u017ekand\u017eiai": [
+			"Ko\u0161\u0117s be pieno nuo 12 m\u0117n.",
+			"Ko\u0161\u0117s be pieno nuo 4 m\u0117n.",
+			"Ko\u0161\u0117s be pieno nuo 6 m\u0117n.",
+			"Ko\u0161\u0117s be pieno nuo 8 m\u0117n.",
+			"Ko\u0161\u0117s su pienu nuo 12 m\u0117n.",
+			"Ko\u0161\u0117s su pienu nuo 4 m\u0117n.",
+			"Ko\u0161\u0117s su pienu nuo 6 m\u0117n.",
+			"Ko\u0161\u0117s su pienu nuo 8 m\u0117n.",
+			"Sausainiai, trapu\u010diai ir d\u017ei\u016bv\u0117s\u0117liai"
+		],
+		"K\u016bdiki\u0173 tyrel\u0117s ir g\u0117rimai": [
+			"Arbata ir arbatos g\u0117rimai",
+			"M\u0117sos ir dar\u017eovi\u0173 tyrel\u0117s nuo 12 m\u0117n.",
+			"M\u0117sos ir dar\u017eovi\u0173 tyrel\u0117s nuo 4 m\u0117n.",
+			"M\u0117sos ir dar\u017eovi\u0173 tyrel\u0117s nuo 6 m\u0117n.",
+			"M\u0117sos ir dar\u017eovi\u0173 tyrel\u0117s nuo 8 m\u0117n.",
+			"Sultys, nektarai ir kiti g\u0117rimai",
+			"Vaisin\u0117s ir desertin\u0117s tyrel\u0117s nuo 12 m\u0117n.",
+			"Vaisin\u0117s ir desertin\u0117s tyrel\u0117s nuo 4 m\u0117n.",
+			"Vaisin\u0117s ir desertin\u0117s tyrel\u0117s nuo 6 m\u0117n.",
+			"Vaisin\u0117s ir desertin\u0117s tyrel\u0117s nuo 8 m\u0117n."
+		],
+		"LEGO\u00ae konstruktoriai": [
+			"LEGO\u00ae City",
+			"LEGO\u00ae Classic",
+			"LEGO\u00ae Creator",
+			"LEGO\u00ae Disney",
+			"LEGO\u00ae Dots",
+			"LEGO\u00ae Duplo",
+			"LEGO\u00ae Friends",
+			"LEGO\u00ae Harry Potter",
+			"LEGO\u00ae Juniors",
+			"LEGO\u00ae Marvel Super Heroes",
+			"LEGO\u00ae Minecraft",
+			"LEGO\u00ae Ninjago",
+			"LEGO\u00ae Technic"
+		],
+		"Pieno mi\u0161iniai": [
+			"Paruo\u0161ti vartoti pieno mi\u0161iniai",
+			"Pieno mi\u0161iniai iki 6 m\u0117n.",
+			"Pieno mi\u0161iniai nuo 1-2 met\u0173.",
+			"Pieno mi\u0161iniai nuo 10 m\u0117n.",
+			"Pieno mi\u0161iniai nuo 6 m\u0117n.",
+			"Pieno mi\u0161iniai nuo 6+ m\u0117n.",
+			"Pradinio maitinimo pieno mi\u0161iniai",
+			"Specializuoti pieno mi\u0161iniai"
+		],
+		"Prie\u017ei\u016bros prek\u0117s": [
+			"Burnos higienos priemon\u0117s",
+			"Kiti k\u016bdiki\u0173 prie\u017ei\u016bros reikmenys",
+			"Kosmetin\u0117 vata ir krap\u0161tukai",
+			"Kremai, losjonai ir aliejai",
+			"Maitinimo ir k\u016bdiki\u0173 prie\u017ei\u016bros reikmenys",
+			"Prek\u0117s mamoms",
+			"Seilinukai",
+			"\u0160amp\u016bnai ir prausimosi priemon\u0117s"
+		],
+		"Sauskeln\u0117s ir servet\u0117l\u0117s": [
+			"Dr\u0117gnosios servet\u0117l\u0117s",
+			"Paklotai",
+			"Sauskeln\u0117s, dydis 0 ir 1",
+			"Sauskeln\u0117s, dydis 2",
+			"Sauskeln\u0117s, dydis 3",
+			"Sauskeln\u0117s, dydis 4",
+			"Sauskeln\u0117s, dydis 5",
+			"Sauskeln\u0117s, dydis 6+"
+		],
+		"Vaik\u0173 higienos prek\u0117s": [
+			"Burnos higienos priemon\u0117s"
+		]
+	},
+	"M\u0117sa, \u017euvis ir kulinarija": {
+		"Kulinarija": [
+			"Miltiniai patiekalai",
+			"Pagrindiniai patiekalai ir sriubos",
+			"Salotos ir mi\u0161rain\u0117s",
+			"U\u017ekand\u017eiai"
+		],
+		"M\u0117sos ir pauk\u0161tienos gaminiai": [
+			"De\u0161rel\u0117s griliui",
+			"Kar\u0161tai r\u016bkyti gaminiai",
+			"Kar\u0161tai r\u016bkytos de\u0161ros",
+			"M\u0117sos ir pauk\u0161tienos konservai",
+			"M\u0117sos u\u017ekand\u017eiai ir de\u0161rel\u0117s",
+			"Par\u016bkytos  de\u0161ros ir de\u0161rel\u0117s",
+			"Pa\u0161tetai",
+			"Virti, kepti ir s\u016bdyti gaminiai",
+			"Virtos de\u0161rel\u0117s",
+			"Virtos de\u0161ros",
+			"Vytinti m\u0117sos gaminiai",
+			"Vytintos de\u0161ros",
+			"\u0160altai r\u016bkyti gaminiai",
+			"\u0160altai r\u016bkytos de\u0161ros"
+		],
+		"\u0160vie\u017eia m\u0117sa": [
+			"Jautiena ",
+			"Kiauliena",
+			"Malta m\u0117sa",
+			"Triu\u0161iena"
+		],
+		"\u0160vie\u017eia pauk\u0161tiena": [
+			"Kalakutiena",
+			"Kita pauk\u0161tiena",
+			"Malta pauk\u0161tiena",
+			"Vi\u0161tiena"
+		],
+		"\u0160vie\u017eios m\u0117sos ir pauk\u0161tienos pusgaminiai": [
+			"Marinuota m\u0117sa",
+			"Marinuota pauk\u0161tiena",
+			"\u0160vie\u017eios de\u0161rel\u0117s"
+		],
+		"\u0160vie\u017eios \u017euvys ir j\u016br\u0173 g\u0117ryb\u0117s": [
+			"J\u016bros g\u0117ryb\u0117s",
+			"Marinuota \u017euvis",
+			"\u0160vie\u017eia \u017euvis"
+		],
+		"\u017duv\u0173 gaminiai": [
+			"Apdorotos j\u016bros g\u0117ryb\u0117s",
+			"Ikrai",
+			"J\u016bros kop\u016bstai",
+			"Konservuotos \u017euvys ir j\u016bros g\u0117ryb\u0117s",
+			"Krab\u0173 lazdel\u0117s",
+			"La\u0161i\u0161os ir j\u0173 gaminiai",
+			"R\u016bkytos \u017euvys ir j\u016bros g\u0117ryb\u0117s",
+			"Silk\u0117s ir j\u0173 gaminiai",
+			"Tunai ir j\u0173 gaminiai",
+			"U\u017etep\u0117l\u0117s ir pa\u0161tetai",
+			"Vytintos \u017euvys ir j\u016bros g\u0117ryb\u0117s"
+		]
+	},
+	"Namai ir laisvalaikis": {
+		"Augalams": [
+			"Tr\u0105\u0161os",
+			"\u017dem\u0117s ir substratai"
+		],
+		"Automobili\u0173 prek\u0117s": [
+			"Automobiliniai oro gaivikliai",
+			"Automobili\u0173 lemput\u0117s",
+			"Automobili\u0173 \u0161varos priemon\u0117s",
+			"Kitos automobili\u0173 prek\u0117s ",
+			"Tepalai, alyvos"
+		],
+		"Buitin\u0117 technika ir elektronika": [
+			"Elektronikos prietaisai ir j\u0173 priedai",
+			"Elektros lemput\u0117s ir \u017eibintuv\u0117liai",
+			"Ilgintuvai ir jungtukai ",
+			"Kita buitin\u0117 technika",
+			"Kita elektronika",
+			"Kompiuterijos prek\u0117s",
+			"Virtuv\u0117s  buitin\u0117 tehnika"
+		],
+		"Laikra\u0161\u010diai, \u017eurnalai, knygos": [
+			"Kry\u017eia\u017eod\u017eiai",
+			"Populiarioji literat\u016bra suaugusiems",
+			"Populiarioji literat\u016bra vaikams",
+			"Valstybin\u0117 atributika",
+			"\u017durnalai ir laikra\u0161\u010diai",
+			"\u017durnalai vaikams"
+		],
+		"Laisvalaikiui gamtoje": [
+			"Apsaugin\u0117s priemon\u0117s nuo saul\u0117s",
+			"Kepsnin\u0117s ir j\u0173 reikmenys",
+			"Lauko pramogos",
+			"Papl\u016bdimio pramogos ",
+			"Pridegimo priemon\u0117s",
+			"Priemon\u0117s nuo uod\u0173 ir erki\u0173",
+			"Sporto ir laisvalaikio prek\u0117s",
+			"Stovyklavimui",
+			"Vienkartiniai indai ir \u012frankiai",
+			"\u017d\u016bkl\u0117"
+		],
+		"Maisto ruo\u0161imo ir laikymo indai": [
+			"Gertuv\u0117s ir termosai",
+			"Kepimo formos",
+			"Kiti virtuv\u0117s \u012frankiai",
+			"Maisto gaminimo ir laikymo med\u017eiagos",
+			"Maisto produkt\u0173 laikymo indai",
+			"Maisto ruo\u0161imo \u012frankiai",
+			"Puodai ir keptuv\u0117s"
+		],
+		"Mam\u0173 unija": [
+			"Mam\u0173 unija"
+		],
+		"Mokyklin\u0117 mug\u0117": [
+			"Kita kanceliarija",
+			"Kuprin\u0117s, sportiniai mai\u0161ai, penalai",
+			"Pie\u0161imo priemon\u0117s",
+			"Popierius, popieriaus gaminiai",
+			"Ra\u0161ymo priemon\u0117s"
+		],
+		"Mokyklin\u0117s prek\u0117s ": [
+			"Kita kanceliarija",
+			"Pie\u0161imo, ra\u0161ymo ir lipdymo priemon\u0117s",
+			"Popierius, popieriaus gaminiai"
+		],
+		"Nam\u0173 apyvokos reikmenys": [
+			"Avalyn\u0117s prie\u017ei\u016bros priemon\u0117s",
+			"Darbo ir remonto priemon\u0117s",
+			"Drabu\u017ei\u0173 prie\u017ei\u016bra",
+			"Galvaniniai elementai",
+			"Kap\u0173 \u017evak\u0117s",
+			"Klijai",
+			"Siuvimo ir mezgimo priemon\u0117s"
+		],
+		"Virtuv\u0117s ir stalo serviravimo reikmenys": [
+			"Indai",
+			"Popierin\u0117s servet\u0117l\u0117s",
+			"Progin\u0117 atributika",
+			"Taur\u0117s ir stiklin\u0117s",
+			"Vandens filtrai ir j\u0173 priedai",
+			"\u017dvak\u0117s ir \u017evakid\u0117s"
+		]
+	},
+	"Pieno gaminiai ir kiau\u0161iniai": {
+		"Grietin\u0117 ir grietin\u0117l\u0117": [
+			"Augaliniai grietin\u0117l\u0117s pakaitalai",
+			"Grietin\u0117",
+			"Grietin\u0117l\u0117"
+		],
+		"Jogurtai ir desertai": [
+			"Augaliniai jogurto ir desert\u0173 pakaitalai",
+			"Desertai",
+			"Desertiniai baton\u0117liai",
+			"Geriamieji jogurtai",
+			"Jogurtai be pagard\u0173",
+			"Jogurtai su pagardais"
+		],
+		"Kefyras, r\u016bgpienis ir pasukos": [
+			"Kefyras ir kefyro g\u0117rimai",
+			"Raugintos pasukos",
+			"R\u016bgpienis"
+		],
+		"Kiau\u0161iniai": [
+			"Kit\u0173 pauk\u0161\u010di\u0173 kiau\u0161iniai",
+			"Vi\u0161t\u0173 kiau\u0161iniai"
+		],
+		"Majonezas": [
+			"Augaliniai majonezo pakaitalai",
+			"Majonezas"
+		],
+		"Pienas": [
+			"Augaliniai g\u0117rimai",
+			"Ilgo galiojimo pienas",
+			"Pasterizuotas pienas",
+			"Pieno g\u0117rimai",
+			"Sutir\u0161tintas pienas"
+		],
+		"Produktai be laktoz\u0117s": [
+			"Jogurtai ir desertai be laktoz\u0117s",
+			"Pienas ir g\u0117rimai be laktoz\u0117s",
+			"Sviestas be laktoz\u0117s",
+			"S\u016bris be laktoz\u0117s",
+			"Var\u0161k\u0117 be laktoz\u0117s"
+		],
+		"Sviestas, margarinas ir riebalai": [
+			"Augaliniai sviesto pakaitalai",
+			"Margarinas",
+			"Sviestas",
+			"Tep\u016bs riebal\u0173 mi\u0161iniai"
+		],
+		"S\u016bris": [
+			"Augaliniai s\u016brio pakaitalai",
+			"Fermentiniai s\u016briai",
+			"Fetos ir brinzos s\u016briai",
+			"Kietieji s\u016briai",
+			"Lydyti s\u016briai",
+			"Maskarpon\u0117s ir rikotos s\u016briai",
+			"Mocarelos ir burata s\u016briai",
+			"O\u017ek\u0173 ir avi\u0173 pieno s\u016bris",
+			"Pel\u0117siniai s\u016briai",
+			"S\u016bris kepimui",
+			"S\u016bris u\u017ekand\u017eiams ir s\u016brio lazdel\u0117s",
+			"Tepami s\u016briai",
+			"Var\u0161k\u0117s s\u016briai"
+		],
+		"Var\u0161k\u0117s produktai": [
+			"Desertin\u0117 var\u0161k\u0117",
+			"Gr\u016bd\u0117ta var\u0161k\u0117",
+			"Tepama var\u0161k\u0117",
+			"Var\u0161k\u0117",
+			"Var\u0161k\u0117s s\u016breliai"
+		]
+	},
+	"\u0160aldytas maistas": {
+		"Ledai ir ledo kubeliai": [
+			"Ledai d\u0117\u017eut\u0117se ir indeliuose",
+			"Ledai porcijomis",
+			"Ledo kubeliai"
+		],
+		"\u0160aldyta m\u0117sa": [
+			"\u0160aldyta m\u0117sa",
+			"\u0160aldyta pauk\u0161tiena"
+		],
+		"\u0160aldyti duonos gaminiai, konditerija": [
+			"Kold\u016bnai ir virtiniai",
+			"\u0160aldyta te\u0161la",
+			"\u0160aldyti did\u017ekukuliai, blynai ir lietiniai",
+			"\u0160aldytos bandel\u0117s ir pyragai\u010diai",
+			"\u0160aldytos picos ir u\u017ekand\u017eiai "
+		],
+		"\u0160aldytos dar\u017eov\u0117s, grybai ir uogos": [
+			"\u0160aldyti grybai",
+			"\u0160aldytos bulv\u0117s",
+			"\u0160aldytos dar\u017eov\u0117s ir j\u0173 mi\u0161iniai",
+			"\u0160aldytos uogos ir vaisiai"
+		],
+		"\u0160aldytos \u017euvys ir j\u016br\u0173 g\u0117ryb\u0117s": [
+			"\u0160aldyta \u017euvis",
+			"\u0160aldytos j\u016bros g\u0117ryb\u0117s",
+			"\u0160aldytos krab\u0173 lazdel\u0117s ir j\u0173 gaminiai",
+			"\u0160aldytos krevet\u0117s",
+			"\u017duvies patiekalai",
+			"\u017duv\u0173 pir\u0161teliai"
+		]
+	},
+	"\u0160varos ir gyv\u016bn\u0173 prek\u0117s": {
+		"Buitin\u0117s chemijos prek\u0117s": [
+			"Audini\u0173 standikliai ir antistatikai",
+			"D\u0117mi\u0173 valikliai ir balinimo priemon\u0117s",
+			"Grind\u0173 ir kilim\u0173 valikliai",
+			"Indaplovi\u0173 ir skalbykli\u0173 prie\u017ei\u016bra ",
+			"Ind\u0173 plovikliai",
+			"Kieti WC valikliai - gaivikliai",
+			"Kiti oro gaivikliai",
+			"Lang\u0173 valikliai",
+			"Nuovir\u0173 ir nuos\u0117d\u0173 valikliai",
+			"Nutekam\u0173j\u0173 vamzd\u017ei\u0173 valikliai",
+			"Parazit\u0173 naikinimo priemon\u0117s",
+			"Plovimo priemon\u0117s indaplov\u0117ms",
+			"Priemon\u0117s skalbti rankomis",
+			"Pur\u0161kiamieji oro gaivikliai",
+			"Skalbiamieji lapeliai",
+			"Skalbimo milteliai",
+			"Skalbini\u0173 mink\u0161tikliai",
+			"Skysti WC valikliai - gaivikliai",
+			"Skystos skalbimo priemon\u0117s",
+			"Specialiosios paskirties valikliai",
+			"Universal\u016bs valikliai",
+			"Virtuv\u0117s ir vonios kambario valikliai",
+			"\u0160veitikliai"
+		],
+		"Gyv\u016bn\u0173 prek\u0117s": [
+			"Grau\u017eik\u0173 \u0117dalas",
+			"Gyv\u016bn\u0173 kraikas ir higienos reikmenys",
+			"Kiti ka\u010di\u0173 skan\u0117stai",
+			"Kiti \u0161un\u0173 skan\u0117stai",
+			"Kit\u0173 gyv\u016bn\u0173 \u0117dalas",
+			"Konservuotas ka\u010di\u0173 \u0117dalas",
+			"Konservuotas \u0161un\u0173 \u0117dalas",
+			"Sausas ka\u010di\u0173 \u0117dalas",
+			"Sausas \u0161un\u0173 \u0117dalas"
+		],
+		"Priemon\u0117s valymui": [
+			"Buitin\u0117s ir darbo pir\u0161tin\u0117s",
+			"Lang\u0173 ir grind\u0173 valymo reikmenys",
+			"\u0160iuk\u0161li\u0173 mai\u0161ai",
+			"\u0160luost\u0117s, kempin\u0117l\u0117s ir \u0161epe\u010diai"
+		],
+		"Urban Earth Lovers": [
+			"Atsakinga virtuv\u0117"
+		]
+	}
+}

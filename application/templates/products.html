@@ -1,0 +1,48 @@
+{% extends "layout.html" %}
+
+{% block content %}
+    <div class="search-bar">
+        <!-- <form onsubmit="return validateForm(this);"> -->
+        <form action="{{ url_for('products') }}">
+            <input class="search-bar-input" type="text" placeholder="Search product.." name="q">
+            <button class="search-bar-submit" type="submit">🔎</button>
+        </form>
+    </div>
+    
+    <div class="product-categories">
+        <div class="product-categories-top ">
+            {% for k, v in categories.items() %}
+                <a class="product-categories-item {% if catArr[0] == k %}active{% endif %}" href="/products?cat={{ k }}">{{ k }}</a>
+            {% endfor %}
+        </div>
+        <div class="product-categories-mid ">
+            {% if catArr[0] %}
+                {% for k, v in categories[ catArr[0] ].items() %}
+                    <a class="product-categories-item {% if catArr[1] == k %}active{% endif %}" href="/products?cat={{ catArr[0] + '-' + k }}">{{ k }}</a>
+                {% endfor %}
+            {% endif %}
+        </div>
+        <div class="product-categories-low ">
+            {% if catArr[1] %}
+                {% if categories[ catArr[0] ][ catArr[1] ]|length > 1 %}
+                    {% for k in categories[ catArr[0] ][ catArr[1] ] %}
+                        <a class="product-categories-item {% if catArr[2] == k %}active{% endif %}" href="/products?cat={{ catArr[0] + '-' + catArr[1] + '-' + k }}">{{ k }}</a>
+                    {% endfor %}
+                {% endif %}
+            {% endif %}
+        </div>
+    </div>
+    <div class="product-pagination">
+        {% for item in pagination %}
+            <a class="product-pagination-item {% if item.current %}active{% endif %}" href="{{ item.url }}">{{ item.text }}</a>
+        {% endfor %}
+    </div>
+    
+    {% include "products-grid.html" %}
+
+    <div class="product-pagination">
+        {% for item in pagination %}
+            <a class="product-pagination-item {% if item.current %}active{% endif %}" href="{{ item.url }}">{{ item.text }}</a>
+        {% endfor %}
+    </div>
+{% endblock %}

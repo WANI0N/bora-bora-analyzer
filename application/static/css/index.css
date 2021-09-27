@@ -1,0 +1,67 @@
+.index-table{
+    color:rgba(255, 255, 255, 0.397);
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 10px;
+    border: 1px solid white;
+}
+th.index-table-H1-cell{
+    border-top: 1px solid white;
+    color:rgba(255, 255, 0, 0.582);
+    font-size:0.7cm;
+}
+th.index-table-H2-cell-left{
+    font-size: 0.6cm;
+    color:rgba(0, 255, 64, 0.582);
+}
+th.index-table-H2-cell-right{
+    font-size: 0.6cm;
+    color:rgba(255, 0, 0, 0.582);
+}
+th.index-table-H3-cell{
+    font-size: 0.5cm;
+    border-bottom: 1px solid white;
+    color:rgba(0, 255, 234, 0.582);
+}
+.index-table-empty{
+    width:5%;
+}
+.index-table-empty-vertical{
+    height:20px;
+}
+.index-table-data-cell.allignLeft{
+    text-align: left;
+}
+.index-table-data-cell{
+    text-align: center;
+    font-size: 0.45cm;
+    color:rgba(255, 255, 255, 0.5);
+}
+.index-barboraLink{
+    background: linear-gradient(to right, white,red);
+    font-style: bold;
+    color:red;
+    
+}
+
+
+#graphDescription{
+    color:rgba(255, 255, 255, 0.5);
+}
+
+#anyCharts{
+    width:100%
+}
+#container{
+    display: inline-block;
+    width: 49%;
+    height:500px;
+}
+#container2{
+    display: inline-block;
+    width: 49%;
+    height:500px;
+}
+/* .anychart-credits{
+    display:none;
+} */

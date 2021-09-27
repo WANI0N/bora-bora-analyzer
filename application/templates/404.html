@@ -1,0 +1,15 @@
+{% extends "layout.html" %}
+
+{% block content %}
+    <link rel="stylesheet" href="{{ url_for('static',filename='css/main.css') }}"/>
+    <div class="container_404">
+        <div class="Large_404">
+            404
+            <br>
+            Not Found
+        </div>
+        <div class="Small_404">
+            {{ Message404 }}
+        </div>
+    </div>
+{% endblock %}

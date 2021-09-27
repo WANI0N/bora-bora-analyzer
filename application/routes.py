@@ -7,7 +7,8 @@ import math
 from application.functions.functions import *
 from application.analyzer.product_analyzer import ProductAnalyzer
 
-if os.environ.get("WERKZEUG_RUN_MAIN") == "true":
+# if os.environ.get("WERKZEUG_RUN_MAIN") == "true":
+if True:
     from application import disable_onLoad
     navData = {
         "productCount":0,

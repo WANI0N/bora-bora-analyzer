@@ -22,7 +22,8 @@ mongo_db=client.db # assign database to mongo_db
 # mongo_db.products.insert_many(file_data)
 
 ## code runs only once in dev env
-if os.environ.get("WERKZEUG_RUN_MAIN") == "true":
+# if os.environ.get("WERKZEUG_RUN_MAIN") == "true":
+if True:
     # disable_onLoad = True
     disable_onLoad = False
     

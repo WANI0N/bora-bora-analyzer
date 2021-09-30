@@ -8,8 +8,8 @@ from application.scripts.functions import *
 from application.scripts.product_analyzer import ProductAnalyzer
 
 
-if os.environ.get("WERKZEUG_RUN_MAIN") == "true":
-# if True:
+# if os.environ.get("WERKZEUG_RUN_MAIN") == "true":
+if True:
     disable_onLoad = False
     navData = {
         "productCount":0,

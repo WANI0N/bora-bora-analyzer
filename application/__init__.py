@@ -10,7 +10,7 @@ app = Flask(__name__)
 blueprint = Blueprint('api', __name__, url_prefix='/api/')
 
 
-api = Api(blueprint, description="API allows to retrieve products' historical data and database statistics.",title="borabora-analyzer api")
+api = Api(blueprint,default="Product",default_label="Retreive product/db stats", description="API allows to retrieve products' historical data and database statistics.",title="borabora-analyzer api")
 app.register_blueprint(blueprint)
 api.init_app(app,add_specs=False,debug=True)
 # app.config.update(

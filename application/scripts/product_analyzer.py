@@ -16,7 +16,6 @@ class ProductAnalyzer:
             self.prices.append(o['price'])
             if o['active']:
                 self.activeCount += 1
-            
         # current_date and dbUpdateDate might be the same
         now = datetime.now()
         self.current_date = now.strftime("%Y-%m-%d")
@@ -26,7 +25,6 @@ class ProductAnalyzer:
         # self.baseDate = d1
         delta = d0 - d1
         self.dayRange = (delta.days)+1
-        
         self.getProductVariation()
         self.getProductAllTimePrice()
         self.getProductAvailability()

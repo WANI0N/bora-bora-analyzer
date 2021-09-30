@@ -8,17 +8,18 @@
         var pieChartData = {{ pieChartData|tojson }};
 	</script>
     <canvas id="dbGraphCanvas" width="1800" height="300" style="width:90%;height:10%"></canvas>
+    <!-- <canvas id="dbGraphCanvas" width="1800" height="300" style="width:60vw;height:10vw"></canvas> -->
     
     <!-- <div  id="graphDescription" >ASD</div> -->
     
-    <div id="anyCharts">
+    <!-- <div id="anyCharts">
         <div id="container" ></div>
         <div id="container2" ></div>
-    </div>
+    </div> -->
 
     <script src="https://cdn.anychart.com/releases/8.10.0/js/anychart-base.min.js"></script>
 
-    <script src="{{ url_for('static',filename='script/pieCharts.js') }}"></script>
+    <!-- <script src="{{ url_for('static',filename='script/pieCharts.js') }}"></script> -->
     <script src="{{ url_for('static',filename='script/graph.js') }}"></script>
     <script src="{{ url_for('static',filename='script/db_graph.js') }}"></script>
     <script src="{{ url_for('static',filename='script/index.js') }}"></script>

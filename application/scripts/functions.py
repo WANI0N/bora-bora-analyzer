@@ -1,8 +1,22 @@
-from bson.json_util import dumps, loads
+from bson.json_util import dumps #, loads
 import json
 from datetime import datetime, timedelta, date
-from application import mongo_db
+try:
+    from application import mongo_db
+except:
+    ## for testing
+    import certifi
+    ca = certifi.where()
+    import os, pymongo
+    from dotenv import load_dotenv
+    load_dotenv()
+    DATABASE_URL=f'mongodb+srv://user:{os.environ.get("DB_PASSWORD")}'\
+              f'@cluster0.zgmnh.mongodb.net/{os.environ.get("DB_NAME")}?'\
+              'retryWrites=true&w=majority'
+    client=pymongo.MongoClient(DATABASE_URL,tlsCAFile=ca) # establish connection with database
+    mongo_db=client.db
 import math
+
 
 def recurr_insertDbDataToHighlights(data,dbDataHashMap):
     for k, content in data.items():
@@ -80,7 +94,6 @@ def getDbAge(products):
             # firstDay = ckDate+timedelta(days=1)
             firstDay = ckDate
             break
-    
     delta = lastDay - firstDay
     return delta.days
     
@@ -137,30 +150,34 @@ def getProductPagination(data):
 def appendDataToTableData(data,tableRangeMinimum):
     now = datetime.now()
     tableData = list()
-    dataIndex = 0
     prices = list()
+    hashMap = dict()
     for o in data:
         prices.append(o["price"])
+        hashMap[o["date"]] = o
     _min = min(prices)
     _max = max(prices)
-    # print(data)
-    d0 = date(int(data[0]['date'][0:4]),int(data[0]['date'][5:7]),int(data[0]['date'][8:10]))
+    array = now.strftime("%Y-%m-%d").split('-')
+    d0 = date(int(array[0]),int(array[1]),int(array[2]))
     d1 = date(int(data[len(data)-1]['date'][0:4]),int(data[len(data)-1]['date'][5:7]),int(data[len(data)-1]['date'][8:10]))
     delta = d0 - d1
     span = delta.days+1
     colCount = tableRangeMinimum if (span < tableRangeMinimum) else span
-    
     # self.dayRange = (delta.days)
     for i in range(colCount):
         ckDate = now + timedelta(days=-i)
-        push = True
+        ckDateString = ckDate.strftime("%Y-%m-%d")
         highlight = None
-        if (dataIndex < len(data)):
-            array = data[dataIndex]['date'].split('-')
-            itemDate = datetime(int(array[0]),int(array[1]),int(array[2]))
-            if ( ckDate.strftime("%Y-%m-%d") == itemDate.strftime("%Y-%m-%d") ):
-                push = False
-        if push:
+        if ckDateString in hashMap:
+            pushObject = hashMap[ckDateString]
+            if (_max != _min):
+                if (pushObject['price'] == _max):
+                    highlight = "max"
+                if (pushObject['price'] == _min):
+                    highlight = "min"
+            pushObject["highlight"] = highlight
+            tableData.append( pushObject )
+        else:
             tableData.append( {
                 "date":ckDate.strftime("%Y-%m-%d"),
                 "price":"n/a",
@@ -168,15 +185,7 @@ def appendDataToTableData(data,tableRangeMinimum):
                 "active":"n/a",
                 "highlight":highlight
             } )
-        else:
-            if (_max != _min):
-                if (data[dataIndex]['price'] == _max):
-                    highlight = "max"
-                if (data[dataIndex]['price'] == _min):
-                    highlight = "min"
-            data[dataIndex]["highlight"] = highlight
-            tableData.append( data[dataIndex] )
-            dataIndex += 1
+        
     return tableData
 
 import unicodedata, re

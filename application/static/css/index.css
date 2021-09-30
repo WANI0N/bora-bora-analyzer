@@ -9,17 +9,21 @@ th.index-table-H1-cell{
     border-top: 1px solid white;
     color:rgba(255, 255, 0, 0.582);
     font-size:0.7cm;
+    font-size:1.7vw;
 }
 th.index-table-H2-cell-left{
     font-size: 0.6cm;
+    font-size: 1.3vw;
     color:rgba(0, 255, 64, 0.582);
 }
 th.index-table-H2-cell-right{
     font-size: 0.6cm;
+    font-size: 1.3vw;
     color:rgba(255, 0, 0, 0.582);
 }
 th.index-table-H3-cell{
     font-size: 0.5cm;
+    font-size: 1.1vw;
     border-bottom: 1px solid white;
     color:rgba(0, 255, 234, 0.582);
 }
@@ -35,13 +39,13 @@ th.index-table-H3-cell{
 .index-table-data-cell{
     text-align: center;
     font-size: 0.45cm;
+    font-size: 0.9vw;
     color:rgba(255, 255, 255, 0.5);
 }
 .index-barboraLink{
     background: linear-gradient(to right, white,red);
     font-style: bold;
     color:red;
-    
 }
 
 
@@ -49,19 +53,22 @@ th.index-table-H3-cell{
     color:rgba(255, 255, 255, 0.5);
 }
 
-#anyCharts{
-    width:100%
-}
+/* #anyCharts{
+    padding-left: 10%;
+    width:80%
+} */
 #container{
     display: inline-block;
-    width: 49%;
-    height:500px;
+    width:49vw;
+    height:30vw;
 }
 #container2{
     display: inline-block;
-    width: 49%;
-    height:500px;
+    width:49vw;
+    height:30vw;
+    /* height:500px; */
+
 }
-/* .anychart-credits{
+.anychart-credits{
     display:none;
-} */
+}

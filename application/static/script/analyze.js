@@ -7,19 +7,21 @@ myGraph.drawDates()
 myGraph.drawData()
 
 let rect, offsetX, offsetY
-
+let i, hide
 function reOffset(){
   rect = document.getElementById("testCanvas").getBoundingClientRect();
   rectWidth=rect.right-rect.left
   rectHeight=rect.bottom-rect.top
   offsetX=rect.left
-  offsetY=rect.top        
+  offsetY=rect.top
+  for(i = 0;i < maskElementsHandles.length;i++){
+    // maskElementsHandles[i].classList.remove("visible");
+    maskElementsHandles[i].classList.add("hidden");
+  }      
 }
 
 window.onscroll=function(e){ reOffset(); }
 window.onresize=function(e){ reOffset(); }
-
-reOffset()
 
 var priceIndicator = document.getElementById('priceIndicator');
 var XLine = document.getElementById('XLine');
@@ -33,7 +35,11 @@ var maskElementsHandles = [
   YLine
 ]
 
-let i, hide
+reOffset()
+
+
+
+
 document.addEventListener('mousemove', (event) => {  
   // console.log(`Mouse X: ${event.clientX}, Mouse Y: ${event.clientY}`);
   if (event.clientX > rect.left && event.clientX < rect.right && event.clientY > rect.top && event.clientY < rect.bottom){

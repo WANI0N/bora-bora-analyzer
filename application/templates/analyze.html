@@ -13,74 +13,52 @@
 					<tr>
 						<td class="analyze-product-description-title">{{ item.title }}</td>
 						{% if item.value %}
-							<td class="analyze-product-description-item">{{ item.value }}</td>
+							<td  class="analyze-product-description-item">
+							{% if item.link %}
+								<a href="{{ item.link }}"> {{ item.value }} </a>
+							{% else %}
+								{{ item.value }}
+							{% endif %}
+							</td>
 						{% endif %}
 						{% if item.title == "Title" %}
-							<td rowspan="6" class="analyze-product-description-item">
-								<img class="analyze-img" src="{{ graphData.img }}">
+							<td rowspan="7" class="analyze-product-description-item">
+								<a href="{{ graphData.descriptiveTableData[0].link }}">
+									<img class="analyze-img" src="{{ graphData.img }}">
+								</a>
 							</td>
 						{% endif %}
 					</tr>
 				{% endfor %}
-				<!-- <tr>
-					<td colspan="2" class="analyze-product-description-item">
-						<canvas class="analyze-graph" id="testCanvas" width="1500vh" height="900vh"></canvas>
-					</td>
-				
-					<td class="analyze-product-description-item">
-						<div id="tableContainer" class="tableContainer">
-							<table border="0" cellpadding="0" cellspacing="0" width="100%" class="scrollTable">
-								<thead class="fixedHeader">
-									<tr>
-										<th>Date</th>
-										<th>Price</th>
-										<th>Comparative unit price</th>
-										<th>Availability</th>
-									</tr>
-								</thead>
-								<tbody class="scrollContent">
-								{% for item in graphData.tableData %}
-									<tr>
-										<td>{{ item.date }}</td>
-										<td>{{ item.price }}</td>
-										<td>{{ item.comparative_unit_price }}</td>
-										<td>{{ item.active }}</td>
-									</tr>
-								{% endfor %}
-								</tbody>
-							</table>
-						</div>
-					</td>
-				</tr> -->
-				
 			</table>
 		</div>
 	</div>
 	
 	<canvas class="analyze-graph" id="testCanvas" width="1500vh" height="900vh"></canvas>
+	
     
     <div id="tableContainer" class="tableContainer">
-			<table border="0" cellpadding="0" cellspacing="0" width="100%" class="scrollTable">
-				<thead class="fixedHeader">
-					<tr>
-						<th>Date</th>
-						<th>Price</th>
-						<th>Comparative unit price</th>
-						<th>Availability</th>
-					</tr>
-				</thead>
-				<tbody class="scrollContent">
-				{% for item in graphData.tableData %}
-					<tr>
-						<td {% if item.highlight %} class="highlight-{{ item.highlight }}" {% endif %}>{{ item.date }}</td>
-						<td {% if item.highlight %} class="highlight-{{ item.highlight }}" {% endif %}>{{ item.price }}</td>
-						<td {% if item.highlight %} class="highlight-{{ item.highlight }}" {% endif %}>{{ item.comparative_unit_price }}</td>
-						<td {% if item.highlight %} class="highlight-{{ item.highlight }}" {% endif %}>{{ item.active }}</td>
-					</tr>
-				{% endfor %}
-				</tbody>
-			</table>
-		</div>
+		<table border="0" cellpadding="0" cellspacing="0" width="100%" class="scrollTable">
+			<thead class="fixedHeader">
+				<tr>
+					<th>Date</th>
+					<th>Price</th>
+					<th>Comparative unit price</th>
+					<th>Availability</th>
+				</tr>
+			</thead>
+			<tbody class="scrollContent">
+			{% for item in graphData.tableData %}
+				<tr>
+					<td {% if item.highlight %} class="highlight-{{ item.highlight }}" {% endif %}>{{ item.date }}</td>
+					<td {% if item.highlight %} class="highlight-{{ item.highlight }}" {% endif %}>{{ item.price }}</td>
+					<td {% if item.highlight %} class="highlight-{{ item.highlight }}" {% endif %}>{{ item.comparative_unit_price }}</td>
+					<td {% if item.highlight %} class="highlight-{{ item.highlight }}" {% endif %}>{{ item.active }}</td>
+				</tr>
+			{% endfor %}
+			</tbody>
+		</table>
+	</div>
 
 
     <script src="{{ url_for('static',filename='script/graph.js') }}"></script>

@@ -93,9 +93,12 @@ class Graph {
     }
     convertPriceData(){
         let values = [];
+        let sum = 0
         for(var i = 0; i < this.data.length; i++) {
             values.push(this.data[i]['price']);
+            sum += this.data[i]['price']
         }
+        this.mean = sum/this.data.length
         let maxPrice = Math.max(...values);
         let minPrice = Math.min(...values);
         this.priceRange = Math.abs(maxPrice-minPrice)
@@ -130,7 +133,8 @@ class Graph {
         //drawing date indicators to y axis
         //static divisor numbers for offsets/fonts are adjusted for canvas input ration 5:3
         let yAxisOffSet = canv.height/20;
-        let xAxisOffSet = canv.width/9.5;
+        // let xAxisOffSet = canv.width/9.5;
+        let xAxisOffSet = this.canv.width/25
         this.xMarkCount = (this.data.length < this.xMarkCount) ? this.data.length : this.xMarkCount;
         let pixelRange = Math.abs(this.xAxisRange[0]-this.xAxisRange[1]-xAxisOffSet);
         let pixelDiff = pixelRange/this.xMarkCount;
@@ -142,25 +146,62 @@ class Graph {
             this.finalDatesArray.push( MyDate.addDays(this.data[ this.data.length-1 ]['date'],dayDiff*i,false) )
             
             text = MyDate.addDays(this.data[ this.data.length-1 ]['date'],dayDiff*i)
-            currentX = i*pixelDiff;
+            currentX = i*pixelDiff+this.xAxisRange[0];
             currentX += xAxisOffSet;
             this.ctx.fillText(text, currentX, this.yAxisRange[1]+yAxisOffSet);
         }
     }
     drawData(){
         
-        let x,y
+        //draw 0 line + gradient
+        let adjustedPrice, x,y
+        // let maxPrice = Math.max(...this.priceIndicators);
+        let pixelRange = Math.abs( this.yAxisRange[1]-this.yAxisRange[0] )
+        let maxPrice = Math.max(...this.priceIndicators);
+        let minPrice = Math.min(...this.priceIndicators);
+        let priceRange = Math.abs( maxPrice-minPrice )
+        // let adjustedPrice = price-minPrice
+        let pixelPerAmount = pixelRange/priceRange
+        // let y = adjustedPrice*pixelPerAmount
+        adjustedPrice = this.mean-minPrice
+        y = adjustedPrice*pixelPerAmount
+        y = this.yAxisRange[1]-y
+        console.log(y)
+        let w = this.xAxisRange[1]-this.xAxisRange[0]
+        let h = this.yAxisRange[1]-this.yAxisRange[0]
+        var gradient = this.ctx.createLinearGradient(0,y-(h/2),0,y+(h/2));
+        gradient.addColorStop(0, 'rgba(56, 33, 33, 0.976)');
+        gradient.addColorStop(.5, 'rgba(33, 35, 56, 0.976)');
+        gradient.addColorStop(1, 'rgba(33, 56, 33, 0.976)');
+        this.ctx.fillStyle = gradient
+        this.ctx.fillRect(this.xAxisRange[0],this.yAxisRange[0],w,h);
+        //0 line
+        this.ctx.strokeStyle = "blue"
+        this.ctx.fillStyle = "blue"
+        this.ctx.beginPath();
+        this.ctx.moveTo(this.xAxisRange[0], y);
+        this.ctx.lineTo(this.xAxisRange[1], y);
+        this.ctx.stroke();
+        this.ctx.closePath();
+        this.ctx.strokeStyle = this.strokeStyle
+        this.ctx.fillStyle = this.fillStyle;
+
+        
         let pathing = []
         this.dataPointsCoor = []
-        this.ctx.fillStyle = "yellow";
+        this.ctx.strokeStyle = "yellow";
+        this.ctx.beginPath();
         for(var i = 0;i < this.data.length;i++){
             x = this.retreiveXforDataPoint(this.data[i]['date'])
             y = this.retreiveYforDataPoint(this.data[i]['price'])
-            this.ctx.beginPath();
-            this.ctx.arc(x,y,canv.width/150,0, 2 * Math.PI)
-            this.ctx.fill();
-            this.ctx.stroke();
-            // console.log(x,y)
+            
+
+            if (i == 0){
+                this.ctx.moveTo(x, y);
+            }else{
+                this.ctx.lineTo(x, y);
+            }
+            
             this.dataPointsCoor.push({
                 "x":x/this.canv.width,
                 "y":y/this.canv.height,
@@ -172,25 +213,37 @@ class Graph {
                 "y":y
             })
         }
-        this.ctx.strokeStyle = "rgb(2, 230, 82)";
-        for(i = 0; i < pathing.length-1; i++){
+        this.ctx.stroke();
+        this.ctx.closePath();
+        // this.ctx.strokeStyle = "rgb(2, 230, 82)";
+        // this.ctx.strokeStyle = "yellow";
+        for(i = 0; i < pathing.length; i++){
+            this.ctx.fillStyle = this.data[i]['active'] ? "rgba(31, 195, 245, 0.87)" : "rgba(245, 31, 138, 0.87)"
+            this.ctx.strokeStyle = this.data[i]['active'] ? "rgba(31, 195, 245, 0.87)" : "rgba(245, 31, 138, 0.87)"
+            // this.ctx.fillStyle = this.data[i]['active'] ? "rgba(31, 195, 245, 0.555)" : "rgba(245, 31, 138, 0.555)"
+            // this.ctx.strokeStyle = this.data[i]['active'] ? "rgba(31, 195, 245, 0.555)" : "rgba(245, 31, 138, 0.555)"
             this.ctx.beginPath();
-            this.ctx.moveTo(pathing[i]['x'], pathing[i]['y']);
-            this.ctx.lineTo(pathing[i+1]['x'], pathing[i+1]['y']);
+            this.ctx.arc(pathing[i]['x'],pathing[i]['y'],canv.width/250,0, 2 * Math.PI)
+            this.ctx.fill();
             this.ctx.stroke();
+            
         }
         this.ctx.strokeStyle = this.strokeStyle;
-        // this.dataPointsCoor = pathing
         
     }
     retreiveXforDataPoint(date){
         let pixelRange = Math.abs( this.xAxisRange[1]-this.xAxisRange[0] )
+        let xAxisOffSet = this.canv.width/25
+        pixelRange += -xAxisOffSet
         let daysRange = MyDate.getDiff([ this.finalDatesArray[0] , this.finalDatesArray[ this.finalDatesArray.length-1 ] ])
         let adjustedDate = MyDate.getDiff([ this.finalDatesArray[0] , date ])
         let pixelPerDay = pixelRange/(daysRange+1 )
         let x = adjustedDate*pixelPerDay
-        let xAxisOffSet = canv.width/18;
-        return this.yAxisRange[0]+x+xAxisOffSet
+        // let xAxisOffSet = canv.width/18;
+        // let xAxisOffSet = canv.width/9.5;
+        x = this.yAxisRange[0]+x+xAxisOffSet
+        return x*0.97
+        // return this.yAxisRange[0]+x
     }
     retreiveYforDataPoint(price){
         let pixelRange = Math.abs( this.yAxisRange[1]-this.yAxisRange[0] )

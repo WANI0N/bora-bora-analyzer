@@ -11,20 +11,17 @@
 
 .analyze-graph{
     width: 80vh;
+	width: 49%;
+    display: flex;
 	float: left;
-    
-	margin-left: 5%;
+	/* margin-left: 5%; */
 }
-div.tableContainer {
-	position:relative;
-	margin-left:auto; 
-    margin-right:auto;
-	
-	border: 1px solid rgb(43, 73, 53);
-	height: 418px;
-	overflow: auto;
-	width: 756px;
+@media (max-width: 500px) {
+	.analyze-graph{
+		width: 100%;
+	}
 }
+
 
 
 .analyze-product-description-table{
@@ -34,20 +31,29 @@ div.tableContainer {
     border-color: aliceblue;
     border-width: 1px; */
 	font: normal normal 12px Verdana, Geneva, Arial, Helvetica, sans-serif;
+	font: normal normal 2vw Verdana, Geneva, Arial, Helvetica, sans-serif;
 	/* position:relative; */
 	/* left:20px; */
 }
 .analyze-product-description-title{
 	font-size: medium;
+	font-size: 0.8vw;
 	text-align: right;
 }
 .analyze-product-description-item{
 	color:#FFF;
 	text-align: left;
 	font-size: large;
+	font-size: 1vw;
 }
-
-
+.analyze-product-description-table a{
+	text-decoration: none;
+	color:#FFF;
+}
+img.analyze-img{
+	max-width: 20vw;
+	max-height: 20vw;
+}
 
 
 .indicator{
@@ -85,10 +91,35 @@ div.tableContainer {
 
 
 
-
+ div.tableContainer {
+	position:relative;
+	margin-left:auto; 
+    margin-right:auto;
+	border: 1px solid rgb(43, 73, 53);
+	height: 418px;
+	height: 21.771vw;
+	height: 27.271vw;
+	overflow: auto;
+	width: 756px;
+	width: 39.375vw;
+}
+html>body tbody.scrollContent {
+	display: block;
+	height: 395px;
+	height: 20.573vw;
+	height: 26.073vw;
+	overflow: auto;
+	width: 100%
+}
+@media (max-width: 500px) {
+	div.tableContainer{
+		display: none;
+	}
+}
 table, td {
 	color: rgba(255, 255, 255, 0.685);
 	font: normal normal 12px Verdana, Geneva, Arial, Helvetica, sans-serif;
+	font: normal normal 0.625vw Verdana, Geneva, Arial, Helvetica, sans-serif;
 }
 td.highlight-max{
 	color:rgb(253, 253, 168);
@@ -104,19 +135,22 @@ td.highlight-min{
 /* Reset overflow value to hidden for all non-IE browsers. */
 html>body div.tableContainer {
 	overflow: hidden;
-	width: 756px
+	width: 756px;
+	width: 39.375vw;
 }
 
 /* define width of table. IE browsers only                 */
 div.tableContainer table {
 	float: left;
-	width: 740px
+	width: 740px;
+	width: 38.542vw;
 }
 
 /* define width of table. Add 16px to width for scrollbar.           */
 /* All other non-IE browsers.                                        */
 html>body div.tableContainer table {
-	width: 756px
+	width: 756px;
+	width: 39.375vw;
 }
 
 /* set table header to a fixed position. WinIE 6.x only                                       */
@@ -141,11 +175,15 @@ thead.fixedHeader th {
 	border-top: 1px solid rgb(43, 73, 53);
 	font-weight: normal;
 	padding: 4px 3px;
+	padding: 0.208vw 0.156vw;
 	text-align: left;
 }
 
+
+
 /* make the A elements pretty. makes for nice clickable headers                */
-thead.fixedHeader a, thead.fixedHeader a:link, thead.fixedHeader a:visited {
+/* thead.fixedHeader a, thead.fixedHeader a:link, thead.fixedHeader a:visited { */
+thead.fixedHeader , thead.fixedHeader , thead.fixedHeader  {
 	color: rgba(255, 255, 255, 0.739);
 	display: block;
 	text-decoration: none;
@@ -165,12 +203,13 @@ thead.fixedHeader  {
 /* set TBODY element to have block level attributes. All other non-IE browsers            */
 /* this enables overflow to work on TBODY element. All other non-IE, non-Mozilla browsers */
 /* induced side effect is that child TDs no longer accept width: auto                     */
-html>body tbody.scrollContent {
+/* html>body tbody.scrollContent {
 	display: block;
 	height: 395px;
+	height: 20.573vw;
 	overflow: auto;
 	width: 100%
-}
+} */
 
 /* make TD elements pretty. Provide alternating classes for striping the table */
 /* http://www.alistapart.com/articles/zebratables/                             */
@@ -181,7 +220,8 @@ tbody.scrollContent td, tbody.scrollContent tr.normalRow td {
 	border-left: none;
 	border-right: 1px solid #CCC;
 	border-top: 1px solid #DDD;
-	padding: 2px 3px 3px 4px
+	padding: 2px 3px 3px 4px;
+	padding: 0.104vw 0.156vw 0.156vw 0.208vw;
 }
 
 tbody.scrollContent tr.alternateRow td {
@@ -190,35 +230,42 @@ tbody.scrollContent tr.alternateRow td {
 	border-left: none;
 	border-right: 1px solid #CCC;
 	border-top: 1px solid #DDD;
-	padding: 2px 3px 3px 4px
+	padding: 2px 3px 3px 4px;
+	padding: 0.104vw 0.156vw 0.156vw 0.208vw;
 }
 
 /* define width of TH elements: 1st, 2nd, and 3rd respectively.          */
 /* Add 16px to last TH for scrollbar padding. All other non-IE browsers. */
 /* http://www.w3.org/TR/REC-CSS2/selector.html#adjacent-selectors        */
 html>body thead.fixedHeader th {
-	width: 200px
+	width: 200px;
+	width: 10.417vw;
 }
 
 html>body thead.fixedHeader th + th {
-	width: 240px
+	width: 240px;
+	width: 12.500vw;
 }
 
 html>body thead.fixedHeader th + th + th {
-	width: 316px
+	width: 316px;
+	width: 16.458vw;
 }
 
 /* define width of TD elements: 1st, 2nd, and 3rd respectively.          */
 /* All other non-IE browsers.                                            */
 /* http://www.w3.org/TR/REC-CSS2/selector.html#adjacent-selectors        */
 html>body tbody.scrollContent td {
-	width: 200px
+	width: 200px;
+	width: 10.417vw;
 }
 
 html>body tbody.scrollContent td + td {
-	width: 240px
+	width: 240px;
+	width: 12.500vw;
 }
 
 html>body tbody.scrollContent td + td + td {
-	width: 300px
+	width: 300px;
+	width: 15.625vw;
 }

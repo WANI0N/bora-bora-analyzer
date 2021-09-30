@@ -2,14 +2,15 @@ from application import app, mongo_db, api
 import os
 from flask import render_template, request,json,abort # Response, jsonify, redirect, flash, url_for, session
 from flask_restx import Resource
-from datetime import date, datetime, timedelta
+from datetime import date #, datetime, timedelta
 import math
-from application.functions.functions import *
-from application.analyzer.product_analyzer import ProductAnalyzer
+from application.scripts.functions import *
+from application.scripts.product_analyzer import ProductAnalyzer
 
-# if os.environ.get("WERKZEUG_RUN_MAIN") == "true":
-if True:
-    from application import disable_onLoad
+
+if os.environ.get("WERKZEUG_RUN_MAIN") == "true":
+# if True:
+    disable_onLoad = False
     navData = {
         "productCount":0,
         "dbAge":0,
@@ -50,7 +51,8 @@ productAPIKeys = [
     'comparative_unit',
     'brand_name'
 ]
-@api.route('product')
+productAPIKeysString = ", ".join(productAPIKeys)
+@api.route('/product',doc={"description": f"Returns product(s) with full history based on url parameters: {productAPIKeysString}.\nLimit 400 products per request.\n\nExample: product?brand_name=AROSO"})
 class GetProduct(Resource):
     def get(self):
         needleParams = {}
@@ -67,41 +69,46 @@ class GetProduct(Resource):
             return callBack
         else:
             abort(401,"Product not found")
+
         
-@api.route('product-ids/')
+@api.route('/product-ids/',doc={"description": "Returns an array of product ids."})
 class GetAllProducts(Resource):
     def get(self):
         ids = list()
         try:
-            for _id in mongo_db.products.find({},{"id":1,"title":1}):
-                ids.append(_id)
+            ids = mongo_db.products.find({},{"id":1})
         except Exception as e:
             abort(400,str(e))
         if not ids:
             abort(401,"Not Found")
         else:
-            return parseMongo(ids)
+            #removing '_id' object
+            finalIds = []
+            for item in ids:
+                finalIds.append(item['id'])
+            return finalIds
 
-@api.route('dailystats/<dateParam>')
+@api.route('/dailystats/<dateString>',doc={"description": "Returns following:\n -prices difference to average (diff_perc)\n -number of products available (count)\n -total number of products - same for any day (total)\n -percentage of products on the day (perCent)"})
+@api.doc(params={'dateString': 'Use format yyyy-mm-dd'})
 class GetDailyStats(Resource):
-    def get(self,dateParam):
+    def get(self,dateString):
         errorFlags = []
-        if not dateParam:
+        if not dateString:
             errorFlags.append("Missing date. Use yyyy-mm-dd.")
         else:
-            arr = dateParam.split('-')
-            if (len(arr) != 3) or (len(dateParam) != 10):
-                errorFlags.append(f"Incorrect date format: {dateParam}. Use yyyy-mm-dd.")
+            arr = dateString.split('-')
+            if (len(arr) != 3) or (len(dateString) != 10):
+                errorFlags.append(f"Incorrect date format: {dateString}. Use yyyy-mm-dd.")
             else:
                 try:
                     _ = date(int(arr[0]),int(arr[1]),int(arr[2]))
                 except:
-                    errorFlags.append(f"Incorrect date format: {dateParam}. Use yyyy-mm-dd.")
+                    errorFlags.append(f"Incorrect date format: {dateString}. Use yyyy-mm-dd.")
         if errorFlags:
             abort(400,'\n'.join(errorFlags))
-        if dateParam in dbStatsApiData:
-            return dbStatsApiData[dateParam]
-        abort(404,f"Day {dateParam} not found")
+        if dateString in dbStatsApiData:
+            return dbStatsApiData[dateString]
+        abort(404,f"Day {dateString} not found")
 #################################
 
 ##ROUTES
@@ -204,13 +211,15 @@ def analyze_product():
         "title":data['title'],
         "img":data["image"][0:-5] + "m.png"
     }
-    analyzeResults = ProductAnalyzer(data['history']).getResultsAsDict()
-
+    productHandle = ProductAnalyzer(data['history'])
+    analyzeResults = productHandle.getResultsAsDict()
+    link = getProductUrlLink(data["title"])
     graphData["tableData"] = appendDataToTableData(data['history'],26)
     graphData["descriptiveTableData"] = [
         {
             "title":"Title",
-            "value":data["title"]
+            "value":data["title"],
+            "link":link
         },
         {
             "title":"Brand Name",
@@ -219,6 +228,10 @@ def analyze_product():
         {
             "title":"Comparative Unit",
             "value":data["comparative_unit"]
+        },
+        {
+            "title":"Mean",
+            "value":"€ " + str(round(productHandle.mean,2))
         },
         {
             "title":"Standard Deviation",

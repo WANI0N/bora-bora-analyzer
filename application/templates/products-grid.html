@@ -2,11 +2,67 @@
 <div class="product-grid-container">
     {% for item in data %}
         
-        <div class="product-container"> 
-            <div class="product-title"> {{ item.title }} </div>
-            <img class="product-img" src="{{ item.image }}">
+        <!-- <div class="product-container">  -->
+            <!-- <div class="product-title"> {{ item.title }} </div>
+            <img class="product-img" src="{{ item.image }}"> -->
             
             <table class="product-table">
+                <tr>
+                    <td colspan="5">
+                        <div class="product-title"> {{ item.title }} </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="image-wrapper" colspan="3" rowspan="5">
+                        <a class="table-link" href="{{ item.analyzeLink }}">
+                            <img class="product-img" src="{{ item.image }}">
+                        </a>
+                    </td>
+                    <td class="table-tag">price</td>
+                    <td class="table-data">{{ item.history[0].price }}</td>
+                </tr>
+                <tr>
+                    <td class="table-tag">price per {{ item.comparative_unit }}</td>
+                    <td class="table-data">{{ item.history[0].comparative_unit_price }}</td>
+                </tr>
+                <tr>
+                    <td class="table-tag">last retreived</td>
+                    <td class="table-data">{{ item.history[0].date }}</td>
+                </tr>
+                <tr>
+                    <td class="table-data" colspan="2">
+                        <a class="table-link" href="{{ item.link }}">barbora link</a>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="table-data" colspan="2">
+                        <a class="table-link" href="{{ item.analyzeLink }}">ANALYZE</a>
+                    </td>
+                </tr>
+                <!-- <tr>
+                    <td class="table-tag">product link</td>
+                    <td class="table-data">
+                        <a class="table-link" href="{{ item.link }}">pagrindinis.barbora.lt</a>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="table-tag">statistics</td>
+                    <td class="table-data">
+                        <a class="table-link" href="{{ item.analyzeLink }}">ANALYZE</a>
+                    </td>
+                </tr> -->
+            </table>
+            <!-- <table class="product-table">
+                <tr>
+                    <td colspan="2">
+                        <div class="product-title"> {{ item.title }} </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="image-wrapper" colspan="2">
+                        <img class="product-img" src="{{ item.image }}">
+                    </td>
+                </tr>
                 <tr>
                     <td class="table-tag">price</td>
                     <td class="table-data">{{ item.history[0].price }}</td>
@@ -20,21 +76,19 @@
                     <td class="table-data">{{ item.history[0].date }}</td>
                 </tr>
                 <tr>
-                    <!-- /produktai/saltai-rukyta-atlantiniu-lasisu-file-ocean-170-g?id=535342 -->
                     <td class="table-tag">product link</td>
                     <td class="table-data">
                         <a class="table-link" href="{{ item.link }}">pagrindinis.barbora.lt</a>
                     </td>
                 </tr>
                 <tr>
-                    <!-- /produktai/saltai-rukyta-atlantiniu-lasisu-file-ocean-170-g?id=535342 -->
                     <td class="table-tag">statistics</td>
                     <td class="table-data">
                         <a class="table-link" href="{{ item.analyzeLink }}">ANALYZE</a>
                     </td>
                 </tr>
-            </table>
-        </div>
+            </table> -->
+        <!-- </div> -->
     
     {% endfor %}
 </div>

@@ -3,7 +3,7 @@ import json
 import time
 import os
 import pymongo
-from pymongo.errors import AutoReconnect, ConnectionFailure
+# from pymongo.errors import AutoReconnect, ConnectionFailure
 from datetime import datetime, timedelta
 from dotenv import load_dotenv
 from bson.json_util import dumps, loads
@@ -12,6 +12,7 @@ import math
 #from application import routes.parseMongo
 
 from product_analyzer import ProductAnalyzer
+
 
 load_dotenv()
 
@@ -100,6 +101,7 @@ class DbAnalyzer:
                 self.dbUpdateDate = today
                 break
         
+        # self.TEST_DuplicateList = []
 
     def analyze(self):
         batchSize = 200
@@ -118,10 +120,10 @@ class DbAnalyzer:
             products = self.db.products.find({"id": {"$in": self.dbIds[startIndex:endIndex]}},{"history":1,"id":1},batch_size=batchSize)
             products = list(products)
             t = threading.Thread(target=self.threadSubmit, args=[products])
+            # t = threading.Thread(target=self.threadSubmitTEST, args=[products])
             t.start()
             print("thread started-> " + str(startIndex) + "-" + str(endIndex))
             threads.append(t)
-            # t2 = threading.Thread(target=self.threadSubmitTotalMeans, args=[products])
             i += 1
         i = 0
         for thread in threads:
@@ -134,6 +136,18 @@ class DbAnalyzer:
         self.highlights["availability_perc"]["tops"] = self.highlights["availability_perc"]["tops"][::-1]
         self.highlights["topToday"]["tops"] = self.highlights["topToday"]["tops"][::-1]
         self.highlights["topToday"]["lows"] = self.highlights["topToday"]["lows"][::-1]
+
+    # def threadSubmitTEST(self,products):
+    #     for product in products:
+    #         listOfElems = []
+    #         for o in product['history']:
+    #             listOfElems.append( o['date'] )
+    #         if len(listOfElems) == len(set(listOfElems)):
+    #             continue
+    #         self.TEST_DuplicateList.append({
+    #             "id:":product['id'],
+    #             "data":product['history']
+    #         })
 
     def threadSubmit(self,products):
         for product in products:
@@ -258,11 +272,12 @@ if __name__ == "__main__":
     #     else:
     #         return json_data
     
-    
+    import certifi
+    ca = certifi.where()
     DATABASE_URL=f'mongodb+srv://user:{os.environ.get("DB_PASSWORD")}'\
               f'@cluster0.zgmnh.mongodb.net/{os.environ.get("DB_NAME")}?'\
               'retryWrites=true&w=majority'
-    client=pymongo.MongoClient(DATABASE_URL) # establish connection with database
+    client=pymongo.MongoClient(DATABASE_URL,tlsCAFile=ca) # establish connection with database
     mongo_db=client.db
 
     analyzer = DbAnalyzer(mongo_db)

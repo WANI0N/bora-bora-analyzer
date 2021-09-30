@@ -1,14 +1,39 @@
 <!-- <a href="https://www.freepnglogos.com/pics/robot">Robot from freepnglogos.com</a> -->
+<!-- <div class="nav-db-stats">
+    product count={{ navData.productCount }}
+    <br>
+    day count={{ navData.dbAge }}
+</div> -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 <header>
+    
+    
     <nav>
         <li class="nav-item"><a href="{{ url_for('index') }}" class="nav-link {% if index %}active{% endif %}">Home</a></li>
         <li class="nav-item"><a href="{{ url_for('products') }}" class="nav-link {% if products %}active{% endif %}">Products</a></li>
         <li class="nav-item"><a href="/api" class="nav-link">API</a></li>
         <li class="nav-item"><a href="{{ url_for('about') }}" class="nav-link {% if about %}active{% endif %}">About</a></li>
-        <div class="nav-db-stats">
-            product count={{ navData.productCount }}
-            <br>
-            day count={{ navData.dbAge }}
-        </div>
     </nav>
+    <!-- <div class="topnav">
+        <a href="{{ url_for('index') }}" class="nav-link {% if index %}active{% endif %}">Home</a>
+        <div id="myLinks">
+          <a href="{{ url_for('products') }}">Products</a>
+          <a href="/api">API</a>
+          <a href="{{ url_for('about') }}">About</a>
+        </div>
+        <a href="javascript:void(0);" class="icon" onclick="myFunction()">
+          <i class="fa fa-bars"></i>
+        </a>
+      </div> -->
 </header>
+
+<!-- <script>
+    function myFunction() {
+        var x = document.getElementById("myLinks");
+        if (x.style.display === "block") {
+          x.style.display = "none";
+        } else {
+          x.style.display = "block";
+        }
+      }
+</script> -->

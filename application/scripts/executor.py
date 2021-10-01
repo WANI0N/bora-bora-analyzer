@@ -19,9 +19,9 @@ if __name__ == "__main__":
 
     # mongoHandle = MongoDatabase()
     # mongoHandle.update(crawler.database)
-
+    
     ##test two - file creation
-    f=open('testFIle.txt','a')
+    f=open('temp/testFIle.txt','a')
     f.write('testString')
     f.close()
     # DATABASE_URL=f'mongodb+srv://user:{os.environ.get("DB_PASSWORD")}'\

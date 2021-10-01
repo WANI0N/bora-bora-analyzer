@@ -12,12 +12,18 @@ load_dotenv()
 
 if __name__ == "__main__":
     
-    crawler = BarboraCrawler()
-    crawler.analyze()
 
-    mongoHandle = MongoDatabase()
-    mongoHandle.update(crawler.database)
+    ##test 1 worked, day pushed to productsTEST db
+    # crawler = BarboraCrawler()
+    # crawler.analyze()
 
+    # mongoHandle = MongoDatabase()
+    # mongoHandle.update(crawler.database)
+
+    ##test two - file creation
+    f=open('testFIle.txt','a')
+    f.write('testString')
+    f.close()
     # DATABASE_URL=f'mongodb+srv://user:{os.environ.get("DB_PASSWORD")}'\
     #           f'@cluster0.zgmnh.mongodb.net/{os.environ.get("DB_NAME")}?'\
     #           'retryWrites=true&w=majority'

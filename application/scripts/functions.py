@@ -52,6 +52,18 @@ def parseMongo(data,format='object'):
     else: #string
         return json_string
 
+def parseMongoCollection(cursorData, type):
+    if (type == "list"):
+        data = list(cursorData)
+        for item in data:
+            del item["_id"]
+    elif (type == "dict"):
+        data = dict(cursorData)
+        del data["_id"]
+    else:
+        return "Missing type"
+    return data
+
 def getProductsPage(ids,page,productsPerPage):
     
     startIndex = page*productsPerPage-productsPerPage

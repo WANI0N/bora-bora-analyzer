@@ -5,7 +5,7 @@ import threading
 import json
 import time
 import os
-# import pymongo
+import pymongo
 from datetime import datetime #, timedelta
 from dotenv import load_dotenv
 #from bson.json_util import dumps, loads
@@ -177,15 +177,16 @@ if __name__ == "__main__":
     f = open(current_date + '.json','r') #1203075,867412
     string = f.read()
     data = json.loads( string )
-    mongoHandle = MongoDatabase()
+    DATABASE_URL=f'mongodb+srv://user:{os.environ.get("DB_PASSWORD")}'\
+              f'@cluster0.zgmnh.mongodb.net/{os.environ.get("DB_NAME")}?'\
+              'retryWrites=true&w=majority'
+    client=pymongo.MongoClient(DATABASE_URL) # establish connection with database
+    mongo_db=client.db
+    mongoHandle = MongoDatabase(mongo_db)
     mongoHandle.update(data)
     
 
-    # DATABASE_URL=f'mongodb+srv://user:{os.environ.get("DB_PASSWORD")}'\
-    #           f'@cluster0.zgmnh.mongodb.net/{os.environ.get("DB_NAME")}?'\
-    #           'retryWrites=true&w=majority'
-    # client=pymongo.MongoClient(DATABASE_URL) # establish connection with database
-    # mongo_db=client.db
+    
     
 
     

@@ -68,10 +68,9 @@ def translateCats(targetArr,sourceData):
     return returnArr
 
 class DbAnalyzer:
-    def __init__(self,db,updateCategories = False):
+    def __init__(self,db):
         self.db = db
         self.dbIds = self.db.products.find({},{"id":1}).distinct('id')
-        self.updateCategories = updateCategories
         self.highlights = {
             "var_stdDev":{
                 "tops":[],
@@ -175,50 +174,57 @@ class DbAnalyzer:
             }))
         self.dbStatsData = {}
     
-    def executeAndDiscard(self):
+    def executeAndDiscard(self, updateCategories=False):
         self.analyze()
-        # self.getTotalMeans()
         self.getDbStatsDataFinal()
-        
-        # self.totalMeansData = [] #memory extensive
 
-        if (os.path.exists('temp/highlights.json')):
-            os.remove('temp/highlights.json')
-        f = open('temp/highlights.json','a')
-        f.write( json.dumps(self.highlights,indent="\t") )
-        f.close()
+        self.db.dbStatsDataFinal.drop()
+        self.db.dbStatsDataFinal.insert_many(self.dbStatsDataFinal)
         
-        if (os.path.exists('temp/dbStatsDataFinal.json')):
-            os.remove('temp/dbStatsDataFinal.json')
-        f = open('temp/dbStatsDataFinal.json','a')
-        f.write( json.dumps(self.dbStatsDataFinal,indent="\t") )
-        f.close()
-        # if (os.path.exists('temp/totalMeansFinal.json')):
-        #     os.remove('temp/totalMeansFinal.json')
-        # f = open('temp/totalMeansFinal.json','a')
-        # f.write( json.dumps(self.totalMeansFinal,indent="\t") )
+        # if (os.path.exists('temp/dbStatsDataFinal.json')):
+        #     os.remove('temp/dbStatsDataFinal.json')
+        # f = open('temp/dbStatsDataFinal.json','a')
+        # f.write( json.dumps(self.dbStatsDataFinal,indent="\t") )
         # f.close()
-        if self.updateCategories:
+        
+        self.db.highlights.drop()
+        self.db.highlights.insert_one(self.highlights)
+        
+        # if (os.path.exists('temp/highlights.json')):
+        #     os.remove('temp/highlights.json')
+        # f = open('temp/highlights.json','a')
+        # f.write( json.dumps(self.highlights,indent="\t") )
+        # f.close()
+        
+        
+        
+        if updateCategories:
             self.getCategories()
-            if (os.path.exists('temp/categoryPathing.json')):
-                os.remove('temp/categoryPathing.json')
-            f = open('temp/categoryPathing.json','a')
-            f.write( json.dumps(self.categoryPathing,indent="\t") )
-            f.close()
 
-            if (os.path.exists('temp/categoryCounts.json')):
-                os.remove('temp/categoryCounts.json')
-            f = open('temp/categoryCounts.json','a')
-            f.write( json.dumps(self.categoryCounts,indent="\t") )
-            f.close()
+            self.db.categoryPathing.drop()
+            self.db.categoryPathing.insert_one(self.categoryPathing)
+            
+            # if (os.path.exists('temp/categoryPathing.json')):
+            #     os.remove('temp/categoryPathing.json')
+            # f = open('temp/categoryPathing.json','a')
+            # f.write( json.dumps(self.categoryPathing,indent="\t") )
+            # f.close()
+
+            self.db.categoryCounts.drop()
+            self.db.categoryCounts.insert_one(self.categoryCounts)
+            # if (os.path.exists('temp/categoryCounts.json')):
+            #     os.remove('temp/categoryCounts.json')
+            # f = open('temp/categoryCounts.json','a')
+            # f.write( json.dumps(self.categoryCounts,indent="\t") )
+            # f.close()
 
     def getCategories(self):
         categoryList = list()
         categoryList = self.db.products.find({},{"category_name_full_path":1}).distinct('category_name_full_path')
         
         catsTranslation = {}
-        if (os.path.exists('temp/catsTranslation.json')):
-            f=open('temp/catsTranslation.json','r',encoding='utf-8')
+        if (os.path.exists('application/static/catsTranslation.json')):
+            f=open('application/static/catsTranslation.json','r',encoding='utf-8')
             catsTranslation = json.loads( f.read() )
             f.close()
         
@@ -245,17 +251,17 @@ class DbAnalyzer:
                     self.categoryCounts[ translatedCatArr[2] ] = dict({
                         "top":translatedCatArr[0],
                         "mid":translatedCatArr[1],
-                        "count":submitPath
-                        # "count":self.db.products.count_documents({"category_name_full_path":submitPath})
+                        # "count":submitPath
+                        "count":self.db.products.count_documents({"category_name_full_path":submitPath})
                     })
         
-        threads = []
-        for k in self.categoryCounts:
-            t = threading.Thread(target=self.catThreadSubmit, args=[k])
-            t.start()
-            threads.append(t)
-        for thread in threads:
-            thread.join()
+        # threads = []
+        # for k in self.categoryCounts:
+        #     t = threading.Thread(target=self.catThreadSubmit, args=[k])
+        #     t.start()
+        #     threads.append(t)
+        # for thread in threads:
+        #     thread.join()
         
 
     def catThreadSubmit(self,key):
@@ -282,6 +288,7 @@ if __name__ == "__main__":
 
     analyzer = DbAnalyzer(mongo_db)
     # analyzer.getCategories()
+    # analyzer.executeAndDiscard(True)
     analyzer.executeAndDiscard()
     
     

@@ -5,14 +5,15 @@ from dotenv import load_dotenv
 load_dotenv()
 
 class MongoDatabase:
-    def __init__(self):
-        #connect to db
-        DATABASE_URL=f'mongodb+srv://user:{os.environ.get("DB_PASSWORD")}'\
-              f'@cluster0.zgmnh.mongodb.net/{os.environ.get("DB_NAME")}?'\
-              'retryWrites=true&w=majority'
-        client=pymongo.MongoClient(DATABASE_URL,tlsCAFile=ca) # establish connection with database
-        #declare self
-        self.db = client.db
+    def __init__(self,db):
+        # #connect to db
+        # DATABASE_URL=f'mongodb+srv://user:{os.environ.get("DB_PASSWORD")}'\
+        #       f'@cluster0.zgmnh.mongodb.net/{os.environ.get("DB_NAME")}?'\
+        #       'retryWrites=true&w=majority'
+        # client=pymongo.MongoClient(DATABASE_URL,tlsCAFile=ca) # establish connection with database
+        # #declare self
+        # self.db = client.db
+        self.db = db
         #call all product ids from db
         self.dbIds = list()
         self.dbIds = self.db.products.find({},{"id":1}).distinct('id')
@@ -60,8 +61,15 @@ class MongoDatabase:
                 thread.join()
                 i += 1
         else:
+            printedPerCent = 0
+            uploadCount = 0
             for item in uploadDB:
                 self.executeUploadThread( [item] )
+                uploadCount += 1
+                perCent = math.floor( uploadCount/len(uploadDB)*100 )
+                if printedPerCent < perCent:
+                    printedPerCent = perCent
+                    print(f"{printedPerCent}%")
         
         ##patching
         #obtain missing Ids
@@ -124,7 +132,7 @@ class MongoDatabase:
             #remove duplicateIndex from product['history']
             del product['history'][duplicateIndex]
             #overwrite product['history']
-            # self.db.products.update_one({"id":product['id']},{"$set":{"history":product['history']}})
+            self.db.products.update_one({"id":product['id']},{"$set":{"history":product['history']}})
             print(f"Correcting duplicate error -> {product['id']} / index -> {duplicateIndex}")
             productDuplicatesErrorLog.append(f"Correcting duplicate error -> {product['id']} / index -> {duplicateIndex}")
         if productDuplicatesErrorLog:

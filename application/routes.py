@@ -8,6 +8,7 @@ from application.scripts.functions import *
 from application.scripts.product_analyzer import ProductAnalyzer
 
 
+
 # if os.environ.get("WERKZEUG_RUN_MAIN") == "true":
 if True:
     disable_onLoad = False
@@ -23,23 +24,38 @@ if True:
         
         navData["productCount"] = len(ids)
         navData["dbAge"] = getDbAge(mongo_db.products)
-
-    f=open( 'temp/categoryPathing.json','r' )
-    categoryPathing = json.loads(f.read())
-    f.close()
-    f=open( 'temp/categoryCounts.json','r' )
-    categoryCounts = json.loads(f.read())
-    f.close()
-    f = open('temp/dbStatsDataFinal.json','r')
-    dbStats = json.loads( f.read() )
-    f.close()
+    
+    dbStats_cursor = mongo_db.dbStatsDataFinal.find()
+    dbStats = parseMongoCollection(dbStats_cursor,'list')
     dbStatsApiData = dict()
     for item in dbStats:
         dbStatsApiData[ item["date"] ] = item
-    f = open('temp/highlights.json','r')
-    string = f.read()
-    f.close()
-    highlightsData = json.loads( string )
+
+    categoryCounts_cursor = mongo_db.categoryCounts.find_one()
+    categoryCounts = parseMongoCollection(categoryCounts_cursor,'dict')
+
+    categoryPathing_cursor = mongo_db.categoryPathing.find_one()
+    categoryPathing = parseMongoCollection(categoryPathing_cursor,'dict')
+
+    highlightsData_cursor = mongo_db.highlights.find_one()
+    highlightsData = parseMongoCollection(highlightsData_cursor,'dict')
+
+    # f=open( 'temp/categoryPathing.json','r' )
+    # categoryPathing = json.loads(f.read())
+    # f.close()
+    # f=open( 'temp/categoryCounts.json','r' )
+    # categoryCounts = json.loads(f.read())
+    # f.close()
+    # f = open('temp/dbStatsDataFinal.json','r')
+    # dbStats = json.loads( f.read() )
+    # f.close()
+    # dbStatsApiData = dict()
+    # for item in dbStats:
+    #     dbStatsApiData[ item["date"] ] = item
+    # f = open('temp/highlights.json','r')
+    # string = f.read()
+    # f.close()
+    # highlightsData = json.loads( string )
 
 ## API ##
 #################################

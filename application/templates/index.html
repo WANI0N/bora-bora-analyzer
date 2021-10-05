@@ -7,7 +7,12 @@
 		var dbGraphCanvasData = {{ graphData|tojson }};
         var pieChartData = {{ pieChartData|tojson }};
 	</script>
-    <canvas id="dbGraphCanvas" width="1800" height="300" style="width:90%;height:10%"></canvas>
+    
+    <div id="graph-title">Daily Prices Compared to Average</div>
+    <div id="graph-wrapper">
+        <canvas id="dbGraphCanvas" width="1800" height="300" ></canvas>
+    </div>
+    <!-- <canvas id="dbGraphCanvas" width="1800" height="300" style="width:90%;height:10%"></canvas> -->
     <!-- <canvas id="dbGraphCanvas" width="1800" height="300" style="width:60vw;height:10vw"></canvas> -->
     
     <!-- <div  id="graphDescription" >ASD</div> -->

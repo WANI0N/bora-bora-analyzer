@@ -1,14 +1,8 @@
 {% extends "layout.html" %}
 
 {% block content %}
-    <div class="search-bar">
-        <!-- <form onsubmit="return validateForm(this);"> -->
-        <form action="{{ url_for('products') }}">
-            <input class="search-bar-input" type="text" placeholder="Search product.." name="q">
-            <button class="search-bar-submit" type="submit">🔎</button>
-        </form>
-    </div>
     
+    <!-- main product categories navigation -->
     <div class="product-categories">
         <div class="product-categories-top ">
             {% for k, v in categories.items() %}
@@ -31,6 +25,74 @@
                 {% endif %}
             {% endif %}
         </div>
+    </div>
+    <!-- mobile product categories navigation -->
+    
+    <div class="topnav">
+        {% if catArr[0] %}
+            <!-- <a class="mobile-cat-item" href="/products?cat={{ catArr[0] }}" >{{ catArr[0] }}</a> -->
+            <a class="mobile-cat-item" >{{ catArr[0] }}</a>
+        {% else %}
+            <a class="mobile-cat-item">...</a>
+        {% endif %}
+        <div id="mobileCatsTop">
+            {% for k, v in categories.items() %}
+                {% if catArr[0] != k %}
+                    <a class="mobile-cat-item" href="/products?cat={{ k }}">{{ k }}</a>
+                {% endif %}
+            {% endfor %}
+        </div>
+        <a href="javascript:void(0);" class="icon" onclick="expandMenu('mobileCatsTop')">
+            <i class="fa fa-bars"></i>
+        </a>
+    </div>
+    {% if catArr[0] %}
+        <div class="topnav">
+            {% if catArr[1] %}
+                <a class="mobile-cat-item" >{{ catArr[1] }}</a>
+            {% else %}
+                <a class="mobile-cat-item">...</a>
+            {% endif %}
+            <div id="mobileCatsMid">
+                {% for k, v in categories[ catArr[0] ].items() %}
+                    {% if catArr[1] != k %}
+                        <a class="mobile-cat-item" href="/products?cat={{ catArr[0] + '-' + k }}">{{ k }}</a>
+                    {% endif %}
+                {% endfor %}
+            </div>
+            <a href="javascript:void(0);" class="icon" onclick="expandMenu('mobileCatsMid')">
+                <i class="fa fa-bars"></i>
+            </a>
+        </div>
+    {% endif %}
+    {% if catArr[1] %}
+        <div class="topnav">
+            {% if catArr[2] %}
+                <a class="mobile-cat-item" >{{ catArr[2] }}</a>
+            {% else %}
+                <a class="mobile-cat-item">...</a>
+            {% endif %}
+            <div id="mobileCatsLow">
+                {% if categories[ catArr[0] ][ catArr[1] ]|length > 1 %}
+                    {% for k in categories[ catArr[0] ][ catArr[1] ] %}
+                        {% if catArr[2] != k %}
+                            <a class="mobile-cat-item" href="/products?cat={{ catArr[0] + '-' + catArr[1] + '-' + k }}">{{ k }}</a>
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
+            </div>
+            <a href="javascript:void(0);" class="icon" onclick="expandMenu('mobileCatsLow')">
+                <i class="fa fa-bars"></i>
+            </a>
+        </div>
+    {% endif %}
+    
+    <div class="search-bar">
+        <!-- <form onsubmit="return validateForm(this);"> -->
+        <form action="{{ url_for('products') }}">
+            <input class="search-bar-input" type="text" placeholder="Search product.." name="q">
+            <button class="search-bar-submit" type="submit">🔎</button>
+        </form>
     </div>
     <div class="product-pagination">
         {% for item in pagination %}

@@ -192,12 +192,17 @@
 
 
 let canv=document.getElementById("dbGraphCanvas");
-myGraph = new DB_Graph(canv,dbGraphCanvasData,"Daily Prices Compared to Average");
+myGraph = new DB_Graph(canv,dbGraphCanvasData);
 
 let rect, offsetX, offsetY, rectWidth, rectHeight
 
+
+
+graphWrapper = document.getElementById("graph-wrapper")
+
+rect = document.getElementById("dbGraphCanvas").getBoundingClientRect();
 function reOffset(){
-    rect = document.getElementById("dbGraphCanvas").getBoundingClientRect();
+    
     rectWidth=rect.right-rect.left
     rectHeight=rect.bottom-rect.top
     offsetX=rect.left
@@ -247,16 +252,22 @@ function addDescriptor(data = false){
 var targetOffset = rectWidth/450
 let str,adjustedMouseX,adjustedMouseY,pointX,pointY, currentLinePointer
 
+graphWrapper.scroll({
+	left: myGraph.canv.width
+})
+
 document.addEventListener('mousemove', (event) => { 
+	
     if (event.clientX > rect.left && event.clientX < rect.right && event.clientY > rect.top && event.clientY < rect.bottom){
-        myGraph.drawBase()
+		myGraph.drawBase()
 		myGraph.drawDataToAxis()
 		myGraph.drawDataToChart()
 		// myGraph.drawLinePointer(currentLinePointer)
 		for (i = 0;i < myGraph.dataPointsCoor.length;i++){
             adjustedMouseX = event.clientX-offsetX
             adjustedMouseY = event.clientY-offsetY
-            pointX = rectWidth*myGraph.dataPointsCoor[i]['x']
+            // pointX = rectWidth*myGraph.dataPointsCoor[i]['x']
+            pointX = rectWidth*myGraph.dataPointsCoor[i]['x']-graphWrapper.scrollLeft
             pointY = rectHeight*myGraph.dataPointsCoor[i]['y']
             if (Math.abs(adjustedMouseX-pointX) < targetOffset && Math.abs(adjustedMouseY-pointY) < targetOffset){
             // if (Math.abs((rectWidth*myGraph.dataPointsCoor[i]['x'] + offsetX) - event.clientX) < targetOffset && Math.abs((rectHeight*myGraph.dataPointsCoor[i]['y'] + offsetY) - event.clientY) < targetOffset){

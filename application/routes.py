@@ -159,7 +159,12 @@ def index():
                     o[k] = round(float(v),4)
 
     pieChartData = categoryCounts
-    return render_template("index.html",navData=navData,pieChartData=pieChartData,data=highlightsData,graphData=dbStats, index=True)
+    activePage={
+        "link":"index",
+        "label":"Home"
+    }
+    # return render_template("index.html",activePage=activePage,navData=navData,pieChartData=pieChartData,data=highlightsData,graphData=dbStats, index=True)
+    return render_template("index.html",activePage=activePage,navData=navData,pieChartData=pieChartData,data=highlightsData,graphData=dbStats)
 
 
 @app.route("/products")
@@ -202,13 +207,29 @@ def products():
     pagination = getProductPagination(paginationSubmit)
     
     catArr = cat.split('-') if cat else []
-    
-    return render_template("products.html",navData=navData, catArr = catArr,categories=categoryPathing, pagination=pagination, data=data, products=True)
+    activePage={
+        "link":"products",
+        "label":"Products"
+    }
+    # return render_template("products.html",activePage=activePage,navData=navData, catArr = catArr,categories=categoryPathing, pagination=pagination, data=data, products=True)
+    return render_template("products.html",activePage=activePage,navData=navData, catArr = catArr,categories=categoryPathing, pagination=pagination, data=data)
 
 @app.route("/about")
 def about():
-    return render_template("about.html",navData=navData,about=True)
-
+    tableTestData = list()
+    for i in range (20):
+        line = dict()
+        for ci in range(4):
+            line[f'key_h{ci}'] = str(f"data_{i}_{ci}")
+        tableTestData.append(line)
+    activePage={
+        "link":"about",
+        "label":"About"
+    }
+    # print( json.dumps(tableTestData,indent='\t') )
+    # return render_template("about.html",activePage=activePage,tableTestData=tableTestData,navData=navData,about=True)
+    return render_template("about.html",activePage=activePage,tableTestData=tableTestData,navData=navData)
+    
 ##SUBMITS
 @app.route('/analyze')
 def analyze_product():
@@ -262,5 +283,8 @@ def analyze_product():
             "value":str(round(analyzeResults["availability_perc"],2)) + "%"
         }
     ]
-    
-    return render_template("analyze.html",navData=navData, graphData=graphData)
+    activePage={
+        "link":"products",
+        "label":"Products"
+    }
+    return render_template("analyze.html",activePage=activePage,navData=navData, graphData=graphData)

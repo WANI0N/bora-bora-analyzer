@@ -2,10 +2,9 @@
 
 
 class DB_Graph{
-    constructor(canvas,data,title){
+    constructor(canvas,data){
         this.canv = canvas
         this.data = data
-        this.title = title
         this.ctx = this.canv.getContext("2d")
         this.strokeStyle = "rgb(195,195,195)"
         
@@ -31,7 +30,8 @@ class DB_Graph{
         this.ctx.lineWidth = 1;
         //drawing y axis, vertical
         this.ctx.beginPath();
-        this.ctx.moveTo(this.canv.width*0.04, this.canv.height*0.12);
+        // this.ctx.moveTo(this.canv.width*0.04, this.canv.height*0.12);
+        this.ctx.moveTo(this.canv.width*0.04, this.canv.height*0.01);
         this.ctx.lineTo(this.canv.width*0.04, this.canv.height*0.86);
         this.ctx.stroke();
         //drawing x axis, horizontal
@@ -41,12 +41,13 @@ class DB_Graph{
         this.ctx.stroke();
         //declare axis positioning
         this.xAxisRange = [this.canv.width*0.04,this.canv.width*0.96];
-        this.yAxisRange = [this.canv.height*0.12,this.canv.height*0.86];
-        //insert title
+        // this.yAxisRange = [this.canv.height*0.12,this.canv.height*0.86];
+        this.yAxisRange = [this.canv.height*0.01,this.canv.height*0.86];
         this.ctx.fillStyle = this.strokeStyle;
-        this.ctx.font = Math.floor(this.canv.width/71.6 ).toString() + "px Arial";
         this.ctx.textAlign = "center";
-        this.ctx.fillText(this.title, this.canv.width*0.5, this.canv.height*0.1);
+        //insert title
+        // this.ctx.font = Math.floor(this.canv.width/71.6 ).toString() + "px Arial";
+        // this.ctx.fillText(this.title, this.canv.width*0.5, this.canv.height*0.1);
     }
     drawDataToAxis(){
         //y axis
@@ -54,12 +55,14 @@ class DB_Graph{
         let xAxisOffSet = this.canv.width/55;
         
         let xCoor = this.xAxisRange[0]-xAxisOffSet;
-        let diff = this.canv.height/5.57;
+        // let diff = this.canv.height/5.57;
+        let diff = (this.yAxisRange[1]-this.yAxisRange[0])/4.3;
 
         this.priceIndicators = this.convertPriceData()
         
         for(var i = 0; i < this.yMarkCount; i++){
             this.ctx.fillText(this.priceIndicators[i], xCoor, this.yAxisRange[1]-diff*i);
+            this.ctx.fillText(this.priceIndicators[i], this.xAxisRange[1]+xAxisOffSet, this.yAxisRange[1]-diff*i);
         }
         
         //x axis
@@ -268,7 +271,7 @@ class DB_Graph{
         
         y = obj['_y']
         w = this.canv.width/8
-        let xVector = (obj['_x']+w+5 > this.canv.width) ? "-" : "+"
+        let xVector = (obj['_x']+w+5 > this.canv.width*.9) ? "-" : "+"
         x = (xVector == "+") ? obj['_x']+this.canv.width/340 : obj['_x']-this.canv.width/7.8
         h = this.canv.height/3
         if (data['diff_perc'] < this.priceMid){
@@ -290,11 +293,16 @@ class DB_Graph{
         }
         this.ctx.beginPath();
         this.ctx.rect(x, y, w, h);
+        
         this.ctx.fill();
         this.ctx.stroke();
+        // this.ctx.closePath();
+        //drawing pointer
+        
+
         //drawing image
         
-        y += h/10
+        y += h/20
         w = w/8
         h = h/3
         // x = (xVector == "+") ? x+w/3 : x-w/3

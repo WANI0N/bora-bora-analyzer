@@ -48,7 +48,24 @@ th.index-table-H3-cell{
     color:red;
 }
 
-
+#graph-title{
+    
+    font-size: 1.5vw;
+    color:white;
+    color:rgba(255, 255, 255, 0.5);
+}
+@media (max-width: 500px) {
+    #graph-title{
+        font-size: 5vw;
+    }
+}
+#graph-wrapper{
+    padding-top: 0.3vw;
+    /* height: 300px; */
+    width: 90%;
+    margin:auto;
+    overflow: auto;
+}
 #graphDescription{
     color:rgba(255, 255, 255, 0.5);
 }

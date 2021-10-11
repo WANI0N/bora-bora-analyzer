@@ -11,10 +11,13 @@ class ProductAnalyzer:
         self.data = data
         
         self.activeCount = 0
+        self.lastActiveDate = None
         for o in data:
             self.dates.append(o['date'])
             self.prices.append(o['price'])
             if o['active']:
+                if (self.activeCount == 0):
+                    self.lastActiveDate = o['date']
                 self.activeCount += 1
         # current_date and dbUpdateDate might be the same
         now = datetime.now()
@@ -37,7 +40,10 @@ class ProductAnalyzer:
             "min":self.min,
             "max":self.max,
             "availability_perc":self.availability_perc,
-            "unique_price_count":self.uniquePriceCount
+            "unique_price_count":self.uniquePriceCount,
+            "priceDropPerCent":self.priceDropPerCent,
+            "priceDropDate":self.priceDropDate,
+            "lastActiveDate":self.lastActiveDate,
         })
 
     def getDifferenceToMeanList(self):
@@ -76,6 +82,8 @@ class ProductAnalyzer:
         self.var_perc = perc_diff
         
     def getProductAllTimePrice(self):
+        self.priceDropDate = None
+        self.priceDropPerCent = None
         if (self.dates[0] != self.current_date) or (round(sum(self.prices),2) == round(self.prices[0]*len(self.prices),2)):
             self.min = False
             self.max = False
@@ -83,8 +91,16 @@ class ProductAnalyzer:
         
         _min = min(self.prices)
         _max = max(self.prices)
+        
         self.min = self.prices[0] if (self.prices[0] == _min) else False 
         self.max = self.prices[0] if (self.prices[0] == _max) else False
+        
+        if (self.min or self.max):
+            for i in range(1,len(self.prices)):
+                if (self.prices[i] != self.prices[0]):
+                    self.priceDropPerCent = (self.prices[0]-self.prices[i])/self.prices[i]*100
+                    self.priceDropDate = self.dates[i]
+                    break
         
     def getProductAvailability(self):
         # d0 = date(int(self.dates[0][0:4]),int(self.dates[0][5:7]),int(self.dates[0][8:10]))
@@ -97,89 +113,90 @@ class ProductAnalyzer:
 if __name__ == "__main__":
     data = [
         {
-            "price": 0.99,
+            "price": 1,
             "comparative_unit_price": 0.99,
-            "date": "2021-09-15",
-            "active": True
+            "date": "2021-10-10",
+            "active": False
         },
         {
-            "price": 0.99,
+            "price": 0.6,
             "comparative_unit_price": 0.49,
-            "date": "2021-09-13",
+            "date": "2021-10-09",
             "active": True
         },
-        {
-            "price": 0.99,
-            "comparative_unit_price": 0.49,
-            "date": "2021-09-02",
-            "active": True
-        },
-        {
-            "price": 0.39,
-            "comparative_unit_price": 0.49,
-            "date": "2021-09-01",
-            "active": True
-        },
-        {
-            "price": 0.19,
-            "comparative_unit_price": 0.49,
-            "date": "2021-08-31",
-            "active": True
-        },
-        {
-            "price": 0.99,
-            "comparative_unit_price": 0.49,
-            "date": "2021-08-30",
-            "active": True
-        },
-        {
-            "price": 0.99,
-            "comparative_unit_price": 0.49,
-            "date": "2021-08-29",
-            "active": True
-        },
-        {
-            "price": 0.99,
-            "comparative_unit_price": 0.49,
-            "date": "2021-08-28",
-            "active": True
-        },
-        {
-            "price": 0.99,
-            "comparative_unit_price": 0.49,
-            "date": "2021-08-27",
-            "active": True
-        },
-        {
-            "price": 0.99,
-            "comparative_unit_price": 0.99,
-            "date": "2021-08-26",
-            "active": True
-        },
-        {
-            "price": 0.99,
-            "comparative_unit_price": 0.99,
-            "date": "2021-08-25",
-            "active": True
-        },
-        {
-            "price": 0.99,
-            "comparative_unit_price": 0.49,
-            "date": "2021-08-24",
-            "active": True
-        },
-        {
-            "price": 0.29,
-            "comparative_unit_price": 0.19,
-            "date": "2021-08-23",
-            "active": True
-        }
+        # {
+        #     "price": 0.99,
+        #     "comparative_unit_price": 0.49,
+        #     "date": "2021-09-02",
+        #     "active": True
+        # },
+        # {
+        #     "price": 0.39,
+        #     "comparative_unit_price": 0.49,
+        #     "date": "2021-09-01",
+        #     "active": True
+        # },
+        # {
+        #     "price": 0.19,
+        #     "comparative_unit_price": 0.49,
+        #     "date": "2021-08-31",
+        #     "active": True
+        # },
+        # {
+        #     "price": 0.99,
+        #     "comparative_unit_price": 0.49,
+        #     "date": "2021-08-30",
+        #     "active": True
+        # },
+        # {
+        #     "price": 0.99,
+        #     "comparative_unit_price": 0.49,
+        #     "date": "2021-08-29",
+        #     "active": True
+        # },
+        # {
+        #     "price": 0.99,
+        #     "comparative_unit_price": 0.49,
+        #     "date": "2021-08-28",
+        #     "active": True
+        # },
+        # {
+        #     "price": 0.99,
+        #     "comparative_unit_price": 0.49,
+        #     "date": "2021-08-27",
+        #     "active": True
+        # },
+        # {
+        #     "price": 0.99,
+        #     "comparative_unit_price": 0.99,
+        #     "date": "2021-08-26",
+        #     "active": True
+        # },
+        # {
+        #     "price": 0.99,
+        #     "comparative_unit_price": 0.99,
+        #     "date": "2021-08-25",
+        #     "active": True
+        # },
+        # {
+        #     "price": 0.99,
+        #     "comparative_unit_price": 0.49,
+        #     "date": "2021-08-24",
+        #     "active": True
+        # },
+        # {
+        #     "price": 0.29,
+        #     "comparative_unit_price": 0.19,
+        #     "date": "2021-08-23",
+        #     "active": True
+        # }
     ]
     
     item = ProductAnalyzer(data,"2021-09-15")
     results = item.getResultsAsDict()
-    print(results)
-    print( item.uniquePriceCount )
+    # print(results)
+    print(item.lastActiveDate)
+    # print( item.uniquePriceCount )
     # results = ProductAnalyzer(data,"2021-09-15").getProductMean()
 
     

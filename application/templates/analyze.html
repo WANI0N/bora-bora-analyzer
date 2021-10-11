@@ -5,24 +5,21 @@
     <link rel="stylesheet" href="{{ url_for('static',filename='css/table.css') }}"/>
     <!-- <canvas class="analyze-graph" id="testCanvas" width="1500" height="900"></canvas> -->
     <!--<img class="analyze-img" src="{{ graphData.img }}">-->
-    <div class="analyze-content-container">
-	
+    <div class="analyze-product-title">
+		{{ graphData.title }}
+    </div>
+	<div class="analyze-content-container">
 		<div class="analyze-product-description">
 			<table class="analyze-product-description-table">
 				{% for item in graphData.descriptiveTableData %}
 					<tr>
 						<td class="analyze-product-description-title">{{ item.title }}</td>
-						{% if item.value %}
-							<td  class="analyze-product-description-item">
-							{% if item.link %}
-								<a href="{{ item.link }}"> {{ item.value }} </a>
-							{% else %}
-								{{ item.value }}
-							{% endif %}
-							</td>
-						{% endif %}
-						{% if item.title == "Title" %}
-							<td rowspan="7" class="analyze-product-description-item">
+						<td  class="analyze-product-description-item">
+						{{ item.value }}
+						</td>
+						
+						{% if item.title == "Brand Name" %}
+							<td rowspan="6" class="analyze-product-description-item">
 								<a href="{{ graphData.descriptiveTableData[0].link }}">
 									<img class="analyze-img" src="{{ graphData.img }}">
 								</a>
@@ -66,13 +63,27 @@
     <script>
 		var graphData = {{ graphData|tojson }};
 	</script>
-	<div class="hidden indicator" id="priceIndicator" ></div>
-    <div class="hidden" id="YLine" ></div>
-    <div class="hidden indicator" id="dateIndicator" ></div>
-    <div class="hidden" id="XLine" ></div>
 	<script src="{{ url_for('static',filename='script/analyze.js') }}"></script>
         
         
-        
+	
+	<div class="nTable-wrapper">
+        <div class="nTable-headers">
+			<li class="nTable-header nTable-cell-width">Date
+			<li class="nTable-header nTable-cell-width">Price
+			<li class="nTable-header nTable-cell-width">Unit price
+			<li class="nTable-header nTable-cell-width">Availability
+        </div>
+        <table class="nTable-table">
+		{% for item in graphData.tableData %}
+			<tr>
+				<td class="highlight-{% if item.highlight %}{{ item.highlight }} {% endif %} nTable-cell-decor nTable-cell-width" >{{ item.date }}</td>
+				<td class="highlight-{% if item.highlight %}{{ item.highlight }} {% endif %} nTable-cell-decor nTable-cell-width" >{{ item.price }}</td>
+				<td class="highlight-{% if item.highlight %}{{ item.highlight }} {% endif %} nTable-cell-decor nTable-cell-width" >{{ item.comparative_unit_price }}</td>
+				<td class="highlight-{% if item.highlight %}{{ item.highlight }} {% endif %} nTable-cell-decor nTable-cell-width" >{{ item.active }}</td>
+			</tr>
+		{% endfor %}
+        </table>
+    </div>
     
 {% endblock %}

@@ -8,12 +8,18 @@
         var pieChartData = {{ pieChartData|tojson }};
 	</script>
     
+    <link rel="stylesheet" href="{{ url_for('static',filename='css/tab_selector.css') }}"/>
     <div id="graph-title">Daily Prices Compared to Average</div>
-    <div id="graph-wrapper">
-        <canvas id="dbGraphCanvas" width="1800" height="300" ></canvas>
+    <div id="stats-top-wrapper">
+        <div id="tab-selector">
+            <div class="tab-selector-item" id="tab-graph" onclick="statsSwitchTab('graph')">Graph</div>
+            <div class="tab-selector-item" id="tab-table" onclick="statsSwitchTab('table')">Table</div>
+        </div>
+        <div id="content-wrapper">
+            <canvas id="dbGraphCanvas" width="1800" height="300" ></canvas>
+            <canvas id="dbTableCanvas" width="300" height="3000" ></canvas>
+        </div>
     </div>
-    <!-- <canvas id="dbGraphCanvas" width="1800" height="300" style="width:90%;height:10%"></canvas> -->
-    <!-- <canvas id="dbGraphCanvas" width="1800" height="300" style="width:60vw;height:10vw"></canvas> -->
     
     <!-- <div  id="graphDescription" >ASD</div> -->
     
@@ -21,13 +27,149 @@
         <div id="container" ></div>
         <div id="container2" ></div>
     </div> -->
-
-    <script src="https://cdn.anychart.com/releases/8.10.0/js/anychart-base.min.js"></script>
-
+    <!-- <script src="https://cdn.anychart.com/releases/8.10.0/js/anychart-base.min.js"></script> -->
     <!-- <script src="{{ url_for('static',filename='script/pieCharts.js') }}"></script> -->
+
     <script src="{{ url_for('static',filename='script/graph.js') }}"></script>
+    <script src="{{ url_for('static',filename='script/table_graph.js') }}"></script>
     <script src="{{ url_for('static',filename='script/db_graph.js') }}"></script>
     <script src="{{ url_for('static',filename='script/index.js') }}"></script>
+
+    <link rel="stylesheet" href="{{ url_for('static',filename='css/index-product-scroll.css') }}"/>
+    <div class="products-scroller-container-title"> Cheapest products on this day (for product's history) </div>
+    <div class="products-scroller-container">
+        {% for item in data.topToday.lows %}
+            <div class="products-item-wrapper">
+                <table class="products-scroller-table">
+                    <tr rowspan="2">
+                        <td class="products-scroller-title" colspan="5">
+                            {{ item.title }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="products-scroller-image-wrapper" colspan="3" rowspan="4">
+                            <a class="table-link" href="{{ item.analyzeLink }}">
+                                <img class="product-img" src="{{ item.image }}">
+                            </a>
+                        </td>
+                        <td class="products-table-price" colspan="2">€{{ item.value }}</td>
+                    </tr>
+                    <tr>
+                        <td class="products-table-data" colspan="2">price drop <b>{{ item.priceDropPerCent }}%</b></td>
+                    </tr>
+                    <tr>
+                        <td class="products-table-data" colspan="2">since {{ item.priceDropDate }}</td>
+                    </tr>
+                    <tr>
+                        <td class="products-table-data" colspan="2">
+                            <a class="products-table-link" href="{{ item.link }}">barbora link</a>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        {% endfor %}
+    </div>
+    <div class="products-scroller-container-title"> Most expensive products on this day (for product's history) </div>
+    <div class="products-scroller-container">
+        {% for item in data.topToday.tops %}
+            <div class="products-item-wrapper">
+                <table class="products-scroller-table">
+                    <tr rowspan="2">
+                        <td class="products-scroller-title" colspan="5">
+                            {{ item.title }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="products-scroller-image-wrapper" colspan="3" rowspan="4">
+                            <a class="table-link" href="{{ item.analyzeLink }}">
+                                <img class="product-img" src="{{ item.image }}">
+                            </a>
+                        </td>
+                        <td class="products-table-price" colspan="2">€{{ item.value }}</td>
+                    </tr>
+                    <tr>
+                        <td class="products-table-data" colspan="2">price raise <b>{{ item.priceDropPerCent }}%</b></td>
+                    </tr>
+                    <tr>
+                        <td class="products-table-data" colspan="2">since {{ item.priceDropDate }}</td>
+                    </tr>
+                    <tr>
+                        <td class="products-table-data" colspan="2">
+                            <a class="products-table-link" href="{{ item.link }}">barbora link</a>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        {% endfor %}
+    </div>
+    <div class="products-scroller-container-title"> Most volatile products (variance & standard deviation) </div>
+    <div class="products-scroller-container">
+        {% for item in data.var_perc.tops %}
+            <div class="products-item-wrapper">
+                <table class="products-scroller-table">
+                    <tr rowspan="2">
+                        <td class="products-scroller-title" colspan="5">
+                            {{ item.title }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="products-scroller-image-wrapper" colspan="3" rowspan="4">
+                            <a class="table-link" href="{{ item.analyzeLink }}">
+                                <img class="product-img" src="{{ item.image }}">
+                            </a>
+                        </td>
+                        <td class="products-table-price" colspan="2">var. <b>{{ item.value }}%</b></td>
+                    </tr>
+                    <tr>
+                        <td class="products-table-data" colspan="2">Std.Dev. €{{ item.stdDev }}</td>
+                    </tr>
+                    <tr>
+                        <td class="products-table-data" colspan="2">
+                            <a class="products-table-link" href="{{ item.link }}">barbora link</a>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        {% endfor %}
+    </div>
+    <div class="products-scroller-container-title"> Least available products (excluding 0%) </div>
+    <div class="products-scroller-container">
+        {% for item in data.availability_perc.lows %}
+            <div class="products-item-wrapper">
+                <table class="products-scroller-table">
+                    <tr rowspan="2">
+                        <td class="products-scroller-title" colspan="5">
+                            {{ item.title }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="products-scroller-image-wrapper" colspan="3" rowspan="4">
+                            <a class="table-link" href="{{ item.analyzeLink }}">
+                                <img class="product-img" src="{{ item.image }}">
+                            </a>
+                        </td>
+                        <td class="products-table-price" colspan="2"><b>{{ item.value }}%</b></td>
+                    </tr>
+                    <tr>
+                        <td class="products-table-data" colspan="2">last seen {{ item.lastActiveDate }}</td>
+                    </tr>
+                    <tr>
+                        <td class="products-table-data" colspan="2">
+                            <a class="products-table-link" href="{{ item.link }}">barbora link</a>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        {% endfor %}
+    </div>
+
+
+
+
+
+
+
+
 
     <table class="index-table">
         

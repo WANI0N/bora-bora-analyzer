@@ -228,6 +228,7 @@ class Graph {
             this.ctx.stroke();
             
         }
+        this.dataCoords = pathing
         this.ctx.strokeStyle = this.strokeStyle;
         
     }
@@ -254,6 +255,46 @@ class Graph {
         let pixelPerAmount = pixelRange/priceRange
         let y = adjustedPrice*pixelPerAmount
         return this.yAxisRange[1]-y
+    }
+    markDataPoint(n){
+        this.ctx.save();
+        let xOffset, yOffset, w, h
+        this.ctx.fillStyle = '#f50';
+        this.ctx.strokeStyle = '#f50';
+        xOffset = this.canv.width/40
+        yOffset = this.canv.height/27
+        this.ctx.beginPath();
+        // this.ctx.moveTo(this.dataCoords[n].x, this.dataCoords[n].y);
+        // this.ctx.lineTo(this.dataCoords[n].x, this.yAxisRange[1]);
+        // this.ctx.moveTo(this.dataCoords[n].x, this.dataCoords[n].y);
+        // this.ctx.lineTo(this.xAxisRange[0], this.dataCoords[n].y);
+        this.ctx.moveTo(this.dataCoords[n].x, this.dataCoords[n].y);
+        this.ctx.lineTo(this.dataCoords[n].x, this.yAxisRange[0]+yOffset);
+        this.ctx.moveTo(this.dataCoords[n].x, this.dataCoords[n].y);
+        this.ctx.lineTo(this.xAxisRange[1]-xOffset*2, this.dataCoords[n].y);
+        this.ctx.stroke();
+        this.ctx.closePath();
+        
+        // this.ctx.textBaseline = 'top';
+        
+        
+        this.ctx.fillText(this.data[n]['date'], this.dataCoords[n].x, this.yAxisRange[0]+yOffset);
+        this.ctx.fillText(this.data[n]['price'], this.xAxisRange[1]-xOffset, this.dataCoords[n].y);
+        
+        // w = this.canv.width/20
+        // h = this.canv.height/10
+        // this.ctx.fillStyle = 'white';
+        // this.ctx.fillRect(this.dataCoords[n].x, this.yAxisRange[1]+yOffset,w,h)
+        // this.ctx.fillStyle = '#f50';
+        // this.ctx.fillText(this.data[n]['date'], this.dataCoords[n].x, this.yAxisRange[1]+yOffset);
+        // w = this.canv.width/20
+        // h = this.canv.height/10
+        // this.ctx.fillStyle = 'white';
+        // this.ctx.fillRect(this.xAxisRange[0]-xOffset, this.dataCoords[n].y,w,h)
+        // this.ctx.fillStyle = '#f50';
+        // this.ctx.fillText(this.data[n]['price'], this.xAxisRange[0]-xOffset, this.dataCoords[n].y);
+        this.ctx.restore();
+        
     }
 }
 

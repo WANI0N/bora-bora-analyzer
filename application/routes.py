@@ -1,3 +1,4 @@
+from werkzeug.datastructures import Headers
 from application import app, mongo_db, api
 import os
 from flask import render_template, request,json,abort # Response, jsonify, redirect, flash, url_for, session
@@ -39,19 +40,22 @@ if True:
 
     highlightsData_cursor = mongo_db.highlights.find_one()
     highlightsData = parseMongoCollection(highlightsData_cursor,'dict')
-
-    # f=open( 'temp/categoryPathing.json','r' )
-    # categoryPathing = json.loads(f.read())
-    # f.close()
-    # f=open( 'temp/categoryCounts.json','r' )
-    # categoryCounts = json.loads(f.read())
-    # f.close()
+    
     # f = open('temp/dbStatsDataFinal.json','r')
     # dbStats = json.loads( f.read() )
     # f.close()
     # dbStatsApiData = dict()
     # for item in dbStats:
     #     dbStatsApiData[ item["date"] ] = item
+    
+    # f=open( 'temp/categoryCounts.json','r' )
+    # categoryCounts = json.loads(f.read())
+    # f.close()
+    
+    # f=open( 'temp/categoryPathing.json','r' )
+    # categoryPathing = json.loads(f.read())
+    # f.close()
+    
     # f = open('temp/highlights.json','r')
     # string = f.read()
     # f.close()
@@ -81,6 +85,8 @@ class GetProduct(Resource):
         except Exception as e:
             abort(404,str(e))
         callBack = parseMongo(results)
+        for prod in callBack:
+            del prod["_id"]
         if isinstance(callBack,list):
             return callBack
         else:
@@ -149,7 +155,11 @@ def index():
             for product in highlightsData[cat][subCat]:
                 product["image"] = hashMap[ product['id'] ]["image"]
                 product["title"] = hashMap[ product['id'] ]["title"]
+                product["trimedTitle"] = product["title"][0:35]
+                if (len( product["trimedTitle"] ) == 35):
+                    product["trimedTitle"] += "..."
                 product["link"] = getProductUrlLink(product["title"])
+                product["analyzeLink"] = "/analyze?id=" + product['id']
     
     roundKeys = ['diff_perc','perCent']
     for o in dbStats:
@@ -157,13 +167,14 @@ def index():
             if k in roundKeys:
                 if not isinstance(v,str):
                     o[k] = round(float(v),4)
+    
 
     pieChartData = categoryCounts
     activePage={
         "link":"index",
         "label":"Home"
     }
-    # return render_template("index.html",activePage=activePage,navData=navData,pieChartData=pieChartData,data=highlightsData,graphData=dbStats, index=True)
+    
     return render_template("index.html",activePage=activePage,navData=navData,pieChartData=pieChartData,data=highlightsData,graphData=dbStats)
 
 
@@ -216,11 +227,14 @@ def products():
 
 @app.route("/about")
 def about():
+    headers = ["Date","Price","Unit price","Availability"]
+    _data = ['2021-10-06','1.33','5.78','True']
     tableTestData = list()
     for i in range (20):
         line = dict()
         for ci in range(4):
-            line[f'key_h{ci}'] = str(f"data_{i}_{ci}")
+            # line[f'key_h{ci}'] = str(f"data_{i}_{ci}")
+            line[headers[ci]] = _data[ci]
         tableTestData.append(line)
     activePage={
         "link":"about",
@@ -252,15 +266,12 @@ def analyze_product():
     analyzeResults = productHandle.getResultsAsDict()
     link = getProductUrlLink(data["title"])
     graphData["tableData"] = appendDataToTableData(data['history'],26)
+    graphData["title"] = data["title"]
     graphData["descriptiveTableData"] = [
         {
-            "title":"Title",
-            "value":data["title"],
-            "link":link
-        },
-        {
             "title":"Brand Name",
-            "value":data["brand_name"] if data["brand_name"] else "N/A"
+            "value":data["brand_name"] if data["brand_name"] else "N/A",
+            "link":link
         },
         {
             "title":"Comparative Unit",

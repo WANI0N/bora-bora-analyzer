@@ -1,3 +1,24 @@
+@media (min-width: 500px) {
+    html {
+        --scrollbarBG: #32383b;
+        --thumbBG: #0f1a20;
+    }
+    ::-webkit-scrollbar {
+        width: auto;
+    }
+    body {
+        scrollbar-width: thin;
+        scrollbar-color: var(--thumbBG) var(--scrollbarBG);
+    }
+    ::-webkit-scrollbar-track {
+        background: var(--scrollbarBG);
+    }
+    ::-webkit-scrollbar-thumb {
+        background-color: var(--thumbBG) ;
+        border-radius: 6px;
+        border: 3px solid var(--scrollbarBG);
+    }
+}
 body {
     /* background-color: rgba(22, 21, 21, 0.863); */
     /* background: linear-gradient(to right,rgba(0, 0, 0, 0.945),rgba(44, 47, 44, 0.863)); */

@@ -18,7 +18,7 @@ load_dotenv()
 
 
 def recurrsion_sort(data,_id,pushData, submitKey = None):
-    ignoreItems = ["unique_price_count"]
+    ignoreItems = ["unique_price_count","priceDropPerCent","priceDropDate","lastActiveDate"]
     for k, content in data.items():
         if isinstance(content,dict):
             data[k] = recurrsion_sort(content,_id,pushData,k)
@@ -29,6 +29,8 @@ def recurrsion_sort(data,_id,pushData, submitKey = None):
             if (submitKey != "topToday"):
                 if (submitKey == "var_perc"):
                     pushObj["stdDev"] = round(pushData["var_stdDev"],2)
+                if (submitKey == "availability_perc"):
+                    pushObj["lastActiveDate"] = pushData["lastActiveDate"]
                 pushObj["value"] = round(pushData[submitKey],2)
                 if (len(content) < 20):
                     content.append( pushObj )
@@ -41,6 +43,7 @@ def recurrsion_sort(data,_id,pushData, submitKey = None):
                             continue
                     if (content[ 19 ]["value"] > pushObj['value']):
                         content[ 19 ] = pushObj
+                
                 if content:
                     data[k] = sorted(content, key=lambda k: k['value'])
             else:
@@ -48,6 +51,8 @@ def recurrsion_sort(data,_id,pushData, submitKey = None):
                 if not pushObj['value']:
                     continue
                 pushObj["sortingValue"] = pushData["unique_price_count"]
+                pushObj["priceDropDate"] = pushData["priceDropDate"]
+                pushObj["priceDropPerCent"] = round(pushData["priceDropPerCent"],2)
                 if (len(content) < 20):
                     content.append( pushObj )
                 elif (content[ 0 ]["sortingValue"] < pushObj['sortingValue']):
@@ -174,49 +179,49 @@ class DbAnalyzer:
             }))
         self.dbStatsData = {}
     
-    def executeAndDiscard(self, updateCategories=False):
+    def executeAndDiscard(self, updateCategories=False, localUpdate=False):
         self.analyze()
         self.getDbStatsDataFinal()
 
-        self.db.dbStatsDataFinal.drop()
-        self.db.dbStatsDataFinal.insert_many(self.dbStatsDataFinal)
-        
-        # if (os.path.exists('temp/dbStatsDataFinal.json')):
-        #     os.remove('temp/dbStatsDataFinal.json')
-        # f = open('temp/dbStatsDataFinal.json','a')
-        # f.write( json.dumps(self.dbStatsDataFinal,indent="\t") )
-        # f.close()
-        
-        self.db.highlights.drop()
-        self.db.highlights.insert_one(self.highlights)
-        
-        # if (os.path.exists('temp/highlights.json')):
-        #     os.remove('temp/highlights.json')
-        # f = open('temp/highlights.json','a')
-        # f.write( json.dumps(self.highlights,indent="\t") )
-        # f.close()
-        
-        
-        
-        if updateCategories:
-            self.getCategories()
+        if localUpdate:
+            if (os.path.exists('temp/dbStatsDataFinal.json')):
+                os.remove('temp/dbStatsDataFinal.json')
+            f = open('temp/dbStatsDataFinal.json','a')
+            f.write( json.dumps(self.dbStatsDataFinal,indent="\t") )
+            f.close()
 
-            self.db.categoryPathing.drop()
-            self.db.categoryPathing.insert_one(self.categoryPathing)
-            
-            # if (os.path.exists('temp/categoryPathing.json')):
-            #     os.remove('temp/categoryPathing.json')
-            # f = open('temp/categoryPathing.json','a')
-            # f.write( json.dumps(self.categoryPathing,indent="\t") )
-            # f.close()
+            if (os.path.exists('temp/highlights.json')):
+                os.remove('temp/highlights.json')
+            f = open('temp/highlights.json','a')
+            f.write( json.dumps(self.highlights,indent="\t") )
+            f.close()
+            if updateCategories:
+                self.getCategories()
+                if (os.path.exists('temp/categoryPathing.json')):
+                    os.remove('temp/categoryPathing.json')
+                f = open('temp/categoryPathing.json','a')
+                f.write( json.dumps(self.categoryPathing,indent="\t") )
+                f.close()
 
-            self.db.categoryCounts.drop()
-            self.db.categoryCounts.insert_one(self.categoryCounts)
-            # if (os.path.exists('temp/categoryCounts.json')):
-            #     os.remove('temp/categoryCounts.json')
-            # f = open('temp/categoryCounts.json','a')
-            # f.write( json.dumps(self.categoryCounts,indent="\t") )
-            # f.close()
+                if (os.path.exists('temp/categoryCounts.json')):
+                    os.remove('temp/categoryCounts.json')
+                f = open('temp/categoryCounts.json','a')
+                f.write( json.dumps(self.categoryCounts,indent="\t") )
+                f.close()
+        else:
+            self.db.dbStatsDataFinal.drop()
+            self.db.dbStatsDataFinal.insert_many(self.dbStatsDataFinal)
+        
+            self.db.highlights.drop()
+            self.db.highlights.insert_one(self.highlights)
+            if updateCategories:
+                self.getCategories()
+                self.db.categoryPathing.drop()
+                self.db.categoryPathing.insert_one(self.categoryPathing)
+        
+                self.db.categoryCounts.drop()
+                self.db.categoryCounts.insert_one(self.categoryCounts)
+        
 
     def getCategories(self):
         categoryList = list()
@@ -288,8 +293,8 @@ if __name__ == "__main__":
 
     analyzer = DbAnalyzer(mongo_db)
     # analyzer.getCategories()
-    # analyzer.executeAndDiscard(True)
-    analyzer.executeAndDiscard()
+    analyzer.executeAndDiscard(True)
+    # analyzer.executeAndDiscard(True,True)    
     
     
     print('done')

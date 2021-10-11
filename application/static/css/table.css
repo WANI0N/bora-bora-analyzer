@@ -4,6 +4,10 @@
 /* begin some basic styling here                     */
 
 /* Analyze */
+.analyze-product-title{
+	color:rgba(255, 255, 255, 0.685);
+	font-size: 2vw;
+}
 .analyze-content-container{
 	position:relative;
 	/* background-color: rgb(66, 85, 85); */
@@ -27,6 +31,7 @@
 .analyze-product-description-table{
 	width: 70%;
 	margin-left: 15%;
+	margin:auto;
 	/* border-style: solid;
     border-color: aliceblue;
     border-width: 1px; */
@@ -41,14 +46,14 @@
 	text-align: right;
 }
 .analyze-product-description-item{
-	color:#FFF;
+	color:rgba(255, 255, 255, 0.685);
 	text-align: left;
 	font-size: large;
 	font-size: 1vw;
 }
 .analyze-product-description-table a{
 	text-decoration: none;
-	color:#FFF;
+	color:rgba(255, 255, 255, 0.685);
 }
 img.analyze-img{
 	max-width: 20vw;
@@ -56,21 +61,21 @@ img.analyze-img{
 }
 
 
-.indicator{
+/* .indicator{
 	color:rgb(195,195,195);
-	/* font-size:50px; */
+	
 	font-family: Arial, sans-serif;
 	z-index:100;
 	background-color:rgb(46,46,46);
  }
  #XLine{
-	 /* background-color:rgb(195,195,195); */
+	 
 	 border-style:solid;
 	 border-color:rgb(195,195,195);
 	 border-width: 1px;
  }
  #YLine{
-	 /* background-color:rgb(195,195,195); */
+	 
 	 border-style:solid;
 	 border-color:rgb(195,195,195);
 	 border-width: 1px;
@@ -82,7 +87,7 @@ img.analyze-img{
 	 display:block; 
 	 position:fixed;
 	 overflow:hidden;
- }
+ } */
 
 
 
@@ -111,11 +116,79 @@ html>body tbody.scrollContent {
 	overflow: auto;
 	width: 100%
 }
+
+.nTable-wrapper{
+	display:none;
+    text-align: center;
+    border: 1px solid rgb(43, 73, 53);
+    color: rgba(255, 255, 255, 0.685);
+    max-height: 300px;
+    position: relative;
+    margin: auto;
+    overflow:auto;
+}
+.nTable-headers{
+    margin: 0;
+    position: sticky;
+    top:0;
+    background: rgb(38, 100, 59);
+}
+.nTable-header{
+    border: 1px solid rgb(0,0,0);
+    display: inline-block;
+    margin: 0px;
+}
+.nTable-table{
+    margin:auto;
+    width: inherit;
+    
+}
+.nTable-cell-decor{
+    border-bottom: none;
+	border-left: none;
+	border-right: 1px solid #CCC;
+	border-top: 1px solid #DDD;
+    border: 1px solid #CCC;
+    margin: 0px;
+    font-size: 3.5vw;
+}
+
+.nTable-cell-width{
+    width: 24%;
+}
+
 @media (max-width: 500px) {
+	.nTable-wrapper{
+		display: block;
+	}
 	div.tableContainer{
 		display: none;
 	}
+	.analyze-product-description-title{
+		font-size: 0.8vw;
+		font-size: 0.3cm;
+		font-size: 150%;
+	}
+	.analyze-product-description-item{
+		font-size: 1vw;
+		font-size: 0.5cm;
+		font-size: 220%;
+	}
+	img.analyze-img{
+		max-width: 5cm;
+		max-height: 5cm;
+	}
+	.analyze-product-title{
+		font-size: 1cm;
+		font-size: 180%;
+	}
 }
+
+
+
+
+
+
 table, td {
 	color: rgba(255, 255, 255, 0.685);
 	font: normal normal 12px Verdana, Geneva, Arial, Helvetica, sans-serif;
@@ -214,7 +287,7 @@ thead.fixedHeader  {
 /* make TD elements pretty. Provide alternating classes for striping the table */
 /* http://www.alistapart.com/articles/zebratables/                             */
 tbody.scrollContent td, tbody.scrollContent tr.normalRow td {
-	/* background: #FFF; */
+	/* background: rgba(255, 255, 255, 0.685); */
 	/* background: rgb(49, 48, 48); */
 	border-bottom: none;
 	border-left: none;

@@ -198,7 +198,7 @@ let rect, offsetX, offsetY, rectWidth, rectHeight
 
 
 
-graphWrapper = document.getElementById("graph-wrapper")
+contentWrapper = document.getElementById("content-wrapper")
 
 rect = document.getElementById("dbGraphCanvas").getBoundingClientRect();
 function reOffset(){
@@ -212,6 +212,9 @@ function reOffset(){
     myGraph.drawDataToChart()
 }
 reOffset();
+if (window.screen.width < 500){ // has to be after rect declaration
+    statsSwitchTab("table")
+}
 window.onscroll=function(e){ reOffset(); }
 window.onresize=function(e){ reOffset(); }
 
@@ -252,22 +255,24 @@ function addDescriptor(data = false){
 var targetOffset = rectWidth/450
 let str,adjustedMouseX,adjustedMouseY,pointX,pointY, currentLinePointer
 
-graphWrapper.scroll({
+contentWrapper.scroll({
 	left: myGraph.canv.width
 })
 
 document.addEventListener('mousemove', (event) => { 
-	
-    if (event.clientX > rect.left && event.clientX < rect.right && event.clientY > rect.top && event.clientY < rect.bottom){
+    // if (event.clientX > rect.left && event.clientX < rect.right && event.clientY > rect.top && event.clientY < rect.bottom){
+    if (event.pageX > rect.left && event.pageX < rect.right && event.pageY > rect.top && event.pageY < rect.bottom){
 		myGraph.drawBase()
 		myGraph.drawDataToAxis()
 		myGraph.drawDataToChart()
 		// myGraph.drawLinePointer(currentLinePointer)
 		for (i = 0;i < myGraph.dataPointsCoor.length;i++){
-            adjustedMouseX = event.clientX-offsetX
-            adjustedMouseY = event.clientY-offsetY
+            // adjustedMouseX = event.clientX-offsetX
+            // adjustedMouseY = event.clientY-offsetY
+            adjustedMouseX = event.pageX-offsetX
+            adjustedMouseY = event.pageY-offsetY
             // pointX = rectWidth*myGraph.dataPointsCoor[i]['x']
-            pointX = rectWidth*myGraph.dataPointsCoor[i]['x']-graphWrapper.scrollLeft
+            pointX = rectWidth*myGraph.dataPointsCoor[i]['x']-contentWrapper.scrollLeft
             pointY = rectHeight*myGraph.dataPointsCoor[i]['y']
             if (Math.abs(adjustedMouseX-pointX) < targetOffset && Math.abs(adjustedMouseY-pointY) < targetOffset){
             // if (Math.abs((rectWidth*myGraph.dataPointsCoor[i]['x'] + offsetX) - event.clientX) < targetOffset && Math.abs((rectHeight*myGraph.dataPointsCoor[i]['y'] + offsetY) - event.clientY) < targetOffset){

@@ -1,0 +1,39 @@
+
+.tab-selector-item{
+    border-style: solid;
+    border-color: rgba(255, 255, 255, 0.609);
+    color: rgba(255, 255, 255, 0.609);
+    background-color: black;
+    width: 44%;
+    text-decoration: none;
+    display: inline-block;
+}
+.tab-selector-item-active{
+    color:aquamarine;
+}
+.tab-selector-item:hover{
+    cursor: pointer;
+    color:aquamarine;
+}
+.content-hidden{
+    display: none;
+}
+.content-visible{
+    display: block;
+}
+#tab-selector{
+    display: none;   
+}
+#dbTableCanvas{
+    overflow: scroll;
+}
+@media (max-width: 500px) {
+    #tab-selector{
+        display: block;
+    }
+}
+@media (min-width: 500px) {
+    #dbTableCanvas{
+        display: none;
+    }
+}

@@ -59,12 +59,20 @@ th.index-table-H3-cell{
         font-size: 5vw;
     }
 }
-#graph-wrapper{
+#content-wrapper{
     padding-top: 0.3vw;
     /* height: 300px; */
     width: 90%;
     margin:auto;
     overflow: auto;
+}
+@media (max-width: 500px) {
+    #graph-title{
+        font-size: 5vw;
+    }
+    #content-wrapper{
+        height: 300px;
+    }
 }
 #graphDescription{
     color:rgba(255, 255, 255, 0.5);

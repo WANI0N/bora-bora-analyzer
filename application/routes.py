@@ -161,12 +161,12 @@ def index():
                 product["link"] = getProductUrlLink(product["title"])
                 product["analyzeLink"] = "/analyze?id=" + product['id']
     
-    roundKeys = ['diff_perc','perCent']
-    for o in dbStats:
-        for k, v in o.items():
-            if k in roundKeys:
-                if not isinstance(v,str):
-                    o[k] = round(float(v),4)
+    # roundKeys = ['diff_perc','perCent']
+    # for o in dbStats:
+    #     for k, v in o.items():
+    #         if k in roundKeys:
+    #             if not isinstance(v,str):
+    #                 o[k] = round(float(v),4)
     
 
     pieChartData = categoryCounts
@@ -185,7 +185,10 @@ def products():
     cat = request.args.get('cat', None)
     
     q = request.args.get('q', None)
-    
+    activePage={
+        "link":"products",
+        "label":"Products"
+    }
     page = 1 if (page == None) else int(page)
     basePageUrl = '/products?'
     ## retreiving product data
@@ -195,7 +198,7 @@ def products():
         targetIds = list(targetIds)
         if not targetIds:
             Message404 = f"No matches found for \"{q}\"."
-            return render_template("404.html",navData=navData,Message404=Message404)
+            return render_template("404.html",activePage=activePage,navData=navData,Message404=Message404)
         basePageUrl += 'q=' + q + '&page=' if len(targetIds) > productsPerPage else 'page='
     else:
         targetIds = getCategoryIDs(cat) if cat else ids
@@ -218,44 +221,41 @@ def products():
     pagination = getProductPagination(paginationSubmit)
     
     catArr = cat.split('-') if cat else []
-    activePage={
-        "link":"products",
-        "label":"Products"
-    }
+    
     # return render_template("products.html",activePage=activePage,navData=navData, catArr = catArr,categories=categoryPathing, pagination=pagination, data=data, products=True)
     return render_template("products.html",activePage=activePage,navData=navData, catArr = catArr,categories=categoryPathing, pagination=pagination, data=data)
 
 @app.route("/about")
 def about():
-    headers = ["Date","Price","Unit price","Availability"]
-    _data = ['2021-10-06','1.33','5.78','True']
-    tableTestData = list()
-    for i in range (20):
-        line = dict()
-        for ci in range(4):
-            # line[f'key_h{ci}'] = str(f"data_{i}_{ci}")
-            line[headers[ci]] = _data[ci]
-        tableTestData.append(line)
     activePage={
         "link":"about",
         "label":"About"
     }
-    # print( json.dumps(tableTestData,indent='\t') )
-    # return render_template("about.html",activePage=activePage,tableTestData=tableTestData,navData=navData,about=True)
-    return render_template("about.html",activePage=activePage,tableTestData=tableTestData,navData=navData)
+    pieChartData = categoryCounts
+    roundKeys = ['diff_perc','perCent']
+    for o in dbStats:
+        for k, v in o.items():
+            if k in roundKeys:
+                if not isinstance(v,str):
+                    o[k] = round(float(v),4)
+    return render_template("about.html",activePage=activePage,navData=navData,pieChartData=pieChartData,dbStats=dbStats)
     
 ##SUBMITS
 @app.route('/analyze')
 def analyze_product():
+    activePage={
+        "link":"products",
+        "label":"Products"
+    }
     product_id = request.args.get('id', None)
     if not product_id:
         Message404 = "No product ID submitted."
-        return render_template("404.html",navData=navData,Message404=Message404)
+        return render_template("404.html",activePage=activePage,navData=navData,Message404=Message404)
     
     data = mongo_db.products.find_one({"id":product_id})
     if not data:
         Message404 = f"Product ID {product_id} not found."
-        return render_template("404.html",navData=navData,Message404=Message404)
+        return render_template("404.html",activePage=activePage,navData=navData,Message404=Message404)
     
     graphData = {
         "data":data['history'],
@@ -294,8 +294,5 @@ def analyze_product():
             "value":str(round(analyzeResults["availability_perc"],2)) + "%"
         }
     ]
-    activePage={
-        "link":"products",
-        "label":"Products"
-    }
+    
     return render_template("analyze.html",activePage=activePage,navData=navData, graphData=graphData)

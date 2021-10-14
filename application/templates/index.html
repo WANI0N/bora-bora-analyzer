@@ -6,6 +6,8 @@
     <script>
 		var dbGraphCanvasData = {{ graphData|tojson }};
         var pieChartData = {{ pieChartData|tojson }};
+		var dbStatsData = {{ graphData|tojson }};
+        //var pieChartData = {{ pieChartData|tojson }};
 	</script>
     
     <link rel="stylesheet" href="{{ url_for('static',filename='css/tab_selector.css') }}"/>
@@ -15,8 +17,16 @@
             <div class="tab-selector-item" id="tab-graph" onclick="statsSwitchTab('graph')">Graph</div>
             <div class="tab-selector-item" id="tab-table" onclick="statsSwitchTab('table')">Table</div>
         </div>
+        <link rel="stylesheet" href="{{ url_for('static',filename='css/am_charts.css') }}"/>
+        <script src="https://cdn.amcharts.com/lib/4/core.js"></script>
+        <script src="https://cdn.amcharts.com/lib/4/charts.js"></script>
+        <script src="https://cdn.amcharts.com/lib/4/themes/dark.js"></script>
+        <script src="https://cdn.amcharts.com/lib/4/themes/animated.js"></script>
+        <script src="{{ url_for('static',filename='script/am_pieChart.js') }}"></script>
+        <script src="{{ url_for('static',filename='script/am_xyChart.js') }}"></script>
         <div id="content-wrapper">
-            <canvas id="dbGraphCanvas" width="1800" height="300" ></canvas>
+            <!-- <canvas id="dbGraphCanvas" width="1800" height="300" ></canvas> -->
+            <div id="xyChart"></div>
             <canvas id="dbTableCanvas" width="300" height="3000" ></canvas>
         </div>
     </div>
@@ -30,10 +40,10 @@
     <!-- <script src="https://cdn.anychart.com/releases/8.10.0/js/anychart-base.min.js"></script> -->
     <!-- <script src="{{ url_for('static',filename='script/pieCharts.js') }}"></script> -->
 
-    <script src="{{ url_for('static',filename='script/graph.js') }}"></script>
+    <!-- <script src="{{ url_for('static',filename='script/graph.js') }}"></script> -->
     <script src="{{ url_for('static',filename='script/table_graph.js') }}"></script>
-    <script src="{{ url_for('static',filename='script/db_graph.js') }}"></script>
-    <script src="{{ url_for('static',filename='script/index.js') }}"></script>
+    <!-- <script src="{{ url_for('static',filename='script/db_graph.js') }}"></script> -->
+    <!-- <script src="{{ url_for('static',filename='script/index.js') }}"></script> -->
 
     <link rel="stylesheet" href="{{ url_for('static',filename='css/index-product-scroll.css') }}"/>
     <div class="products-scroller-container-title"> Cheapest products on this day (for product's history) </div>
@@ -166,7 +176,9 @@
 
 
 
-
+    <div id="pieChart-container">
+        <div id="pieChartdiv"></div>
+    </div>
 
 
 

@@ -1,6 +1,7 @@
 let graphHandle=document.getElementById("tab-graph");
 let tableHandle=document.getElementById("tab-table");
-let graph=document.getElementById("dbGraphCanvas");
+// let graph=document.getElementById("dbGraphCanvas");
+let graph=document.getElementById("xyChart");
 let table=document.getElementById("dbTableCanvas");
 function statsSwitchTab(target){
     if (target == "graph"){

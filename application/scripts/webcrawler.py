@@ -72,8 +72,10 @@ class BarboraCrawler:
         i = 0
         for item in self.database:
             self.database[i]["history"] = [{
-                'price':item['price'],
-                'comparative_unit_price':item['comparative_unit_price'],
+                # 'price':item['price'],
+                'price':round(item['price'], 2),
+                # 'comparative_unit_price':item['comparative_unit_price'],
+                'comparative_unit_price':round(item['comparative_unit_price'], 2),
                 'date':current_date,
                 'active':item['active'],
             }]

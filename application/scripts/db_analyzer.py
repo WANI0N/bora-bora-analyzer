@@ -177,6 +177,8 @@ class DbAnalyzer:
                 "total":len(self.dbIds),
                 "perCent":len(list)/len(self.dbIds)*100
             }))
+        ##sort by date ensures graph consistency
+        self.dbStatsDataFinal = sorted(self.dbStatsDataFinal, key = lambda i: i['date'])
         self.dbStatsData = {}
     
     def executeAndDiscard(self, updateCategories=False, localUpdate=False):

@@ -119,15 +119,12 @@ bins.forEach(bin => {
 })
 
 function deleteProfileSubmit(){
-    // window.location.replace("http://www.w3schools.com");
-    // window.location.replace("/products?id=1001009");
+    
     if (confirm("Are you sure you want to delete your profile?")) {
         window.location.replace("/profile?deleteProfile=execute");
     }
 }
 function logoutProfileSubmit(){
-    // window.location.replace("http://www.w3schools.com");
-    // window.location.replace("/products?id=1001009");
     window.location.replace("/profile?logoutProfile=execute");
 }
 
@@ -169,7 +166,7 @@ async function alertSubmit(){
         let localLocation, url, settings
         localLocation = window.location.hostname;
         // url = `http://${localLocation}:5000/api/submitAlerts/`
-        url = `http://${localLocation}/api/submitAlerts/`
+        url = `https://${localLocation}/api/submitAlerts/`
         settings = {
             method: 'POST',
             headers: {

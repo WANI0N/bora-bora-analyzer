@@ -12,7 +12,7 @@ plusSign.addEventListener('click', async () => {
     let location, url, settings
     location = window.location.hostname;
     // url = `http://${location}:5000/api/addAlert/`
-    url = `http://${location}/api/addAlert/`
+    url = `https://${location}/api/addAlert/`
     settings = {
         method: 'POST',
         headers: {

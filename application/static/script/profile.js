@@ -12,7 +12,7 @@ window.onload = function() {
                 let location, url, settings
                 location = window.location.hostname;
                 // url = `http://${location}:5000/api/validation-email/`
-                url = `http://${location}/api/validation-email/`
+                url = `https://${location}/api/validation-email/`
                 settings = {
                     method: 'POST',
                     headers: {

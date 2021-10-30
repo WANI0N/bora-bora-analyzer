@@ -11,7 +11,8 @@ window.onload = function() {
                 }
                 let location, url, settings
                 location = window.location.hostname;
-                url = `http://${location}:5000/api/validation-email/`
+                // url = `http://${location}:5000/api/validation-email/`
+                url = `http://${location}/api/validation-email/`
                 settings = {
                     method: 'POST',
                     headers: {
@@ -167,7 +168,8 @@ async function alertSubmit(){
     if (profileViewDataJson['tmp_token']){
         let localLocation, url, settings
         localLocation = window.location.hostname;
-        url = `http://${localLocation}:5000/api/submitAlerts/`
+        // url = `http://${localLocation}:5000/api/submitAlerts/`
+        url = `http://${localLocation}/api/submitAlerts/`
         settings = {
             method: 'POST',
             headers: {

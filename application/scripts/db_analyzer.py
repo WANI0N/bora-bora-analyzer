@@ -178,7 +178,7 @@ class DbAnalyzer:
                 "perCent":len(list)/len(self.dbIds)*100
             }))
         ##sort by date ensures graph consistency
-        self.dbStatsDataFinal = sorted(self.dbStatsDataFinal, key = lambda i: i['date'])
+        self.dbStatsDataFinal = sorted(self.dbStatsDataFinal, key = lambda i: i['date'],reverse=True)
         self.dbStatsData = {}
     
     def executeAndDiscard(self, updateCategories=False, localUpdate=False):
@@ -295,8 +295,8 @@ if __name__ == "__main__":
 
     analyzer = DbAnalyzer(mongo_db)
     # analyzer.getCategories()
-    analyzer.executeAndDiscard(True)
-    # analyzer.executeAndDiscard(True,True)    
+    # analyzer.executeAndDiscard(True)
+    analyzer.executeAndDiscard(True,True)    
     
     
     print('done')

@@ -1,0 +1,123 @@
+{% extends "layout.html" %}
+
+{% block content %}
+    <link rel="stylesheet" href="{{ url_for('static',filename='css/profile.css') }}"/>
+    <script>
+		var profileViewDataJson = {{ jsPayload|tojson }};
+	</script>
+
+    <div class="email-validation-container">
+        <div class="email-validation-text">
+            {% if profileViewData.emailValidated %}
+                ✅ Email <b>{{ profileViewData.email }}</b> has been successfully validated.
+            {% else %}
+                ❌ Email <b>{{ profileViewData.email }}</b> has not been validated yet.
+            {% endif %}
+        </div>
+        {% if not profileViewData.emailValidated %}
+            <div id="emailValidationButton" class="button-active">
+                Resend
+            </div>
+        {% endif %}
+    </div>
+    {% if not profileViewData.emailValidated %}
+        <p>
+            Please check your email address and click on validation link that has been sent to you.
+        </p>
+    {% else %}
+        <!-- User Alerts -->
+        {% if profileViewData.alerts|length > 0 %}
+        <div>
+            <h2 style="display: inline-block;">My Alerts</h2>
+            <div class="info-click">ⓘ
+                <span class="tooltipwindow"><div class="tooltip-title"></div>
+                    <div class="tooltip-small-title"><b>Status</b></div>
+                        <div class="tooltip-content">
+                            - 🟩: active (enabled checkbox ticked)<br>
+                            - 🟥: inactive (enabled checkbox unticked)
+                        </div>
+                    <div class="tooltip-small-title"><b>Bin 🗑</b></div>
+                        <div class="tooltip-content">
+                            - click to delete a row
+                        </div>
+                    <div class="tooltip-small-title"><b>Expand ᐯ</b></div>
+                        <div class="tooltip-content">
+                            - click to expand/collapse options
+                        </div>
+                    <div class="tooltip-small-title"><b>Alert Types</b></div>
+                        <div class="tooltip-content">
+                            - Availability: product becomes available<br>
+                            - Price Drop: product's price drops<br>
+                            - Price Raise: product's price raises<br>
+                            - Price Change: product's price drops or raises<br>
+                            - Unavailability: product becomes unavailable<br>
+                            NOTE: For price drop/raise/change specify percentage (0 = any, absolute value recorded)
+                        </div>
+                    <div class="tooltip-small-title"><b>Checkbox: deactive after execution</b></div>
+                        <div class="tooltip-content">
+                            - alert switches off automatically after included in notification email
+                        </div>
+                </span>
+            </div>
+        </div>
+        <div class="alerts-container">
+            {% set count = [] %}
+            {% for item in profileViewData.alerts %}
+                <div id="{{ count|length }}_alertLine" class="alert-line-container">
+                    <div class="image-wrapper line-item" >
+                        <a href="/analyze?id={{ item.productID }}">
+                            <img class="image" src="{{ item.image }}">
+                        </a>
+                    </div>
+                    <div id="{{ count|length }}_productID" productid="{{ item.productID }}" class="title-wrapper line-item">
+                        {{ item.title }}
+                    </div>
+                    <div display-status id="{{ count|length }}_status" class="status-wrapper line-item" >
+                        {% if item.active %}🟩{% else %}🟥{% endif %}
+                    </div>
+                    <div submit-bin id="{{ count|length }}_bin" class="bin-wrapper line-item">
+                        🗑
+                    </div>
+                    <div submit-expand id="{{ count|length }}_expand" class="expand-wrapper line-item">
+                        ᐯ
+                    </div>
+                </div>
+                
+                <div id="{{ count|length }}_settings" class="alert-line-expand-content-container hidden">
+                    <label for="type">Alert type:</label>
+                    <select submit-type name="type" id="{{ count|length }}_type">
+                        <option value="availability" {% if item.type == 'availability'%}selected="selected"{% endif %}>Availability</option>
+                        <option value="priceDrop" {% if item.type == 'priceDrop'%}selected="selected"{% endif %}>Price Drop</option>
+                        <option value="priceRaise" {% if item.type == 'priceRaise'%}selected="selected"{% endif %}>Price Raise</option>
+                        <option value="priceChange" {% if item.type == 'priceChange'%}selected="selected"{% endif %}>Price Change</option>
+                        <option value="unavailability" {% if item.type == 'unavailability'%}selected="selected"{% endif %}>Unavailability</option>
+                    </select>
+                    <input onload-perCent class="perCent {% if 'price' not in item.type %}hidden{% endif %}"  id="{{ count|length }}_perCent" type="number" min="0" max="1000" placeholder="%" name="perCent" value="{{ item.percentage }}">
+                    <div class="checkboxes">
+                        <label><input submit-activeCheck id="{{ count|length }}_activeCheck" type="checkbox" {% if item.active %}checked{% endif %} name="activeCheck" value="active"> <span>enabled</span></label>
+                        <label><input submit-deactiveAfterCheck id="{{ count|length }}_deactiveAfterCheck" type="checkbox" {% if item.deactivate_after_alert %}checked{% endif %} name="deactiveAfterCheck" value="active"> <span>deactive after execution</span></label>
+                    </div>
+                    
+                </div>
+                {% set __ = count.append(1) %} 
+            {% endfor %}
+                <button class="button btn-blue hidden" id="saveButtonId" onclick="alertSubmit()">Save Alert Settings</button>
+                <p>Products are scanned daily at 0:00 UTC (3-4AM LT time). Notification email is sent at this time.</p>
+                <p>Alerts are always compiled to a single email.</p>
+                <p>Please note that products' prices can change during day at various times and this website does not track them in real time, but by daily scan.</p>
+        </div>
+        {% else %}
+            <p >You have not set up any product email alerts. Go to <a href="/products">products</a> and search for/browse product you wish to set up an email alert for.</p>
+            <p style="display:inline-block">Then click on product to see its profile and click <i>plus button -</i> <div style="color:green; display:inline-block; background:green;">(➕)</div> </p>
+            <p> You will then see your product alert(s) on this page and be able to modify it. </p>
+            {% endif %}
+    {% endif %}
+    <button class="button btn-green" id="changePwdButtonId" onclick="window.location.href ='/updatePassword';">Change password</button>
+    <div>
+    <button class="button btn-yellow" id="logoutButtonId" onclick="logoutProfileSubmit()">Log Out</button>
+    <button class="button btn-red" id="deleteButtonId" onclick="deleteProfileSubmit()">Delete Profile</button>
+    </div>
+    
+
+    <script src="{{ url_for('static',filename='script/profile.js') }}"></script>
+{% endblock %}

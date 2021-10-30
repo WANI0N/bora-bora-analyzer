@@ -1,6 +1,9 @@
 from bson.json_util import dumps #, loads
 import json
 from datetime import datetime, timedelta, date
+from email_validator import validate_email, EmailNotValidError
+from application import AES
+import urllib, string, secrets
 try:
     from application import mongo_db
 except:
@@ -25,7 +28,6 @@ def recurr_insertDbDataToHighlights(data,dbDataHashMap):
         elif isinstance(content,list):
             for item in content:
                 if 'id' in item:
-                    print('inserting to product:' + item['id'])
                     item["image"] = dbDataHashMap[ item['id'] ]["image"]
                     item["title"] = dbDataHashMap[ item['id'] ]["title"]
     return data
@@ -108,8 +110,62 @@ def getDbAge(products):
             break
     delta = lastDay - firstDay
     return delta.days
-    
-        
+
+class URL_parser:
+    def encode(input):
+        if not isinstance(input,str):
+            if isinstance(input,int):
+                input = str(input)
+            elif isinstance(input,list) or isinstance(input,dict):
+                input = json.dumps(input)
+        salt = ''.join(secrets.choice(string.ascii_letters + string.digits + string.punctuation) for _ in range(3))
+        encr = AES.encrypt( salt + input )
+        return urllib.parse.quote_plus(encr)
+    def decode(input):
+        decode = urllib.parse.unquote(input)
+        decode = AES.decrypt(decode)
+        decode = decode[3::]
+        try:
+            return json.loads( decode )
+        except:
+            return decode
+
+
+def validateEmailFormat(email):
+    status = {"valid":True}
+    try:
+        # Validate.
+        valid = validate_email(email)
+        # Update with the normalized form.
+        status['email'] = valid.email
+    except EmailNotValidError as e:
+        # email is not valid, exception message is human-readable
+        status['valid'] = False
+        status['reason'] = str(e)
+    return status
+
+def validatePasswordFormat(passwd):
+    SpecialSym =['$','@','#','%','-','?',',','\\','.','!','^','&','\"','>','<','~',':',':']
+    status = {
+        "valid":False,
+        "reason":[]
+    }
+    if len(passwd) < 6:
+        status['reason'].append('Password length should be at least 6')
+    if len(passwd) > 50:
+        status['reason'].append('Password length should be not be greater than 50')
+    if not any(char.isdigit() for char in passwd):
+        status['reason'].append('Password should have at least one numeral')
+    if not any(char.isupper() for char in passwd):
+        status['reason'].append('Password should have at least one uppercase letter')
+    if not any(char.islower() for char in passwd):
+        status['reason'].append('Password should have at least one lowercase letter')
+    if not any(char in SpecialSym for char in passwd):
+        status['reason'].append(f"Password should have at least one of the symbols: {''.join(SpecialSym)}")
+    if not status['reason']:
+        status['valid'] = True
+    return status
+
 def getProductPagination(data):
     pagination = list()
     

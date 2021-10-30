@@ -1,0 +1,78 @@
+form {
+    border: 3px solid #f1f1f1;
+    width: 50%;
+    margin: auto;
+    color: rgb(170, 170, 170);
+    color: white;
+}
+
+input[type=text], input[type=password] {
+  width: 100%;
+  padding: 12px 20px;
+  margin: 8px 0;
+  display: inline-block;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+  background-color: transparent;
+  color: white;
+}
+.button-container{
+    width:100%;
+}
+button {
+    display: inline-block;
+    background-color: #04AA6D;
+    background-color: rgba(0, 46, 197, 0.76);
+    color:white;
+    font-weight: bold;
+    padding: 14px 20px;
+    /* margin: 8px 0; */
+    margin: auto;
+    border: none;
+    cursor: pointer;
+    width: 49%;
+    border-style: solid;
+    border-width: 1px;
+    border-color: #04aa6d5d;
+    
+    border-color: rgb(1, 59, 246);
+}
+
+button:hover {
+  opacity: 0.8;
+}
+
+.container {
+  padding: 16px;
+}
+
+span.pwd {
+  float: right;
+  padding-top: 16px;
+}
+.clr-yellow{
+  color:#ced10a;
+}
+.btn-yellow{
+  background-color: rgba(168, 197, 0, 0.76);
+  border-color: rgb(242, 246, 1);
+}
+.noform-button{
+  width: 25%;
+}
+@media (max-width: 500px) {
+    button {
+        width: 45%;
+        padding: 14px 1px;
+    }
+    span.pwd {
+     display: block;
+     float: none;
+  }
+  form {
+    width: 100%;
+  }
+  .noform-button{
+    width: 50%;
+  }
+}

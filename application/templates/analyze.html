@@ -5,9 +5,15 @@
     <link rel="stylesheet" href="{{ url_for('static',filename='css/table.css') }}"/>
     <!-- <canvas class="analyze-graph" id="testCanvas" width="1500" height="900"></canvas> -->
     <!--<img class="analyze-img" src="{{ graphData.img }}">-->
-    <div class="analyze-product-title">
-		{{ graphData.title }}
-    </div>
+    <div>
+		<div style="display:inline-block;" class="analyze-product-title">
+			{{ graphData.title }}
+		</div>
+		<div style="display:inline-block;">
+			<img id="plusSign" class="plus-sign-pic sign-active" src="{{ url_for('static',filename='images/text-plus-icon.png') }}">
+		</div>
+	</div>
+	<p id="plusSignPressMessage" style="display:none;color:white;">This product has been added to your watchlist! Click <a href="/profile">here</a> to see your alerts.</p>
 	<div class="analyze-content-container">
 		<div class="analyze-product-description">
 			<table class="analyze-product-description-table">
@@ -47,7 +53,7 @@
 			<tbody class="scrollContent">
 			{% for item in graphData.tableData %}
 				<tr>
-					<td {% if item.highlight %} class="highlight-{{ item.highlight }}" {% endif %}>{{ item.date }}</td>
+					<td {% if item.highlight %} class="highlight-{{ item.highlight }}" {% endif %}>{{ item.date }} </td>
 					<td {% if item.highlight %} class="highlight-{{ item.highlight }}" {% endif %}>{{ item.price }}</td>
 					<td {% if item.highlight %} class="highlight-{{ item.highlight }}" {% endif %}>{{ item.comparative_unit_price }}</td>
 					<td {% if item.highlight %} class="highlight-{{ item.highlight }}" {% endif %}>{{ item.active }}</td>
@@ -62,6 +68,7 @@
     
     <script>
 		var graphData = {{ graphData|tojson }};
+		var jsPayload = {{ jsPayload|tojson }};
 	</script>
 	<script src="{{ url_for('static',filename='script/analyze.js') }}"></script>
         

@@ -1,17 +1,24 @@
 from werkzeug.datastructures import Headers
-from application import app, mongo_db, api
-import os
-from flask import render_template, request,json,abort # Response, jsonify, redirect, flash, url_for, session
+from application import app, mongo_db, api, server_mail
+# import os
+# import random
+# import requests
+# from flask_mail import Message
+from flask import render_template, request,abort,make_response,redirect # Response,json , jsonify, flash, url_for, session
 from flask_restx import Resource
-from datetime import date #, datetime, timedelta
+from datetime import date, datetime, timedelta
 import math
 from application.scripts.functions import *
 from application.scripts.product_analyzer import ProductAnalyzer
+from application.scripts.user import User
 
+from application import server_mail
 
+# import bson
 
 # if os.environ.get("WERKZEUG_RUN_MAIN") == "true":
 if True:
+    userLoginStatus = False
     disable_onLoad = False
     navData = {
         "productCount":0,
@@ -19,6 +26,10 @@ if True:
     }
     productsPerPage = 24
     
+    from application import AES
+
+    users = User(mongo_db.user,server_mail,AES)
+
     if not disable_onLoad:
         ids = list()
         ids = mongo_db.products.find({},{"id":1}).distinct('id')
@@ -60,6 +71,7 @@ if True:
     # string = f.read()
     # f.close()
     # highlightsData = json.loads( string )
+
 
 ## API ##
 #################################
@@ -131,7 +143,61 @@ class GetDailyStats(Resource):
         if dateString in dbStatsApiData:
             return dbStatsApiData[dateString]
         abort(404,f"Day {dateString} not found")
+
+@api.route('/validation-email/',doc=False)
+class SendValidationEmail(Resource):
+    def post(self):
+        data = api.payload
+        if not data['token']:
+            abort(405,"Missing Token")
+        
+        user = users.validateOneTimeToken(data['token'],"sendEmailValidation")
+        if not user:
+            abort(401,"Unauthorized")
+        status = users.sendValidationEmail(user["email"])
+        
+        return {"emailSentStatus":status}
+
+@api.route('/addAlert/',doc=False) # adding product to alerts
+class AddAlert(Resource):
+    def post(self):
+        data = api.payload
+        user = users.validateOneTimeToken(data['token'],"addAlert")
+        if not user:
+            abort(401,"Unauthorized")
+        if 'innitial_state' not in data:
+            abort(405,"Invalid Request")
+        if data['product_id'] not in ids:
+            abort(405,"Invalid Request")
+
+        status = users.addAlert(user["id_cookie"],data['product_id'],data['innitial_state'])
+        callBackData = {"addAlertStatus":status}
+        if (len(data['product_id']) >= users.alertLimit):
+            callBackData["reason"] = "Alert Limit Reached"
+        return callBackData
+
+@api.route('/submitAlerts/',doc=False)
+class SubmitAlerts(Resource):
+    def post(self):
+        data = api.payload
+        user = users.validateOneTimeToken(data['token'],"submitAlerts")
+        if not user:
+            abort(401,"Unauthorized")
+        for item in data["alerts"]:
+            if item['productID'] not in ids:
+                abort(405,"Invalid request")
+        status = users.updateAlerts(user["id_cookie"],data["alerts"])
+        return {"submitAlertsStatus":status}
 #################################
+
+# Test this https redirect when stable version pushed
+# https://stackoverflow.com/questions/32237379/python-flask-redirect-to-https-from-http
+# @app.before_request
+# def before_request():
+#     if not request.is_secure:
+#         url = request.url.replace('http://', 'https://', 1)
+#         code = 301
+#         return redirect(url, code=code)
 
 ##ROUTES
 ##NAVIGATIONAL
@@ -170,9 +236,12 @@ def index():
     
 
     pieChartData = categoryCounts
+    cookie_id = request.cookies.get('userID')
+    userLoginStatus = users.validateUserCookie(cookie_id)
     activePage={
         "link":"index",
-        "label":"Home"
+        "label":"Home",
+        "login":userLoginStatus
     }
     
     return render_template("index.html",activePage=activePage,navData=navData,pieChartData=pieChartData,data=highlightsData,graphData=dbStats)
@@ -185,9 +254,12 @@ def products():
     cat = request.args.get('cat', None)
     
     q = request.args.get('q', None)
+    cookie_id = request.cookies.get('userID')
+    userLoginStatus = users.validateUserCookie(cookie_id)
     activePage={
         "link":"products",
-        "label":"Products"
+        "label":"Products",
+        "login":userLoginStatus
     }
     page = 1 if (page == None) else int(page)
     basePageUrl = '/products?'
@@ -225,33 +297,169 @@ def products():
     # return render_template("products.html",activePage=activePage,navData=navData, catArr = catArr,categories=categoryPathing, pagination=pagination, data=data, products=True)
     return render_template("products.html",activePage=activePage,navData=navData, catArr = catArr,categories=categoryPathing, pagination=pagination, data=data)
 
-@app.route("/about")
-def about():
+@app.route("/login",methods = ['GET', 'POST'])
+def login():
+    
+    rc = request.args.get('rc', None)
+    displayMessages = URL_parser.decode(rc) if rc else [] 
+        
+    ##login does not appear unless user is not logged in
+    cookie_id = request.cookies.get('userID')
+    userLoginStatus = users.validateUserCookie(cookie_id)
     activePage={
-        "link":"about",
-        "label":"About"
+        "link":"login",
+        "label":"Login",
+        "login":userLoginStatus
     }
-    pieChartData = categoryCounts
-    roundKeys = ['diff_perc','perCent']
-    for o in dbStats:
-        for k, v in o.items():
-            if k in roundKeys:
-                if not isinstance(v,str):
-                    o[k] = round(float(v),4)
-    return render_template("about.html",activePage=activePage,navData=navData,pieChartData=pieChartData,dbStats=dbStats)
+    return render_template("login.html",displayMessages=displayMessages,activePage=activePage,navData=navData)
+
+@app.route("/updatePassword",methods = ['GET', 'POST'])
+def updatePassword():
+    cookie_id = request.cookies.get('userID')
+    userLoginStatus = users.validateUserCookie(cookie_id)
+    errorMessages = []
+    if not userLoginStatus:
+        return redirect("/index")
+    
+    if request.method == "POST":
+        current_pwd = request.form.get('current_pwd')
+        new_pwd1 = request.form.get('new_pwd1')
+        new_pwd2 = request.form.get('new_pwd2')
+        if (new_pwd1 != new_pwd2):
+            errorMessages.append( "New password was not inserted identically." )
+        pwdStatus = validatePasswordFormat(new_pwd1)
+        if not pwdStatus['valid']:
+            errorMessages.extend(pwdStatus['reason'])
+        if not errorMessages:
+            status = users.updatePassword(cookie_id,current_pwd,new_pwd1)
+            if status['success'] == True:
+                rc = URL_parser.encode( ['Your password has been reset, please login with your new password.'] )
+                return redirect(f"/login?rc={rc}")
+            else:
+                errorMessages.append( status['reason'] )
+    
+    activePage={
+        "login":userLoginStatus
+    }
+    return render_template("updatePassword.html",errorMessages=errorMessages,activePage=activePage,navData=navData)
+    
+
+@app.route("/profile",methods = ['GET', 'POST'])
+def profile():
+    cookie_id = request.cookies.get('userID')
+    userLoginStatus = users.validateUserCookie(cookie_id)
+    if request.method == "GET": #normal click on profile
+        if not userLoginStatus:
+            return redirect("/login")
+        deleteUser = request.args.get('deleteProfile', None)
+        logOutUser = request.args.get('logoutProfile', None)
+        if (deleteUser == "execute"):
+            users.delete(cookie_id)
+            rc = URL_parser.encode( ['Your profile has been deleted.'] )
+            return redirect(f"/login?rc={rc}")
+        if (logOutUser == "execute"):
+            users.logOut(cookie_id) #remove cookie from server memory
+            resp = make_response(redirect("/index")) 
+            resp.set_cookie('userID', '', expires=0) #remove cookie from user's browser
+            return resp
+        
+    else: #POST coming from login form
+        email = request.form.get('uemail')
+        password = request.form.get('pwd')
+        login = request.form.get('login') #true/None
+        create = request.form.get('create') #true/None
+        remember = request.form.get('remember') #on/None
+        if login == 'true':
+            if users.validateUser(email,password):
+                resp = make_response(redirect("/index"))
+                cookieId = users.getUserCookie(email)
+                users.userCookieIds[cookieId] = True #set cookie on server memory
+                if remember == 'on':
+                    resp.set_cookie('userID', cookieId,expires=datetime.now()+timedelta(days=9999),secure=True,httponly=True)
+                else:
+                    resp.set_cookie('userID', cookieId,secure=True,httponly=True)                
+                return resp
+            else:
+                rc = URL_parser.encode( ['Email or password are incorrect.'] )
+                return redirect(f"/login?rc={rc}")
+        if create == 'true':
+            # form validation
+            formInvalidReason = []
+            emailStatus = validateEmailFormat(email)
+            if not emailStatus['valid']:
+                formInvalidReason.append(emailStatus['reason'])
+            pwdStatus = validatePasswordFormat(password)
+            if not pwdStatus['valid']:
+                formInvalidReason.extend(pwdStatus['reason'])
+            if formInvalidReason:
+                rc = URL_parser.encode( formInvalidReason )
+                return redirect(f"/login?rc={rc}")
+
+            status = users.create(email,password)
+            if status:
+                cookieId = users.getUserCookie(email)
+                resp = make_response(redirect("/profile"))
+                if remember == 'on':
+                    resp.set_cookie('userID', cookieId,expires=datetime.now()+timedelta(days=9999),secure=True,httponly=True)
+                else:
+                    resp.set_cookie('userID', cookieId,secure=True,httponly=True)                
+                users.sendValidationEmail(email)
+                return resp
+            else:
+                rc = URL_parser.encode( ['This account already exist.'] )
+                return redirect(f"/login?rc={rc}")
+        
+    activePage={
+        "link":"profile",
+        "label":"Profile",
+        "login":userLoginStatus
+    }
+    user = users.getUserByCookie(cookie_id)
+    profileViewData = {
+        # "emailValidated":False if "validation_code" in user else True,
+        "emailValidated":user["validation_status"],
+        "email":user["email"]
+    }
+    jsPayload = {}
+    if not profileViewData["emailValidated"]:
+        token = users.setOneTimeToken(cookie_id,"sendEmailValidation")
+        jsPayload = {"tmp_token":token}
+    else:
+        token = users.setOneTimeToken(cookie_id,"submitAlerts")
+        jsPayload = {"tmp_token":token}
+        
+    userAlerts = users.getAlerts(cookie_id)
+    #update user data
+    for alert in userAlerts:
+        product = mongo_db.products.find_one({"id":alert['productID']},{"image":1,"title":1})
+        alert["title"] = product["title"]
+        alert["image"] = product["image"]
+    
+    
+    profileViewData["alerts"] = userAlerts
+
+    return render_template("profile.html",jsPayload=jsPayload,profileViewData=profileViewData,activePage=activePage,navData=navData)
     
 ##SUBMITS
 @app.route('/analyze')
 def analyze_product():
+    cookie_id = request.cookies.get('userID')
+    userLoginStatus = users.validateUserCookie(cookie_id)
     activePage={
-        "link":"products",
-        "label":"Products"
+        # "link":"products",
+        # "label":"Products",
+        "login":userLoginStatus
     }
+        
     product_id = request.args.get('id', None)
     if not product_id:
         Message404 = "No product ID submitted."
         return render_template("404.html",activePage=activePage,navData=navData,Message404=Message404)
-    
+    jsPayload = {}
+    if userLoginStatus:
+        token = users.setOneTimeToken(cookie_id,"addAlert")
+        jsPayload = {"tmp_token":token,"product_id":product_id}
+
     data = mongo_db.products.find_one({"id":product_id})
     if not data:
         Message404 = f"Product ID {product_id} not found."
@@ -295,4 +503,89 @@ def analyze_product():
         }
     ]
     
-    return render_template("analyze.html",activePage=activePage,navData=navData, graphData=graphData)
+    return render_template("analyze.html",jsPayload=jsPayload,activePage=activePage,navData=navData, graphData=graphData)
+
+@app.route("/password-reset",methods = ['GET', 'POST'])
+def passwordReset():
+    formData = {}
+    formData['userMessages'] = []
+    if request.method == 'GET':
+        reset_code = request.args.get('reset_code', None)
+        if reset_code:
+            cookie_id = users.verifyPasswordResetSubmit(reset_code)
+            # cookie_id = True
+            if not cookie_id:
+                rc = URL_parser.encode( ['The password reset link is not valid. Click Forgot password to generate a new one.'] )
+                return redirect(f"/login?rc={rc}")
+            else:
+                formData['userMessages'] = ['Please insert new password']
+                token = users.setOneTimeToken(cookie_id,"submitNewPassword")
+                formData['formToken'] = token
+                formData['renderType'] = 'submitNewPassword'
+        else:
+            formData['renderType'] = 'submitSendEmail'
+    if request.method == 'POST':
+        submitSendEmail = request.form.get('submitSendEmail') #true/None
+        if submitSendEmail:
+            email = request.form.get('submitEmail')
+            emailStatus = validateEmailFormat(email)
+            formData['renderType'] = 'submitSendEmail'
+            if not emailStatus['valid']:
+                formData['userMessages'].append(emailStatus['reason'])
+            else:
+                if users.getUserCookie( emailStatus['email'] ):
+                    users.sendPasswordResetEmail(emailStatus['email'])
+                formData['userMessages'].append('Email Password reset has been sent, please check your email address.')
+        submitNewPassword = request.form.get('submitNewPassword') #true/None
+        if submitNewPassword:
+            new_pwd1 = request.form.get('new_pwd1')
+            new_pwd2 = request.form.get('new_pwd2')
+            if (new_pwd1 != new_pwd2):
+                formData['userMessages'].append( "New password was not inserted identically." )
+            pwdStatus = validatePasswordFormat(new_pwd1)
+            if not pwdStatus['valid']:
+                formData['userMessages'].extend(pwdStatus['reason'])
+            if formData['userMessages']:
+                formData['formToken'] = request.form.get('formToken')
+                formData['renderType'] = 'submitNewPassword'
+            if not formData['userMessages']:
+                if users.resetPassword(request.form.get('formToken'),new_pwd1):
+                    rc = URL_parser.encode( ['Your password has been reset, please login with your new password.'] )
+                    return redirect(f"/login?rc={rc}")
+                else:
+                    formData['renderType'] = 'submitSendEmail'
+                    formData['userMessages'].append( "Something went wrong, please submit a new reset password request." )
+
+    cookie_id = request.cookies.get('userID')
+    userLoginStatus = users.validateUserCookie(cookie_id)
+    activePage={
+        "login":userLoginStatus
+    }
+    return render_template('resetPassword.html',formData=formData,activePage=activePage,navData=navData)
+
+@app.route("/email-validation/<validation_code>")
+def emailValidation(validation_code):
+    status = users.validateUserEmail(validation_code)
+    cookie_id = request.cookies.get('userID')
+    userLoginStatus = users.validateUserCookie(cookie_id)
+    
+    if not status:
+        Message404 = "Unfortunately it has not been possible to validate email. If you haven't validated your email within 48h, your account is automatically deleted. Please create an account again."
+        activePage={
+            "login":userLoginStatus
+        }
+        return render_template("404.html",activePage=activePage,navData=navData,Message404=Message404)
+    return redirect("/profile")
+
+@app.route("/about")
+def about():
+    
+    cookie_id = request.cookies.get('userID')
+    userLoginStatus = users.validateUserCookie(cookie_id)
+    activePage={
+        "link":"about",
+        "label":"About",
+        "login":userLoginStatus
+    }
+    
+    return render_template("about.html",activePage=activePage,navData=navData)

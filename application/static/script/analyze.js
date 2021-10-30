@@ -1,3 +1,48 @@
+
+const plusSign = document.getElementById('plusSign')
+const plusSignPressMessage = document.getElementById('plusSignPressMessage')
+
+plusSignBlock = false
+plusSign.addEventListener('click', async () => {
+  if (plusSignBlock){
+    return
+  }  
+  
+  if (jsPayload['tmp_token']){
+    let location, url, settings
+    location = window.location.hostname;
+    url = `http://${location}:5000/api/addAlert/`
+    settings = {
+        method: 'POST',
+        headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            "token":jsPayload.tmp_token,
+            "product_id":jsPayload.product_id,
+            "innitial_state":(graphData.tableData[0].active == true) ? false : true
+        })
+    }
+    try{
+      const response = await fetch(url,settings)
+      const jsonResp = await response.json()
+      if (!jsonResp.addAlertStatus){
+        if (jsonResp.reason){
+          plusSignPressMessage.innerText = "Maximum number of alerts has been reached."  
+        }else{
+          plusSignPressMessage.innerText = "Something went wrong, please refresh the page and try again."  
+        }
+      }
+    }catch{
+      plusSignPressMessage.innerText = "Something went wrong, please refresh the page and try again."
+    }
+  }
+  plusSign.classList.remove('sign-active')
+  plusSignPressMessage.style.display = "block"
+  plusSignBlock = true
+})
+
 let canv=document.getElementById("testCanvas");
 myGraph = new Graph(canv,graphData['data'],graphData['title']);
 

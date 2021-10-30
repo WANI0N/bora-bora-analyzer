@@ -166,7 +166,7 @@ class Graph {
         adjustedPrice = this.mean-minPrice
         y = adjustedPrice*pixelPerAmount
         y = this.yAxisRange[1]-y
-        console.log(y)
+        // console.log(y)
         let w = this.xAxisRange[1]-this.xAxisRange[0]
         let h = this.yAxisRange[1]-this.yAxisRange[0]
         var gradient = this.ctx.createLinearGradient(0,y-(h/2),0,y+(h/2));
@@ -215,15 +215,24 @@ class Graph {
         }
         this.ctx.stroke();
         this.ctx.closePath();
+        // console.log(canv.width)
+        
         // this.ctx.strokeStyle = "rgb(2, 230, 82)";
         // this.ctx.strokeStyle = "yellow";
+        let radius, estimate, max
+        estimate = canv.width/(this.data.length*3.2)
+        max = canv.width/100
+        radius = estimate > max ? max : estimate
         for(i = 0; i < pathing.length; i++){
             this.ctx.fillStyle = this.data[i]['active'] ? "rgba(31, 195, 245, 0.87)" : "rgba(245, 31, 138, 0.87)"
             this.ctx.strokeStyle = this.data[i]['active'] ? "rgba(31, 195, 245, 0.87)" : "rgba(245, 31, 138, 0.87)"
             // this.ctx.fillStyle = this.data[i]['active'] ? "rgba(31, 195, 245, 0.555)" : "rgba(245, 31, 138, 0.555)"
             // this.ctx.strokeStyle = this.data[i]['active'] ? "rgba(31, 195, 245, 0.555)" : "rgba(245, 31, 138, 0.555)"
             this.ctx.beginPath();
-            this.ctx.arc(pathing[i]['x'],pathing[i]['y'],canv.width/250,0, 2 * Math.PI)
+            
+            // this.ctx.arc(pathing[i]['x'],pathing[i]['y'],canv.width/250,0, 2 * Math.PI)
+            this.ctx.arc(pathing[i]['x'],pathing[i]['y'],radius,0, 2 * Math.PI)
+            
             this.ctx.fill();
             this.ctx.stroke();
             

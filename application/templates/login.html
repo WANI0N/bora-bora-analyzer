@@ -1,0 +1,42 @@
+{% extends "layout.html" %}
+
+{% block content %}
+    <link rel="stylesheet" href="{{ url_for('static',filename='css/form.css') }}"/>
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/js-sha256/0.9.0/sha256.min.js" integrity="sha512-szJ5FSo9hEmXXe7b5AUVtn/WnL8a5VofnFeYC2i2z03uS2LhAch7ewNLbl5flsEmTTimMN0enBZg/3sQ+YOSzQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script> -->
+    <!-- <form id="loginForm" action="{{ url_for('profile') }}" method="POST" onsubmit="javascript: return SubmitForm();" /> -->
+    {% if displayMessages %}
+        {% for msg in displayMessages %}
+            <p class="clr-yellow">{{ msg }}</p>
+        {% endfor %}
+    {% endif %}
+    
+    
+    <form id="loginForm" action="{{ url_for('profile') }}" method="POST" />
+        <div class="container">
+            <div >
+                <label  for="uemail"><b>Email</b></label>
+                <input id="uemail"  type="text" placeholder="Enter Email" name="uemail" required>
+            </div>
+            <div >
+                <label  for="pwd"><b>Password</b></label>
+                <input id="password"  type="password" placeholder="Enter Password" name="pwd" required>
+            </div>
+            <div class="button-container">
+                <button type="submit" name="login" value="true">Login</button>
+                <button type="submit" name="create" value="true">Create Account</button>
+            </div>
+            
+            <label>
+              <input type="checkbox" checked="checked" name="remember"> Remember me
+            </label>
+            <p>
+                Ticking "Remember me" will save 1 cookie for user identifier. Your password is salted and hashed on server side before storing.
+            </p>
+        </div>
+    </form>
+    <a href="/password-reset">
+        <button class="noform-button btn-yellow" style="margin-top:8px">Forgot Password</button>
+    </a>
+    <!-- <script src="{{ url_for('static',filename='script/login.js') }}"></script> -->
+    
+{% endblock %}

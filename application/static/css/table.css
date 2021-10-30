@@ -8,6 +8,17 @@
 	color:rgba(255, 255, 255, 0.685);
 	font-size: 2vw;
 }
+.plus-sign-pic{
+	position: relative;
+	top:5px;
+	max-width:100%;
+	height:40px;
+	opacity: 0.5;
+}
+.sign-active{
+	opacity:1;
+	cursor: pointer;
+}
 .analyze-content-container{
 	position:relative;
 	/* background-color: rgb(66, 85, 85); */

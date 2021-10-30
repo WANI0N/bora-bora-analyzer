@@ -122,12 +122,13 @@ class DB_Graph2{
                 
                 this.ctx.textAlign = "left";
                 this.ctx.font = "bold " + Math.floor(this.canv.width/23 ).toString() + "px Arial";
-                this.ctx.fillText(rowData.perCent + '%',x+w/1.5,y+h/1.1);
+                // rowData.perCent = Math.round(rowData.perCent,9)
+                this.ctx.fillText(rowData.perCent.toFixed(9) + '%',x+w/1.5,y+h/1.1);
 
                 //difference
                 this.ctx.textAlign = "left";
                 this.ctx.font = "bold " + Math.floor(this.canv.width/13.3 ).toString() + "px Arial";
-                this.ctx.fillText(pricePrefix + rowData.diff_perc + '%',x+w/1.5,y+h/2.9);
+                this.ctx.fillText(pricePrefix + rowData.diff_perc.toFixed(3) + '%',x+w/1.5,y+h/2.9);
                 y += h+1
             }
         })

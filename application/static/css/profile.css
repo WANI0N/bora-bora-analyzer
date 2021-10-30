@@ -1,0 +1,232 @@
+body{
+    color:white
+}
+.email-validation-container{
+    font-size: 25px;
+    color: white;
+    width: 50%;
+    /* color: rgba(255, 255, 255, 0.609); */
+    margin: auto;
+    /* border-style:solid;
+    border-color: pink;
+    border-width: 1px; */
+    /* background-color: rgb(22, 49, 112); */
+    padding: 4px 8px;
+}
+.email-validation-text{
+    display: inline-block;
+}
+/* p{
+    color:white;
+} */
+#emailValidationButton{
+    margin-left: 20px;
+    display: inline-block;
+     
+    padding: 4px 8px;
+    border-style:solid;
+    border-radius: 0.4em;
+    border-color: black;
+    border-width: 1px;
+    box-shadow: 0.2vw 0.2vw 0.5vw black;
+}
+.button-active{
+    background-color: #04AA6D;
+}
+.button-inactive{
+    background-color: #919b97;
+}
+#emailValidationButton.button-active:hover{
+    cursor: pointer;
+    opacity: 0.8;
+}
+
+.alerts-container{
+    width: 90%;
+    margin: auto;
+}
+.alert-line-container{
+    display: flex;
+    height: 50px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+.image-wrapper{
+    width: 10%;
+}
+.image{
+    max-width:100%;
+    max-height:100%;
+}
+.title-wrapper{
+    width: 50%;
+}
+.status-wrapper{
+    width: 5%;
+}
+.bin-wrapper{
+    width: 5%;
+}
+.bin-wrapper:hover{
+    cursor: pointer;
+    opacity: 0.8;
+}
+.expand-wrapper{
+    width: 5%;
+}
+.expand-wrapper:hover{
+    cursor: pointer;
+    opacity: 0.8;
+}
+select{
+    margin-left: 3px;
+    height: 50%;
+    background-color: transparent;
+    color:white;
+}
+select option {
+    background: black;
+    color:white;
+}
+.perCent{
+    height: 50%;
+    width: 40px;
+    background-color: transparent;
+    color:white;
+}
+.checkboxes{
+    cursor: pointer;
+}
+.checkboxes label {
+    display: inline-block;
+    padding-right: 10px;
+    white-space: nowrap;
+    cursor: pointer;
+}
+.checkboxes input {
+    vertical-align: middle;
+    cursor: pointer;
+}
+.checkboxes label span {
+    vertical-align: middle;
+}
+
+.alert-line-expand-content-container{
+    border-style: solid;
+    border-width: 1px;
+    border-color: rgb(192, 255, 208);
+    display: flex;
+    font-size: large;
+    /* height: 50px; */
+    justify-content: center;
+    flex-wrap: wrap;
+    /* margin: auto; */
+}
+
+.line-item{
+    display: inline-block;
+    max-width: inherit;
+    max-height: inherit;
+    border-style: solid;
+    border-width: 1px;
+    border-color: pink;
+    font-size: 150%;
+    height: 100%;
+}
+
+.button {
+    margin-top:10px;
+    display: inline-block;
+    color:white;
+    font-weight: bold;
+    padding: 14px 20px;
+    margin-left: auto;
+    margin-right: auto;
+    border: none;
+    cursor: pointer;
+    border-style: solid;
+    border-width: 1px;
+}
+.btn-green{
+    background-color: rgba(0, 197, 33, 0.76);
+    border-color: rgb(1, 246, 1);
+}
+.btn-yellow{
+    background-color: rgba(168, 197, 0, 0.76);
+    border-color: rgb(242, 246, 1);
+}
+.btn-blue{
+    background-color: rgba(0, 46, 197, 0.76);
+    border-color: rgb(1, 59, 246);
+}
+.btn-red{
+    background-color: rgba(197, 0, 0, 0.76);
+    border-color: rgb(246, 1, 21);
+}
+.button:hover {
+    opacity: 0.8;
+}
+.hidden{
+    display: none;
+}
+.info-click .tooltipwindow{
+    visibility: hidden;
+    background-color: black;
+    opacity: 0.9;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px 0;
+
+    /* Position the tooltip */
+    position: absolute;
+    z-index: 1;
+}
+.info-click:hover .tooltipwindow {
+    visibility: visible;
+}
+.tooltip-title{
+    font-size: 30px;
+}
+.tooltip-small-title{
+    text-align: left;
+    font-size: 20px;
+}
+.tooltip-content{
+    position: relative;
+    left: 10px;
+    text-align: left;
+    font-size: 18px;
+}
+.info-click{
+    margin-left:5px;
+    font-size:23px;
+    display: inline-block;
+}
+
+@media (max-width: 500px) {
+    .email-validation-container{
+        width: 100%;
+    }
+    .line-item{
+        font-size: 100%;
+    }
+    .alerts-container{
+        width: 100%;
+    }
+    .image-wrapper{
+        width: 10%;
+    }
+    .title-wrapper{
+        width: 60%;
+    }
+    .status-wrapper{
+        width: 5%;
+    }
+    .bin-wrapper{
+        width: 10%;
+    }
+    .expand-wrapper{
+        width: 10%;
+    }
+}

@@ -5,3 +5,6 @@ __pycache__/
 *.py[cod]
 venv/
 temp/
+test.py
+imgTmp
+test.js

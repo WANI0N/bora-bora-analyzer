@@ -82,7 +82,7 @@ class User:
         
         text = "Hello!\nPassword reset has been requested for your borabora-analyzer account. To set a new password, please click on this link:\n"
         text += link
-        f = open('application\static\html\email_resetPassword.html','r')
+        f = open('application/static/html/email_resetPassword.html','r')
         html = f.read().replace("BDHSUIAYCDISOIUHDAIUBDAIOSG", link)
         f.close()
 
@@ -258,7 +258,7 @@ class User:
         
         text = "Hello!\nPlease click on the following link to validated your email with borabora-analyzer:\n"
         text += link
-        f = open('application\static\html\email_validation.html','r')
+        f = open('application/static/html/email_validation.html','r')
         html = f.read().replace("BDHSUIAYCDISOIUHDAIUBDAIOSG", link)
         f.close()
 

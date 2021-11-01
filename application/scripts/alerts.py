@@ -170,7 +170,10 @@ class SendAlerts:
         message.attach(part1)
         message.attach(part2)
 
-        self.smtpServer.sendmail(self.sender_email,receiver_email, message.as_string())
+        b = message.as_string().encode('utf-8')
+        self.smtpServer.sendmail(self.sender_email,receiver_email, b)
+        # self.smtpServer.sendmail(self.sender_email,receiver_email, message.as_string())
+        self.smtpServer.quit()
 
 
         

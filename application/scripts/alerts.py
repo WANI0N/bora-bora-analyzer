@@ -164,7 +164,7 @@ class SendAlerts:
 
         # part1 = MIMEText(text, "plain")
         # part2 = MIMEText(html, "html")
-        part1 = MIMEText(text, "plain")
+        part1 = MIMEText(text.encode('utf-8'), "plain",'UTF-8')
         part2 = MIMEText(html.encode('utf-8'), "html",'UTF-8')
 
         message.attach(part1)

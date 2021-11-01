@@ -27,6 +27,7 @@
       {% else %}
         <a href="{{ url_for('index') }}" >🤖Home</a>
       {% endif %}
+      
       <!-- <a>🤖{{ activePage.label }}</a> -->
       
       <div id="myLinks">
@@ -40,8 +41,14 @@
         {% if activePage.label != 'About' %}
           <a href="{{ url_for('about') }}">About</a>
         {% endif %}
-        {% if activePage.label != 'profile' %}
-          <a href="{{ url_for('profile') }}">Profile</a>
+        {% if activePage.login == True %}
+          {% if activePage.label != 'Profile' %}
+            <a href="{{ url_for('profile') }}">Profile</a>
+          {% endif %}
+        {% else %}
+          {% if activePage.label != 'Login' %}
+            <a href="{{ url_for('login') }}">Login</a>
+          {% endif %}
         {% endif %}
       </div>
       <a href="javascript:void(0);" class="icon" onclick="expandMenu('myLinks')">

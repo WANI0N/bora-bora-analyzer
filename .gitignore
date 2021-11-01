@@ -1,6 +1,7 @@
 .env
 .trash
 .vscode
+.VSCodeCounter
 __pycache__/
 *.py[cod]
 venv/

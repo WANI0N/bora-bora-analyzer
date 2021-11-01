@@ -1,6 +1,6 @@
 from werkzeug.datastructures import Headers
 from application import app, mongo_db, api, server_mail
-# import os
+import os
 # import random
 # import requests
 # from flask_mail import Message
@@ -29,6 +29,8 @@ if True:
     from application import AES
 
     users = User(mongo_db.user,server_mail,AES)
+
+    urlParser = URL_parser(AES)
 
     if not disable_onLoad:
         ids = list()
@@ -190,8 +192,7 @@ class SubmitAlerts(Resource):
         return {"submitAlertsStatus":status}
 #################################
 
-# Test this https redirect when stable version pushed
-# https://stackoverflow.com/questions/32237379/python-flask-redirect-to-https-from-http
+# Force https, does not work for local host
 @app.before_request
 def before_request():
     if not request.is_secure:
@@ -226,13 +227,6 @@ def index():
                     product["trimedTitle"] += "..."
                 product["link"] = getProductUrlLink(product["title"])
                 product["analyzeLink"] = "/analyze?id=" + product['id']
-    
-    # roundKeys = ['diff_perc','perCent']
-    # for o in dbStats:
-    #     for k, v in o.items():
-    #         if k in roundKeys:
-    #             if not isinstance(v,str):
-    #                 o[k] = round(float(v),4)
     
 
     pieChartData = categoryCounts
@@ -301,7 +295,7 @@ def products():
 def login():
     
     rc = request.args.get('rc', None)
-    displayMessages = URL_parser.decode(rc) if rc else [] 
+    displayMessages = urlParser.decode(rc) if rc else [] 
         
     ##login does not appear unless user is not logged in
     cookie_id = request.cookies.get('userID')
@@ -333,7 +327,7 @@ def updatePassword():
         if not errorMessages:
             status = users.updatePassword(cookie_id,current_pwd,new_pwd1)
             if status['success'] == True:
-                rc = URL_parser.encode( ['Your password has been reset, please login with your new password.'] )
+                rc = urlParser.encode( ['Your password has been reset, please login with your new password.'] )
                 return redirect(f"/login?rc={rc}")
             else:
                 errorMessages.append( status['reason'] )
@@ -355,7 +349,7 @@ def profile():
         logOutUser = request.args.get('logoutProfile', None)
         if (deleteUser == "execute"):
             users.delete(cookie_id)
-            rc = URL_parser.encode( ['Your profile has been deleted.'] )
+            rc = urlParser.encode( ['Your profile has been deleted.'] )
             return redirect(f"/login?rc={rc}")
         if (logOutUser == "execute"):
             users.logOut(cookie_id) #remove cookie from server memory
@@ -380,7 +374,7 @@ def profile():
                     resp.set_cookie('userID', cookieId,secure=True,httponly=True)                
                 return resp
             else:
-                rc = URL_parser.encode( ['Email or password are incorrect.'] )
+                rc = urlParser.encode( ['Email or password are incorrect.'] )
                 return redirect(f"/login?rc={rc}")
         if create == 'true':
             # form validation
@@ -392,7 +386,7 @@ def profile():
             if not pwdStatus['valid']:
                 formInvalidReason.extend(pwdStatus['reason'])
             if formInvalidReason:
-                rc = URL_parser.encode( formInvalidReason )
+                rc = urlParser.encode( formInvalidReason )
                 return redirect(f"/login?rc={rc}")
 
             status = users.create(email,password)
@@ -406,7 +400,7 @@ def profile():
                 users.sendValidationEmail(email)
                 return resp
             else:
-                rc = URL_parser.encode( ['This account already exist.'] )
+                rc = urlParser.encode( ['This account already exist.'] )
                 return redirect(f"/login?rc={rc}")
         
     activePage={
@@ -515,7 +509,7 @@ def passwordReset():
             cookie_id = users.verifyPasswordResetSubmit(reset_code)
             # cookie_id = True
             if not cookie_id:
-                rc = URL_parser.encode( ['The password reset link is not valid. Click Forgot password to generate a new one.'] )
+                rc = urlParser.encode( ['The password reset link is not valid. Click Forgot password to generate a new one.'] )
                 return redirect(f"/login?rc={rc}")
             else:
                 formData['userMessages'] = ['Please insert new password']
@@ -550,7 +544,7 @@ def passwordReset():
                 formData['renderType'] = 'submitNewPassword'
             if not formData['userMessages']:
                 if users.resetPassword(request.form.get('formToken'),new_pwd1):
-                    rc = URL_parser.encode( ['Your password has been reset, please login with your new password.'] )
+                    rc = urlParser.encode( ['Your password has been reset, please login with your new password.'] )
                     return redirect(f"/login?rc={rc}")
                 else:
                     formData['renderType'] = 'submitSendEmail'

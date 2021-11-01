@@ -2,7 +2,7 @@ from bson.json_util import dumps #, loads
 import json
 from datetime import datetime, timedelta, date
 from email_validator import validate_email, EmailNotValidError
-from application import AES
+# from application import AES
 import urllib, string, secrets
 try:
     from application import mongo_db
@@ -112,18 +112,20 @@ def getDbAge(products):
     return delta.days
 
 class URL_parser:
-    def encode(input):
+    def __init__(self,AES):
+        self.AES = AES
+    def encode(self,input):
         if not isinstance(input,str):
             if isinstance(input,int):
                 input = str(input)
             elif isinstance(input,list) or isinstance(input,dict):
                 input = json.dumps(input)
         salt = ''.join(secrets.choice(string.ascii_letters + string.digits + string.punctuation) for _ in range(3))
-        encr = AES.encrypt( salt + input )
+        encr = self.AES.encrypt( salt + input )
         return urllib.parse.quote_plus(encr)
-    def decode(input):
+    def decode(self,input):
         decode = urllib.parse.unquote(input)
-        decode = AES.decrypt(decode)
+        decode = self.AES.decrypt(decode)
         decode = decode[3::]
         try:
             return json.loads( decode )

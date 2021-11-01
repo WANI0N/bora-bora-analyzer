@@ -63,6 +63,8 @@ nav a {
 }
 .nav-item {
     /* font-size: 30px; */
+    border:1px solid rgba(192, 250, 255, 0.582);
+    border-radius: 2px;
     top:0;
     position: relative;
     font-size: 2vw;

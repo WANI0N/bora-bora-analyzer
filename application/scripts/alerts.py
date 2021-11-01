@@ -161,8 +161,10 @@ class SendAlerts:
         # msgImage.add_header('Content-ID', '<logoSmall>')
         # message.attach(msgImage)
 
+        # part1 = MIMEText(text, "plain")
+        # part2 = MIMEText(html, "html")
         part1 = MIMEText(text, "plain")
-        part2 = MIMEText(html, "html")
+        part2 = MIMEText(html.encode('utf-8'), "html",'UTF-8')
 
         message.attach(part1)
         message.attach(part2)

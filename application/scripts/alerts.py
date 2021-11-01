@@ -122,6 +122,7 @@ class SendAlerts:
         message["Subject"] = "Product Alerts [borabora-analyzer]"
         message["From"] = self.sender_email
         message["To"] = receiver_email
+        message.set_charset('utf8')
 
         text = "Unfortunatelly this email is only available in html or json:\n"
         jsonString = json.dumps( data,indent='\t' )
@@ -149,11 +150,11 @@ class SendAlerts:
 
         html = html.replace( 'BLOCK_CONTENT','\n'.join(insertHtml) )
 
-        if os.path.exists( 'finalEmail.html' ):
-            os.remove( 'finalEmail.html' )
-        f = open('finalEmail.html','a',encoding='utf-8')
-        f.write( html )
-        f.close()
+        # if os.path.exists( 'finalEmail.html' ):
+        #     os.remove( 'finalEmail.html' )
+        # f = open('finalEmail.html','a',encoding='utf-8')
+        # f.write( html )
+        # f.close()
         
         # fp = open('application/static/html/img/logo-small.png', 'rb')
         # msgImage = MIMEImage(fp.read())

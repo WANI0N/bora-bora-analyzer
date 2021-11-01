@@ -571,6 +571,48 @@ def emailValidation(validation_code):
         return render_template("404.html",activePage=activePage,navData=navData,Message404=Message404)
     return redirect("/profile")
 
+@app.route("/unsubscribe",methods = ['GET', 'POST'])
+def unsubscribe():
+    formData = {}
+    formData["userMessages"] = []
+    if request.method == 'GET':
+        token = request.args.get('token', None)
+        Message404 = ""
+        if not token:
+            Message404 = "Missing token"
+        elif not users.checkUnsubToken(token):
+            Message404 = "Invalid token"
+        if Message404:
+            cookie_id = request.cookies.get('userID')
+            activePage={"login":users.validateUserCookie(cookie_id)}
+            return render_template("404.html",activePage=activePage,navData=navData,Message404=Message404)
+        formData['formToken'] = token
+    else: #POST
+        unsubToken = request.form.get('formToken')
+        unsubscribe = request.form.get('unsubscribe') #true/None
+        
+        deactivate = request.form.get('deactivate') #on/None
+        remove = request.form.get('remove') #on/None
+        deactivate = True if (deactivate == 'on') else False
+        remove = True if (remove == 'on') else False
+        if not unsubToken:
+            formData["userMessages"].append('Invalid token.')
+        if not deactivate and not remove:
+            formData["userMessages"].append('No action taken.')
+        if not formData["userMessages"]:
+            if unsubToken:
+                if unsubscribe:
+                    status = users.unsubscribeUser(unsubToken,deactivate,remove)
+            if status:
+                if remove:
+                    formData["userMessages"].append('All alerts have been deleted.')
+                elif deactivate:
+                    formData["userMessages"].append('All alerts have been deactivated.')
+            else:
+                formData["userMessages"].append('Invalid token.')
+    
+    return render_template("unsubscribe.html",formData=formData)
+
 @app.route("/about")
 def about():
     

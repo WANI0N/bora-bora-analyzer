@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static',filename='css/main.css') }}"/>
+    <link rel="stylesheet" href="{{ url_for('static',filename='css/form.css') }}"/>
+    <title>BB Analyzer</title>
+    <link rel='shortcut icon' type='image/x-icon' href="{{ url_for('static',filename='images/favicon.ico') }}" />
+</head>
+<body>
+    {% if formData.userMessages %}
+        {% for msg in formData.userMessages %}
+            <p style="text-align:center;color:white;"> {{msg}} </p>
+        {% endfor %}
+    {% else %}
+    <form action="{{ url_for('unsubscribe') }}" method="POST" />
+        <div class="container" style="text-align: center;">
+            <label style="display:block;">
+              <input type="checkbox" checked name="deactivate">Deactivate all my product alerts
+            </label>
+            <label style="display:block;margin-top:20px;">
+              <input type="checkbox" name="remove">Remove all my product alerts
+            </label>
+            <div class="button-container" style="margin-top:20px;">
+                <button type="submit" name="unsubscribe" value="true">Unsubscribe</button>
+            </div>
+
+            <p>
+                You can re-enable product alerts in your profile page if you change your mind.
+            </p>
+
+            <div style="display:none;">
+                <input id="formToken"  type="password" name="formToken" value="{{ formData.formToken }}" required>
+            </div>
+        </div>
+    </form>
+    {% endif %}
+</body>
+</html>

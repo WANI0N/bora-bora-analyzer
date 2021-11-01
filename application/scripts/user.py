@@ -38,6 +38,7 @@ class User:
             "password":self.hash( pwd + salt_pwd ),
             "salt_pwd":salt_pwd,
             "id_cookie":self.hash( self.getSalt(20) ),
+            "unsub_token":self.hash( self.getSalt(20) ),
             "validation_code":self.hash( self.getSalt(20) ),
             "validation_end":validation_end,
             "validation_status":False
@@ -110,6 +111,40 @@ class User:
             }
         })
         return user["id_cookie"]
+
+    def checkUnsubToken(self,unsubToken):
+        user = self.users.find_one({"unsub_token":unsubToken},{"id_cookie":1})
+        if not user:
+            return False
+        return True
+
+    def unsubscribeUser(self,unsubToken,deactivate,remove):
+        if remove:
+            user = self.users.find_one({"unsub_token":unsubToken},{"id_cookie":1})
+            if not user:
+                return False
+            self.users.update_one({"id_cookie":user["id_cookie"]},
+            {
+                "$unset":{
+                    "alerts":""
+                }
+            })
+            return True
+        if deactivate:
+            user = self.users.find_one({"unsub_token":unsubToken},{"id_cookie":1,"alerts":1})
+            if not user:
+                return False
+            for alert in user["alerts"]:
+                alert['active'] = False
+            self.users.update_one({"id_cookie":user["id_cookie"]},
+            {
+                "$set":{
+                    "alerts":user["alerts"]
+                }
+            })
+            return True
+        return False
+        
 
     def setOneTimeToken(self,cookie_id,tokenType,**kwargs):
         user = self.users.find_one({"id_cookie":cookie_id},{"id_cookie":1})

@@ -30,7 +30,7 @@ class SendAlerts:
         self.getUserAlerts()
         # print( self.notificationData )
         for recipient in self.notificationData:
-            self.sendAlertsToUser(recipient['email'],recipient['alerts'])
+            self.sendAlertsToUser(recipient['email'],recipient['unsubToken'],recipient['alerts'])
 
     def login_smtpServer(self):
         context = ssl.create_default_context()
@@ -40,7 +40,7 @@ class SendAlerts:
 
     def getUserAlerts(self):
         self.notificationData = []
-        for user in self.db.user.find({},{"alerts":1,"email":1,"id_cookie":1}):
+        for user in self.db.user.find({},{"alerts":1,"email":1,"id_cookie":1,"unsub_token":1}):
             userAlertList = []
             i = 0
             for alert in user['alerts']:
@@ -66,6 +66,7 @@ class SendAlerts:
             if userAlertList:
                 self.notificationData.append({
                     "email":user['email'],
+                    "unsubToken":user["unsub_token"],
                     "alerts":userAlertList
                 })
 
@@ -116,7 +117,7 @@ class SendAlerts:
 
         
 
-    def sendAlertsToUser(self,receiver_email,data):
+    def sendAlertsToUser(self,receiver_email,unsubToken,data):
         
         message = MIMEMultipart("alternative")
         message["Subject"] = "Product Alerts [borabora-analyzer]"
@@ -149,7 +150,7 @@ class SendAlerts:
             insertHtml.append( content )
 
         html = html.replace( 'BLOCK_CONTENT','\n'.join(insertHtml) )
-
+        html = html.replace("REPLACE_UNSUBTOKEN", unsubToken)
         # if os.path.exists( 'finalEmail.html' ):
         #     os.remove( 'finalEmail.html' )
         # f = open('finalEmail.html','a',encoding='utf-8')

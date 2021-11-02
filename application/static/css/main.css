@@ -294,6 +294,21 @@ img.product-img{
     font-size: 1.042vw;
 }
 
+footer {
+    text-align: center;
+    /* padding: 1px; */
+    color: rgba(255, 255, 255, 0.609);
+    display: flex; 
+    margin-top:8px;
+    border-top: 1px solid rgba(255, 255, 255, 0.609);
+    align-items: center; 
+    width: 100%;
+}
+footer > p{
+    width: 100%;
+}
+
+
 @media (max-width: 500px) {
     .product-grid-container {
         grid-template-columns: repeat(1, auto);

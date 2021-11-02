@@ -1,9 +1,11 @@
 body{
-    color:white
+    color:white;
+    color: rgba(255, 255, 255, 0.609);
 }
 .email-validation-container{
     font-size: 25px;
     color: white;
+    color: rgba(255, 255, 255, 0.609);
     width: 50%;
     /* color: rgba(255, 255, 255, 0.609); */
     margin: auto;
@@ -83,16 +85,19 @@ select{
     height: 50%;
     background-color: transparent;
     color:white;
+    color: rgba(255, 255, 255, 0.609);
 }
 select option {
     background: black;
     color:white;
+    color: rgba(255, 255, 255, 0.609);
 }
 .perCent{
     height: 50%;
     width: 40px;
     background-color: transparent;
     color:white;
+    color: rgba(255, 255, 255, 0.609);
 }
 .checkboxes{
     cursor: pointer;
@@ -115,6 +120,7 @@ select option {
     border-style: solid;
     border-width: 1px;
     border-color: rgb(192, 255, 208);
+    border-color: rgba(255, 255, 255, 0.609);
     display: flex;
     font-size: large;
     /* height: 50px; */
@@ -130,6 +136,7 @@ select option {
     border-style: solid;
     border-width: 1px;
     border-color: pink;
+    border-color: rgba(255, 255, 255, 0.609);
     font-size: 150%;
     height: 100%;
 }

@@ -1,9 +1,10 @@
 form {
-    border: 3px solid #f1f1f1;
+    border: 3px solid rgba(255, 255, 255, 0.609);
     width: 50%;
     margin: auto;
     color: rgb(170, 170, 170);
     color: white;
+    color: rgba(255, 255, 255, 0.609);;
 }
 
 input[type=text], input[type=password] {
@@ -14,7 +15,7 @@ input[type=text], input[type=password] {
   border: 1px solid #ccc;
   box-sizing: border-box;
   background-color: transparent;
-  color: white;
+  color: rgba(255, 255, 255, 0.609);
 }
 .button-container{
     width:100%;
@@ -24,6 +25,7 @@ button {
     background-color: #04AA6D;
     background-color: rgba(0, 46, 197, 0.76);
     color:white;
+    
     font-weight: bold;
     padding: 14px 20px;
     /* margin: 8px 0; */

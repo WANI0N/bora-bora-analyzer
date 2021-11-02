@@ -30,6 +30,8 @@ class User:
     def create(self,email,pwd):
         if self.users.find_one({"email":email},{"email":1}):
             return False
+        if (self.users.count_documents({"validation_status":False}) > 5000):
+            return False
         salt_pwd = self.getSalt()
         validation_end = datetime.now()+timedelta(days=2)
         validation_end = validation_end.strftime("%Y-%m-%d %H:%M:%S")

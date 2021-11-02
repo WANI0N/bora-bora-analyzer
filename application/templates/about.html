@@ -1,5 +1,66 @@
 {% extends "layout.html" %}
 
 {% block content %}
-    ABOUT CONTENT
+    <link rel="stylesheet" href="{{ url_for('static',filename='css/about.css') }}"/>
+    <div class="about-content">
+        
+        <div class="hiw-container">
+            <div class="hiw-title">
+            How it Works
+            </div>
+            <div class="hiw-text">
+                <div class="hiw-item">
+                    -application runs webscrapper that records all available products (every 24 hours)
+                </div>
+                <div class="hiw-item">
+                    -database is updated with the daily products' data and statistics are generated
+                </div>
+                <div class="hiw-item">
+                    -product alerts are sent to registered users (only if switched on)
+                </div>
+                <div class="hiw-item">
+                    -application hosts API for retrieving product information and daily stats
+                </div>
+            </div>
+        </div>
+
+        <div class="hiw-container">
+            <div class="hiw-title">
+            Powered by
+            </div>
+            <a href="https://www.heroku.com/">
+                <img class="image" src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/Heroku_logo.svg/320px-Heroku_logo.svg.png">
+            </a>
+            <a href="https://flask.palletsprojects.com/en/2.0.x/">
+                <img class="image" src="https://flask.palletsprojects.com/en/2.0.x/_images/flask-logo.png">
+            </a>
+            <a href="https://www.mongodb.com">
+                <img class="image" src="https://webimages.mongodb.com/_com_assets/cms/kusb9stg1ndrp7j53-MongoDBLogoBrand1.png?auto=format%252Ccompress">
+            </a>
+            <a href="https://www.python.org">
+                <img class="image" src="https://www.python.org/static/community_logos/python-logo.png">
+            </a>
+            <a href="https://github.com">
+                <img class="image" src="https://github.githubassets.com/images/modules/logos_page/GitHub-Logo.png">
+            </a>
+        </div>
+        
+        <div class="hiw-container">
+            <div class="hiw-title">
+            Author Contact
+            </div>
+            <div class="hiw-text">
+                <div class="hiw-item">
+                    <a href="https://www.linkedin.com/in/marek-beck-537357180/">LinkedIn</a>
+                </div>
+                <div class="hiw-item">
+                    <a href="https://github.com/WANI0N">GitHub</a>
+                </div>
+                <div class="hiw-item">
+                    <a >Application Source Code</a>
+                </div>
+            </div>
+            
+        </div>
+    </div>
 {% endblock %}

@@ -1,0 +1,48 @@
+.about-content{
+    color: rgba(255, 255, 255, 0.609);
+    font-family: "Brush Script MT","Lucida Handwriting",Cursive
+}
+.hiw-container{
+    width: 50%;
+    margin: auto;
+    /* border: 1px solid green; */
+    position: relative;
+    margin-bottom: 10px;
+}
+.hiw-title{
+    text-align: left;
+    font-weight: bold;
+    font-size: 30px;
+    /* border: 1px solid red; */
+    height: 20%;
+    top:0;
+    left: 0;
+    
+}
+.hiw-text{
+    top:20%;
+    /* border: 1px solid pink; */
+    margin-left: 10%;
+    right: 0;
+    width: 90%;
+}
+.hiw-item{
+    font-size: 20px;
+    padding:1ch;
+    text-align: left;
+}
+.image{
+    opacity: 0.8;
+    margin: 5px;
+    max-width: 200px;
+    /* height: auto; */
+    height: 70px;
+    object-fit: contain;
+    background-color: rgba(255, 255, 255, 0.76);
+    background-color: white;
+}
+@media (max-width: 500px) {
+    .hiw-container{
+        width: 100%;
+    }
+}

@@ -20,7 +20,7 @@ from application import server_mail
 if True:
     userLoginStatus = False
     disable_onLoad = False
-    navData = {
+    footerData = {
         "productCount":0,
         "dbAge":0,
     }
@@ -36,8 +36,8 @@ if True:
         ids = list()
         ids = mongo_db.products.find({},{"id":1}).distinct('id')
         
-        navData["productCount"] = len(ids)
-        navData["dbAge"] = getDbAge(mongo_db.products)
+        footerData["productCount"] = len(ids)
+        footerData["dbAge"] = getDbAge(mongo_db.products)
     
     dbStats_cursor = mongo_db.dbStatsDataFinal.find()
     dbStats = parseMongoCollection(dbStats_cursor,'list')
@@ -107,7 +107,7 @@ class GetProduct(Resource):
             abort(401,"Product not found")
 
         
-@api.route('/product-ids/',doc={"description": "Returns an array of product ids."})
+@api.route('/product-ids/',doc={"description": "Returns an array of all product ids."})
 class GetAllProducts(Resource):
     def get(self):
         ids = list()
@@ -193,12 +193,12 @@ class SubmitAlerts(Resource):
 #################################
 
 # Force https, does not work for local host
-@app.before_request
-def before_request():
-    if not request.is_secure:
-        url = request.url.replace('http://', 'https://', 1)
-        code = 301
-        return redirect(url, code=code)
+# @app.before_request
+# def before_request():
+#     if not request.is_secure:
+#         url = request.url.replace('http://', 'https://', 1)
+#         code = 301
+#         return redirect(url, code=code)
 
 ##ROUTES
 ##NAVIGATIONAL
@@ -238,7 +238,7 @@ def index():
         "login":userLoginStatus
     }
     
-    return render_template("index.html",activePage=activePage,navData=navData,pieChartData=pieChartData,data=highlightsData,graphData=dbStats)
+    return render_template("index.html",activePage=activePage,footerData=footerData,pieChartData=pieChartData,data=highlightsData,graphData=dbStats)
 
 
 @app.route("/products")
@@ -264,7 +264,7 @@ def products():
         targetIds = list(targetIds)
         if not targetIds:
             Message404 = f"No matches found for \"{q}\"."
-            return render_template("404.html",activePage=activePage,navData=navData,Message404=Message404)
+            return render_template("404.html",activePage=activePage,footerData=footerData,Message404=Message404)
         basePageUrl += 'q=' + q + '&page=' if len(targetIds) > productsPerPage else 'page='
     else:
         targetIds = getCategoryIDs(cat) if cat else ids
@@ -288,8 +288,8 @@ def products():
     
     catArr = cat.split('-') if cat else []
     
-    # return render_template("products.html",activePage=activePage,navData=navData, catArr = catArr,categories=categoryPathing, pagination=pagination, data=data, products=True)
-    return render_template("products.html",activePage=activePage,navData=navData, catArr = catArr,categories=categoryPathing, pagination=pagination, data=data)
+    
+    return render_template("products.html",activePage=activePage,footerData=footerData, catArr = catArr,categories=categoryPathing, pagination=pagination, data=data)
 
 @app.route("/login",methods = ['GET', 'POST'])
 def login():
@@ -305,7 +305,7 @@ def login():
         "label":"Login",
         "login":userLoginStatus
     }
-    return render_template("login.html",displayMessages=displayMessages,activePage=activePage,navData=navData)
+    return render_template("login.html",displayMessages=displayMessages,activePage=activePage,footerData=footerData)
 
 @app.route("/updatePassword",methods = ['GET', 'POST'])
 def updatePassword():
@@ -335,7 +335,7 @@ def updatePassword():
     activePage={
         "login":userLoginStatus
     }
-    return render_template("updatePassword.html",errorMessages=errorMessages,activePage=activePage,navData=navData)
+    return render_template("updatePassword.html",errorMessages=errorMessages,activePage=activePage,footerData=footerData)
     
 
 @app.route("/profile",methods = ['GET', 'POST'])
@@ -432,7 +432,7 @@ def profile():
     
     profileViewData["alerts"] = userAlerts
 
-    return render_template("profile.html",jsPayload=jsPayload,profileViewData=profileViewData,activePage=activePage,navData=navData)
+    return render_template("profile.html",jsPayload=jsPayload,profileViewData=profileViewData,activePage=activePage,footerData=footerData)
     
 ##SUBMITS
 @app.route('/analyze')
@@ -448,7 +448,7 @@ def analyze_product():
     product_id = request.args.get('id', None)
     if not product_id:
         Message404 = "No product ID submitted."
-        return render_template("404.html",activePage=activePage,navData=navData,Message404=Message404)
+        return render_template("404.html",activePage=activePage,footerData=footerData,Message404=Message404)
     jsPayload = {}
     if userLoginStatus:
         token = users.setOneTimeToken(cookie_id,"addAlert")
@@ -457,7 +457,7 @@ def analyze_product():
     data = mongo_db.products.find_one({"id":product_id})
     if not data:
         Message404 = f"Product ID {product_id} not found."
-        return render_template("404.html",activePage=activePage,navData=navData,Message404=Message404)
+        return render_template("404.html",activePage=activePage,footerData=footerData,Message404=Message404)
     
     graphData = {
         "data":data['history'],
@@ -497,7 +497,7 @@ def analyze_product():
         }
     ]
     
-    return render_template("analyze.html",jsPayload=jsPayload,activePage=activePage,navData=navData, graphData=graphData)
+    return render_template("analyze.html",jsPayload=jsPayload,activePage=activePage,footerData=footerData, graphData=graphData)
 
 @app.route("/password-reset",methods = ['GET', 'POST'])
 def passwordReset():
@@ -555,7 +555,7 @@ def passwordReset():
     activePage={
         "login":userLoginStatus
     }
-    return render_template('resetPassword.html',formData=formData,activePage=activePage,navData=navData)
+    return render_template('resetPassword.html',formData=formData,activePage=activePage,footerData=footerData)
 
 @app.route("/email-validation/<validation_code>")
 def emailValidation(validation_code):
@@ -568,7 +568,7 @@ def emailValidation(validation_code):
         activePage={
             "login":userLoginStatus
         }
-        return render_template("404.html",activePage=activePage,navData=navData,Message404=Message404)
+        return render_template("404.html",activePage=activePage,footerData=footerData,Message404=Message404)
     return redirect("/profile")
 
 @app.route("/unsubscribe",methods = ['GET', 'POST'])
@@ -585,7 +585,7 @@ def unsubscribe():
         if Message404:
             cookie_id = request.cookies.get('userID')
             activePage={"login":users.validateUserCookie(cookie_id)}
-            return render_template("404.html",activePage=activePage,navData=navData,Message404=Message404)
+            return render_template("404.html",activePage=activePage,footerData=footerData,Message404=Message404)
         formData['formToken'] = token
     else: #POST
         unsubToken = request.form.get('formToken')
@@ -624,4 +624,4 @@ def about():
         "login":userLoginStatus
     }
     
-    return render_template("about.html",activePage=activePage,navData=navData)
+    return render_template("about.html",activePage=activePage,footerData=footerData)

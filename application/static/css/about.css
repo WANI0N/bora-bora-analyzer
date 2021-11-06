@@ -1,6 +1,6 @@
 .about-content{
     color: rgba(255, 255, 255, 0.609);
-    font-family: "Brush Script MT","Lucida Handwriting",Cursive
+    font-family: 'Audiowide', cursive;
 }
 .hiw-container{
     width: 50%;
@@ -10,6 +10,7 @@
     margin-bottom: 10px;
 }
 .hiw-title{
+    font-family: 'Orbitron', sans-serif;
     text-align: left;
     font-weight: bold;
     font-size: 30px;
@@ -20,6 +21,7 @@
     
 }
 .hiw-text{
+    font-family: 'Sunflower', sans-serif;
     top:20%;
     /* border: 1px solid pink; */
     margin-left: 10%;

@@ -2,13 +2,18 @@
 
 {% block content %}
     <link rel="stylesheet" href="{{ url_for('static',filename='css/about.css') }}"/>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Audiowide&family=Orbitron&family=Sunflower:wght@300&display=swap" rel="stylesheet">
+
     <div class="about-content">
         
         <div class="hiw-container">
             <div class="hiw-title">
             How it Works
             </div>
-            <div class="hiw-text">
+            <div class="hiw-text" >
                 <div class="hiw-item">
                     -application runs webscrapper that records all available products (every 24 hours)
                 </div>
@@ -16,7 +21,7 @@
                     -database is updated with the daily products' data and statistics are generated
                 </div>
                 <div class="hiw-item">
-                    -product alerts are sent to registered users (only if switched on)
+                    -product alerts are sent to registered users - only if switched on
                 </div>
                 <div class="hiw-item">
                     -application hosts API for retrieving product information and daily stats

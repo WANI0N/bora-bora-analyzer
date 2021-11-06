@@ -38,6 +38,12 @@ plusSign.addEventListener('click', async () => {
     }catch{
       plusSignPressMessage.innerText = "Something went wrong, please refresh the page and try again."
     }
+  }else{
+    plusSignPressMessage.innerText = "To add product alerts, you must"
+    let a = document.createElement("a");
+    a.href = "/login"
+    a.innerText = " REGISTER"
+    plusSignPressMessage.appendChild(a)
   }
   plusSign.classList.remove('sign-active')
   plusSignPressMessage.style.display = "block"

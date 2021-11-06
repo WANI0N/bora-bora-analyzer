@@ -14,6 +14,15 @@ from application.scripts.user import User
 
 from application import server_mail
 
+from application.scripts.API_limiter import API_Limiter
+
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
+limiter = Limiter(
+    app,
+    key_func=get_remote_address,
+    default_limits=["1000 per day", "500 per hour"]
+)
 # import bson
 
 # if os.environ.get("WERKZEUG_RUN_MAIN") == "true":
@@ -31,6 +40,8 @@ if True:
     users = User(mongo_db.user,server_mail,AES)
 
     urlParser = URL_parser(AES)
+
+    API_limiter = API_Limiter()
 
     if not disable_onLoad:
         ids = list()
@@ -195,6 +206,22 @@ class SubmitAlerts(Resource):
 # Force https, does not work for local host
 @app.before_request
 def before_request():
+    # ip_address = request.remote_addr
+    # print(f"ip_address: {ip_address}")
+    # print(f"url: {request.url}")
+    # print( request.method )
+    if not API_limiter.submit(request.remote_addr,request.url,request.method):
+        # if os.path.exists( 'log.json' ):
+        #     os.remove( 'log.json' )
+        # f=open('log.json','a')
+        # f.write( json.dumps( API_limiter.requests,indent='\t' ) )
+        # f.close()
+        return json.dumps({
+            "error:":"Limit reached.",
+            "IP":request.remote_addr,
+        })
+    
+    
     if not request.is_secure:
         url = request.url.replace('http://', 'https://', 1)
         code = 301
@@ -292,6 +319,7 @@ def products():
     return render_template("products.html",activePage=activePage,footerData=footerData, catArr = catArr,categories=categoryPathing, pagination=pagination, data=data)
 
 @app.route("/login",methods = ['GET', 'POST'])
+@limiter.limit("10/minute")
 def login():
     
     rc = request.args.get('rc', None)
@@ -339,6 +367,7 @@ def updatePassword():
     
 
 @app.route("/profile",methods = ['GET', 'POST'])
+@limiter.limit("20/minute")
 def profile():
     cookie_id = request.cookies.get('userID')
     userLoginStatus = users.validateUserCookie(cookie_id)
@@ -500,6 +529,7 @@ def analyze_product():
     return render_template("analyze.html",jsPayload=jsPayload,activePage=activePage,footerData=footerData, graphData=graphData)
 
 @app.route("/password-reset",methods = ['GET', 'POST'])
+@limiter.limit("5/minute")
 def passwordReset():
     formData = {}
     formData['userMessages'] = []
@@ -558,6 +588,7 @@ def passwordReset():
     return render_template('resetPassword.html',formData=formData,activePage=activePage,footerData=footerData)
 
 @app.route("/email-validation/<validation_code>")
+@limiter.limit("5/minute")
 def emailValidation(validation_code):
     status = users.validateUserEmail(validation_code)
     cookie_id = request.cookies.get('userID')

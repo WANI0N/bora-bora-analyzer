@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+import hashlib
 class API_Limiter:
     def __init__(self):
         self.apiLimits = {
@@ -31,6 +32,9 @@ class API_Limiter:
         }
         self.requests = {}
 
+        self.loginAttemptLimit = 5 #per minute
+        self.loginRequests = {}
+
     def submit(self,ipAddress,url,method,**kwargs):
         endPoint = self.getEndpoint(url)
         if (endPoint[0:3] != 'api'):
@@ -38,21 +42,38 @@ class API_Limiter:
             return True
         limit = self.getLimit(endPoint,method)
         key = f"{ipAddress} - {limit['endPoint']}"
-        if key not in self.requests:
-            self.requests[key] = []
+        return self.checkAccess('api',key,limit)
+    
+    def checkAccess(self,type,key,limit = None):
+        if type == "api":
+            targetHashMap = self.requests
+            count = limit['count']
+        elif type == "login":
+            targetHashMap = self.loginRequests
+            count = self.loginAttemptLimit
+        else:
+            raise('invalid checkAccess type')
+        if key not in targetHashMap:
+            targetHashMap[key] = []
         now = datetime.now()
-        if len( self.requests[key] ) < limit['count']:
+        if len( targetHashMap[key] ) < count:
             timeStamp = now.strftime('%Y-%m-%d %H:%M:%S')
-            self.requests[key].append( timeStamp )
+            targetHashMap[key].append( timeStamp )
             return True
         else:
-            firstTime = datetime.strptime(self.requests[key][0],"%Y-%m-%d %H:%M:%S")
+            firstTime = datetime.strptime(targetHashMap[key][0],"%Y-%m-%d %H:%M:%S")
             if (firstTime > now-timedelta(minutes=1)):
                 return False
             timeStamp = now.strftime('%Y-%m-%d %H:%M:%S')
-            self.requests[key].pop(0)
-            self.requests[key].append( timeStamp )
+            targetHashMap[key].pop(0)
+            targetHashMap[key].append( timeStamp )
             return True
+
+
+    def loginAttemptSubmit(self,ipAddress,email):
+        key = email if email else ipAddress
+        key = hashlib.sha256(key.encode('utf-8')).hexdigest()
+        return self.checkAccess('login',key)
         
 
     def getLimit(self,endPoint,method):

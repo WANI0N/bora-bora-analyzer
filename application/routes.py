@@ -38,7 +38,7 @@ if True:
     from application import AES
 
     users = User(mongo_db.user,server_mail,AES)
-
+    users.cleanUp()
     urlParser = URL_parser(AES)
 
     API_limiter = API_Limiter()
@@ -206,22 +206,11 @@ class SubmitAlerts(Resource):
 # Force https, does not work for local host
 @app.before_request
 def before_request():
-    # ip_address = request.remote_addr
-    # print(f"ip_address: {ip_address}")
-    # print(f"url: {request.url}")
-    # print( request.method )
     if not API_limiter.submit(request.remote_addr,request.url,request.method):
-        # if os.path.exists( 'log.json' ):
-        #     os.remove( 'log.json' )
-        # f=open('log.json','a')
-        # f.write( json.dumps( API_limiter.requests,indent='\t' ) )
-        # f.close()
         return json.dumps({
             "error:":"Limit reached.",
             "IP":request.remote_addr,
         })
-    
-    
     if not request.is_secure:
         url = request.url.replace('http://', 'https://', 1)
         code = 301
@@ -391,6 +380,9 @@ def profile():
         password = request.form.get('pwd')
         login = request.form.get('login') #true/None
         create = request.form.get('create') #true/None
+        email = email if email else None
+        if not API_limiter.loginAttemptSubmit(request.remote_addr,email):
+            return {"status":403,"message":"Too many attempts - forbidden"}
         remember = request.form.get('remember') #on/None
         if login == 'true':
             if users.validateUser(email,password):
@@ -646,7 +638,6 @@ def unsubscribe():
 
 @app.route("/about")
 def about():
-    
     cookie_id = request.cookies.get('userID')
     userLoginStatus = users.validateUserCookie(cookie_id)
     activePage={

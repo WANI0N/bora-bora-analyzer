@@ -14,6 +14,7 @@ class User:
         self.users = db
         self.alertLimit = 100
         self.saltLength = 10
+        self.pendingValidationUserLimit = 5000
         self.serverUrl = os.environ.get("SERVER_ROOT_URL")
         userCookieIds = self.users.find({},{"id_cookie":1})
         self.userCookieIds = dict()
@@ -30,7 +31,7 @@ class User:
     def create(self,email,pwd):
         if self.users.find_one({"email":email},{"email":1}):
             return False
-        if (self.users.count_documents({"validation_status":False}) > 5000):
+        if (self.users.count_documents({"validation_status":False}) > self.pendingValidationUserLimit):
             return False
         salt_pwd = self.getSalt()
         validation_end = datetime.now()+timedelta(days=2)
@@ -49,6 +50,12 @@ class User:
         self.userCookieIds[ userPush["id_cookie"] ] = True
         return True
     
+    def cleanUp(self):
+        for user in self.users.find({"validation_status":False},{"id_cookie":1,"validation_end":1}):
+            validation_end = datetime.strptime(user["validation_end"],"%Y-%m-%d %H:%M:%S")
+            if ( validation_end > datetime.now() ):
+                self.users.delete_one({"id_cookie":user["id_cookie"]})
+
     def logOut(self,cookie_id):
         if cookie_id in self.userCookieIds:
             del self.userCookieIds[cookie_id]

@@ -25,7 +25,8 @@ am4core.ready(function() {
     
     valueAxis.numberFormatter.numberFormat = '#.####';
     valueAxis.maxPrecision = 5;
-    valueAxis.renderer.minGridDistance = 10;
+    valueAxis.renderer.minGridDistance = 15;
+    
     
     // Create series
     var series = chart.series.push(new am4charts.LineSeries());
@@ -35,6 +36,7 @@ am4core.ready(function() {
     series.tooltipText = "difference: {diff_perc}\n% of products: {perCent}%"
     series.strokeWidth = 2;
     series.minBulletDistance = 15;
+    
 
     // Drop-shaped tooltips
     series.tooltip.background.cornerRadius = 20;

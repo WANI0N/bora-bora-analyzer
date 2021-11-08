@@ -28,7 +28,7 @@ mail_settings = {
 
 app.config.update(mail_settings)
 server_mail = Mail(app)
-
+app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
 #connecting to db
 DATABASE_URL=f'mongodb+srv://user:{os.environ.get("DB_PASSWORD")}'\
               f'@cluster0.zgmnh.mongodb.net/{os.environ.get("DB_NAME")}?'\

@@ -17,9 +17,9 @@ class User:
         self.pendingValidationUserLimit = 5000
         self.serverUrl = os.environ.get("SERVER_ROOT_URL")
         userCookieIds = self.users.find({},{"id_cookie":1})
-        self.userCookieIds = dict()
-        for obj in userCookieIds:
-            self.userCookieIds[ obj["id_cookie"] ] = True
+        # self.userCookieIds = dict()
+        # for obj in userCookieIds:
+        #     self.userCookieIds[ obj["id_cookie"] ] = True
         self.alertKeys = dict({
             "productID":"string",
             "active":"boolean",
@@ -47,7 +47,7 @@ class User:
             "validation_status":False
         })
         self.users.insert_one(userPush)
-        self.userCookieIds[ userPush["id_cookie"] ] = True
+        # self.userCookieIds[ userPush["id_cookie"] ] = True
         return True
     
     def cleanUp(self):
@@ -57,15 +57,19 @@ class User:
                 self.users.delete_one({"id_cookie":user["id_cookie"]})
 
     def logOut(self,cookie_id):
-        if cookie_id in self.userCookieIds:
-            del self.userCookieIds[cookie_id]
+        self.users.update_one({"id_cookie":cookie_id},
+        {
+            "$set":{
+                "id_cookie":self.hash( self.getSalt(20) )
+            }
+        })
 
     def delete(self,cookie_id):
         user = self.users.find_one({"id_cookie":cookie_id},{"id_cookie":1})
         if not user:
             return False
         self.users.delete_one({"id_cookie":cookie_id})
-        self.logOut( cookie_id )
+        # self.logOut( cookie_id )
         return True
 
     def sendPasswordResetEmail(self,email):
@@ -198,7 +202,8 @@ class User:
     def validateUserCookie(self,cookie_id = None):
         if not cookie_id:
             return False
-        if cookie_id in self.userCookieIds:
+        # if cookie_id in self.userCookieIds:
+        if self.users.find_one({"id_cookie":cookie_id},{"_id":1}):
             return True
         return False
     
@@ -242,7 +247,7 @@ class User:
             }
         })
         # removing old cookie from server memory (browser cookie stays, but it's invalid)
-        self.logOut( cookie_id )
+        # self.logOut( cookie_id )
         return {"success":True}
 
     def resetPassword(self,token,new_pwd):
@@ -257,7 +262,7 @@ class User:
                 "password":self.hash( new_pwd + user["salt_pwd"] ),
             }
         })
-        self.logOut( user['id_cookie'] )
+        # self.logOut( user['id_cookie'] )
         return True
 
     def validateUser(self,email,pwd):

@@ -161,13 +161,6 @@ class GetDailyStats(Resource):
             return dbStatsApiData[dateString]
         abort(404,f"Day {dateString} not found")
 
-@api.route('/getMemoryCookies/<code>',doc=False)
-class GetMemoryCookies(Resource):
-    def get(self,code):
-        if (code != "hdsa08sncnzlapuquufj927291"):
-            abort(403)
-        return {"log": users.userCookieIds}
-
 @api.route('/validation-email/',doc=False)
 class SendValidationEmail(Resource):
     def post(self):
@@ -396,7 +389,7 @@ def profile():
             rc = urlParser.encode( ['Your profile has been deleted.'] )
             return redirect(f"/login?rc={rc}")
         if (logOutUser == "execute"):
-            users.logOut(cookie_id) #remove cookie from server memory
+            users.logOut(cookie_id) #reset cookie id in db
             resp = make_response(redirect("/index")) 
             resp.set_cookie('userID', '', expires=0) #remove cookie from user's browser
             return resp
@@ -414,7 +407,7 @@ def profile():
             if users.validateUser(email,password):
                 resp = make_response(redirect("/profile"))
                 cookieId = users.getUserCookie(email)
-                users.userCookieIds[cookieId] = True #set cookie on server memory
+                # users.userCookieIds[cookieId] = True #set cookie on server memory
                 if remember == 'on':
                     resp.set_cookie('userID', cookieId,expires=datetime.now()+timedelta(days=9999),secure=True,httponly=True)
                 else:

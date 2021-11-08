@@ -4,10 +4,15 @@
     <link rel="stylesheet" href="{{ url_for('static',filename='css/form.css') }}"/>
     <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/js-sha256/0.9.0/sha256.min.js" integrity="sha512-szJ5FSo9hEmXXe7b5AUVtn/WnL8a5VofnFeYC2i2z03uS2LhAch7ewNLbl5flsEmTTimMN0enBZg/3sQ+YOSzQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script> -->
     <!-- <form id="loginForm" action="{{ url_for('profile') }}" method="POST" onsubmit="javascript: return SubmitForm();" /> -->
+    
     {% if displayMessages %}
         {% for msg in displayMessages %}
             <p class="clr-yellow">{{ msg }}</p>
         {% endfor %}
+    {% else %}
+        <p class="y-register-msg">
+            Creating an account alows you to setup product alerts.
+        </p>
     {% endif %}
     
     

@@ -62,6 +62,9 @@ span.pwd {
 .noform-button{
   width: 25%;
 }
+.y-register-msg{
+  color:#a6b9e7;
+}
 @media (max-width: 500px) {
     button {
         width: 45%;

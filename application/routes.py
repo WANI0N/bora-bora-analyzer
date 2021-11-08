@@ -1,6 +1,6 @@
 from werkzeug.datastructures import Headers
 from application import app, mongo_db, api, server_mail
-import os
+# import os
 # import random
 # import requests
 # from flask_mail import Message
@@ -23,7 +23,6 @@ limiter = Limiter(
     key_func=get_remote_address,
     default_limits=["1000 per day", "500 per hour"]
 )
-# import bson
 
 # if os.environ.get("WERKZEUG_RUN_MAIN") == "true":
 if True:
@@ -96,8 +95,9 @@ productAPIKeys = [
     'comparative_unit',
     'brand_name'
 ]
+
 productAPIKeysString = ", ".join(productAPIKeys)
-@api.route('/product',doc={"description": f"Returns product(s) with full history based on url parameters: {productAPIKeysString}.\nLimit 400 products per request.\n\nExample: product?brand_name=AROSO"})
+@api.route('/product',doc={"description": f"Returns product(s) with full history based on url parameters: {productAPIKeysString}.\nLimit 400 products per request.\n\nRate limit: 15/min\n\nExample: product?brand_name=AROSO"})
 class GetProduct(Resource):
     def get(self):
         needleParams = {}
@@ -118,7 +118,7 @@ class GetProduct(Resource):
             abort(401,"Product not found")
 
         
-@api.route('/product-ids/',doc={"description": "Returns an array of all product ids."})
+@api.route('/product-ids/',doc={"description": "Returns an array of all product ids.\n\nRate limit: 1/min"})
 class GetAllProducts(Resource):
     def get(self):
         ids = list()
@@ -135,7 +135,7 @@ class GetAllProducts(Resource):
                 finalIds.append(item['id'])
             return finalIds
 
-@api.route('/dailystats/<dateString>',doc={"description": "Returns following:\n -prices difference to average (diff_perc)\n -number of products available (count)\n -total number of products - same for any day (total)\n -percentage of products on the day (perCent)"})
+@api.route('/dailystats/<dateString>',doc={"description": "Returns following:\n -prices difference to average (diff_perc)\n -number of products available (count)\n -total number of products - same for any day (total)\n -percentage of products on the day (perCent)\n\nRate limit: 15/min"})
 @api.doc(params={'dateString': 'Use format yyyy-mm-dd'})
 class GetDailyStats(Resource):
     def get(self,dateString):

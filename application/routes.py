@@ -369,7 +369,9 @@ def updatePassword():
             status = users.updatePassword(cookie_id,current_pwd,new_pwd1)
             if status['success'] == True:
                 rc = urlParser.encode( ['Your password has been reset, please login with your new password.'] )
-                return redirect(f"/login?rc={rc}")
+                resp = make_response(redirect(f"/login?rc={rc}")) 
+                resp.set_cookie('userID', '', expires=0) #remove cookie from user's browser
+                return resp
             else:
                 errorMessages.append( status['reason'] )
     

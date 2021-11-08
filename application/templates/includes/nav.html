@@ -10,11 +10,9 @@
         <li class="nav-item"><a href="{{ url_for('products') }}" class="nav-link {% if activePage.link == 'products' %}active{% endif %}">Products</a></li>
         <li class="nav-item"><a href="/api" class="nav-link">API</a></li>
         <li class="nav-item"><a href="{{ url_for('about') }}" class="nav-link {% if activePage.link == 'about' %}active{% endif %}">About</a></li>
-        {% if activePage.login == True %}
-          <li class="nav-item"><a href="{{ url_for('profile') }}" class="nav-link {% if activePage.link == 'profile' %}active{% endif %}">Profile</a></li>
-        {% else %}
-          <li class="nav-item"><a href="{{ url_for('login') }}" class="nav-link {% if activePage.link == 'login' %}active{% endif %}">Login</a></li>
-        {% endif %}
+        
+        <li class="nav-item"><a href="{{ url_for('profile') }}" class="nav-link {% if activePage.link == 'profile' %}active{% endif %}">Profile</a></li>
+        
     </nav>
     
     <div class="topnav">
@@ -37,15 +35,12 @@
         {% if activePage.label != 'About' %}
           <a href="{{ url_for('about') }}">About</a>
         {% endif %}
-        {% if activePage.login == True %}
-          {% if activePage.label != 'Profile' %}
-            <a href="{{ url_for('profile') }}">Profile</a>
-          {% endif %}
-        {% else %}
-          {% if activePage.label != 'Login' %}
-            <a href="{{ url_for('login') }}">Login</a>
-          {% endif %}
+        
+        
+        {% if activePage.label != 'Profile' %}
+          <a href="{{ url_for('profile') }}">Profile</a>
         {% endif %}
+        
       </div>
       <a href="javascript:void(0);" class="icon" onclick="expandMenu('myLinks')">
         <i class="fa fa-bars"></i>

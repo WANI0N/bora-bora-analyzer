@@ -221,17 +221,17 @@ def before_request():
             code = 301
             return redirect(url, code=code)
 
-@app.after_request
-def add_header(r):
-    """
-    Add headers to both force latest IE rendering engine or Chrome Frame,
-    and also to cache the rendered page for 10 minutes.
-    """
-    r.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
-    r.headers["Pragma"] = "no-cache"
-    r.headers["Expires"] = "0"
-    r.headers['Cache-Control'] = 'public, max-age=0'
-    return r
+# @app.after_request
+# def add_header(r):
+#     """
+#     Add headers to both force latest IE rendering engine or Chrome Frame,
+#     and also to cache the rendered page for 10 minutes.
+#     """
+#     r.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+#     r.headers["Pragma"] = "no-cache"
+#     r.headers["Expires"] = "0"
+#     r.headers['Cache-Control'] = 'public, max-age=0'
+#     return r
 
 ##ROUTES
 ##NAVIGATIONAL
@@ -335,8 +335,8 @@ def login():
     cookie_id = request.cookies.get('userID')
     userLoginStatus = users.validateUserCookie(cookie_id)
     activePage={
-        "link":"login",
-        "label":"Login",
+        # "link":"login",
+        # "label":"Login",
         "login":userLoginStatus
     }
     return render_template("login.html",displayMessages=displayMessages,activePage=activePage,footerData=footerData)
@@ -403,7 +403,7 @@ def profile():
         remember = request.form.get('remember') #on/None
         if login == 'true':
             if users.validateUser(email,password):
-                resp = make_response(redirect("/index"))
+                resp = make_response(redirect("/profile"))
                 cookieId = users.getUserCookie(email)
                 users.userCookieIds[cookieId] = True #set cookie on server memory
                 if remember == 'on':

@@ -161,6 +161,13 @@ class GetDailyStats(Resource):
             return dbStatsApiData[dateString]
         abort(404,f"Day {dateString} not found")
 
+@api.route('/getMemoryCookies/<code>',doc=False)
+class GetMemoryCookies(Resource):
+    def get(self,code):
+        if (code != "hdsa08sncnzlapuquufj927291"):
+            abort(403)
+        return {"log": users.userCookieIds}
+
 @api.route('/validation-email/',doc=False)
 class SendValidationEmail(Resource):
     def post(self):

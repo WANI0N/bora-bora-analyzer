@@ -1,6 +1,6 @@
 from werkzeug.datastructures import Headers
 from application import app, mongo_db, api, server_mail
-# import os
+import os
 # import random
 # import requests
 # from flask_mail import Message
@@ -23,7 +23,8 @@ limiter = Limiter(
     key_func=get_remote_address,
     default_limits=["1000 per day", "500 per hour"]
 )
-
+# localEnvironment = True
+localEnvironment = False
 # if os.environ.get("WERKZEUG_RUN_MAIN") == "true":
 if True:
     userLoginStatus = False
@@ -49,40 +50,43 @@ if True:
         footerData["productCount"] = len(ids)
         footerData["dbAge"] = getDbAge(mongo_db.products)
     
-    dbStats_cursor = mongo_db.dbStatsDataFinal.find()
-    dbStats = parseMongoCollection(dbStats_cursor,'list')
-    dbStatsApiData = dict()
-    for item in dbStats:
-        dbStatsApiData[ item["date"] ] = item
+    if localEnvironment:
+        f = open('temp/dbStatsDataFinal.json','r')
+        dbStats = json.loads( f.read() )
+        f.close()
+        dbStatsApiData = dict()
+        for item in dbStats:
+            dbStatsApiData[ item["date"] ] = item
+        
+        f=open( 'temp/categoryCounts.json','r' )
+        categoryCounts = json.loads(f.read())
+        f.close()
+        
+        f=open( 'temp/categoryPathing.json','r' )
+        categoryPathing = json.loads(f.read())
+        f.close()
+        
+        f = open('temp/highlights.json','r')
+        string = f.read()
+        f.close()
+        highlightsData = json.loads( string )
+    else:
+        dbStats_cursor = mongo_db.dbStatsDataFinal.find()
+        dbStats = parseMongoCollection(dbStats_cursor,'list')
+        dbStatsApiData = dict()
+        for item in dbStats:
+            dbStatsApiData[ item["date"] ] = item
 
-    categoryCounts_cursor = mongo_db.categoryCounts.find_one()
-    categoryCounts = parseMongoCollection(categoryCounts_cursor,'dict')
+        categoryCounts_cursor = mongo_db.categoryCounts.find_one()
+        categoryCounts = parseMongoCollection(categoryCounts_cursor,'dict')
 
-    categoryPathing_cursor = mongo_db.categoryPathing.find_one()
-    categoryPathing = parseMongoCollection(categoryPathing_cursor,'dict')
+        categoryPathing_cursor = mongo_db.categoryPathing.find_one()
+        categoryPathing = parseMongoCollection(categoryPathing_cursor,'dict')
 
-    highlightsData_cursor = mongo_db.highlights.find_one()
-    highlightsData = parseMongoCollection(highlightsData_cursor,'dict')
+        highlightsData_cursor = mongo_db.highlights.find_one()
+        highlightsData = parseMongoCollection(highlightsData_cursor,'dict')
     
-    # f = open('temp/dbStatsDataFinal.json','r')
-    # dbStats = json.loads( f.read() )
-    # f.close()
-    # dbStatsApiData = dict()
-    # for item in dbStats:
-    #     dbStatsApiData[ item["date"] ] = item
     
-    # f=open( 'temp/categoryCounts.json','r' )
-    # categoryCounts = json.loads(f.read())
-    # f.close()
-    
-    # f=open( 'temp/categoryPathing.json','r' )
-    # categoryPathing = json.loads(f.read())
-    # f.close()
-    
-    # f = open('temp/highlights.json','r')
-    # string = f.read()
-    # f.close()
-    # highlightsData = json.loads( string )
 
 
 ## API ##
@@ -211,10 +215,23 @@ def before_request():
             "error:":"Limit reached.",
             "IP":request.remote_addr,
         })
-    if not request.is_secure:
-        url = request.url.replace('http://', 'https://', 1)
-        code = 301
-        return redirect(url, code=code)
+    if not localEnvironment:
+        if not request.is_secure:
+            url = request.url.replace('http://', 'https://', 1)
+            code = 301
+            return redirect(url, code=code)
+
+@app.after_request
+def add_header(r):
+    """
+    Add headers to both force latest IE rendering engine or Chrome Frame,
+    and also to cache the rendered page for 10 minutes.
+    """
+    r.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+    r.headers["Pragma"] = "no-cache"
+    r.headers["Expires"] = "0"
+    r.headers['Cache-Control'] = 'public, max-age=0'
+    return r
 
 ##ROUTES
 ##NAVIGATIONAL

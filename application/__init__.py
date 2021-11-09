@@ -28,7 +28,7 @@ mail_settings = {
 
 app.config.update(mail_settings)
 server_mail = Mail(app)
-# app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
+
 #connecting to db
 DATABASE_URL=f'mongodb+srv://user:{os.environ.get("DB_PASSWORD")}'\
               f'@cluster0.zgmnh.mongodb.net/{os.environ.get("DB_NAME")}?'\
@@ -36,9 +36,7 @@ DATABASE_URL=f'mongodb+srv://user:{os.environ.get("DB_PASSWORD")}'\
 
 client=pymongo.MongoClient(DATABASE_URL,tlsCAFile=ca) # establish connection with database
 mongo_db=client.db # assign database to mongo_db
-#mongo_db.products.drop() # clear the collection
-# mongo_db.products.insert_one(final_db)
-# mongo_db.products.insert_many(file_data)
+
 AES = AESCipher(os.environ.get("USER_CALLBACK_PWD"))
     
 from application import routes

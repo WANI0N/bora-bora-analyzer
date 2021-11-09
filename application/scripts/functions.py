@@ -32,6 +32,15 @@ def recurr_insertDbDataToHighlights(data,dbDataHashMap):
                     item["title"] = dbDataHashMap[ item['id'] ]["title"]
     return data
 def recurr_pullIdsFromHighlights(data,carry = None):
+    """extracts product ids from nested object
+
+    Args:
+        data (object): highlightsData
+        carry (string, optional): Do not submit (used for recurrsion carry list). Defaults to None.
+
+    Returns:
+        [list]: list of products
+    """
     if not carry:
         carry = list()
     for k, content in data.items():
@@ -67,7 +76,16 @@ def parseMongoCollection(cursorData, type):
     return data
 
 def getProductsPage(ids,page,productsPerPage):
-    
+    """get visible product data (limit per page)
+
+    Args:
+        ids (list): product ids needed (can be all)
+        page (integer): pagination page number (determines which products are retreived)
+        productsPerPage (integer): number of products retreived
+
+    Returns:
+        [list]: product data (sliced to latest date per product)
+    """
     startIndex = page*productsPerPage-productsPerPage
     endIndex = startIndex+productsPerPage
     myIds = ids[startIndex:endIndex]
@@ -79,6 +97,14 @@ def getProductsPage(ids,page,productsPerPage):
     return data
     
 def getCategoryIDs(categoryString):
+    """get product ids of specific category and child categories
+
+    Args:
+        categoryString (string): submit with dash(-) separator
+
+    Returns:
+        [list]: product ids
+    """
     ids = list()
     cat = categoryString.replace("-", "/")
     for _id in mongo_db.products.find({"category_name_full_path" : {"$regex": f"^{ cat }"}}).distinct('id'):
@@ -113,8 +139,21 @@ def getDbAge(products):
 
 class URL_parser:
     def __init__(self,AES):
+        """encodes and decodes url paramater submits
+
+        Args:
+            AES (class): AES encryption class
+        """
         self.AES = AES
     def encode(self,input):
+        """encodes and encrypts (with salt) data to valid url string
+
+        Args:
+            input (string, list, dict): any
+
+        Returns:
+            encoded and encrypted string
+        """
         if not isinstance(input,str):
             if isinstance(input,int):
                 input = str(input)
@@ -124,6 +163,14 @@ class URL_parser:
         encr = self.AES.encrypt( salt + input )
         return urllib.parse.quote_plus(encr)
     def decode(self,input):
+        """decodes and decrypts
+
+        Args:
+            input (string)
+
+        Returns:
+            [any]: decoded content
+        """
         decode = urllib.parse.unquote(input)
         decode = self.AES.decrypt(decode)
         decode = decode[3::]
@@ -147,6 +194,14 @@ def validateEmailFormat(email):
     return status
 
 def validatePasswordFormat(passwd):
+    """validates password strength
+
+    Args:
+        passwd (string): any
+
+    Returns:
+        [dict]: valid:boolean, reason:list
+    """
     SpecialSym =['$','@','#','%','-','?',',','\\','.','!','^','&','\"','>','<','~',':',':']
     status = {
         "valid":False,
@@ -169,6 +224,14 @@ def validatePasswordFormat(passwd):
     return status
 
 def getProductPagination(data):
+    """get a list of pagination button data (link, innerText, highlight)
+
+    Args:
+        data (custom object): current page, basePageUrl, productsMaxPageCount, productCount, productsPerPage
+
+    Returns:
+        [list]: pagination button data
+    """
     pagination = list()
     
     pageRange = 5 if data['productCount'] >= 5*data['productsPerPage'] else data['productCount']/data['productsPerPage']
@@ -218,6 +281,15 @@ def getProductPagination(data):
     return pagination
 
 def appendDataToTableData(data,tableRangeMinimum):
+    """modifies product data to table data, empty days padded with 'n/a'
+
+    Args:
+        data (list): product's history list
+        tableRangeMinimum (integer): number large enough to have scrollable table
+
+    Returns:
+        [list]: tableData
+    """
     now = datetime.now()
     tableData = list()
     prices = list()
@@ -260,9 +332,15 @@ def appendDataToTableData(data,tableRangeMinimum):
 
 import unicodedata, re
 
-# def getProductUrlLink(productObj):
-#     text = str( productObj['title'] )
 def getProductUrlLink(title):
+    """converts product title to barbora url
+
+    Args:
+        title (string): product title
+
+    Returns:
+        string: full url
+    """
     text = str( title )
     try:
         text = unicode(text, 'utf-8')

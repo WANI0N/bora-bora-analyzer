@@ -23,12 +23,13 @@ limiter = Limiter(
     key_func=get_remote_address,
     default_limits=["1000 per day", "500 per hour"]
 )
+# set localEnvironment and activate if statement: os.environ.get("WERKZEUG_RUN_MAIN") to run only once for local host
 # localEnvironment = True
 localEnvironment = False
 # if os.environ.get("WERKZEUG_RUN_MAIN") == "true":
 if True:
     userLoginStatus = False
-    disable_onLoad = False
+    
     footerData = {
         "productCount":0,
         "dbAge":0,
@@ -43,14 +44,14 @@ if True:
 
     API_limiter = API_Limiter()
 
-    if not disable_onLoad:
-        ids = list()
-        ids = mongo_db.products.find({},{"id":1}).distinct('id')
-        
-        footerData["productCount"] = len(ids)
-        footerData["dbAge"] = getDbAge(mongo_db.products)
+    ids = list()
+    ids = mongo_db.products.find({},{"id":1}).distinct('id')
+    
+    footerData["productCount"] = len(ids)
+    footerData["dbAge"] = getDbAge(mongo_db.products)
     
     if localEnvironment:
+        # load from local temp file (data can be manually generated in db_analyzer.py)
         f = open('temp/dbStatsDataFinal.json','r')
         dbStats = json.loads( f.read() )
         f.close()
@@ -71,6 +72,7 @@ if True:
         f.close()
         highlightsData = json.loads( string )
     else:
+        # production, load from db
         dbStats_cursor = mongo_db.dbStatsDataFinal.find()
         dbStats = parseMongoCollection(dbStats_cursor,'list')
         dbStatsApiData = dict()
@@ -86,11 +88,10 @@ if True:
         highlightsData_cursor = mongo_db.highlights.find_one()
         highlightsData = parseMongoCollection(highlightsData_cursor,'dict')
     
-    
-
 
 ## API ##
 #################################
+# public API endpoints
 productAPIKeys = [
     'id',
     'title',
@@ -99,7 +100,6 @@ productAPIKeys = [
     'comparative_unit',
     'brand_name'
 ]
-
 productAPIKeysString = ", ".join(productAPIKeys)
 @api.route('/product',doc={"description": f"Returns product(s) with full history based on url parameters: {productAPIKeysString}.\nLimit 400 products per request.\n\nRate limit: 15/min\n\nExample: product?brand_name=AROSO"})
 class GetProduct(Resource):
@@ -160,7 +160,7 @@ class GetDailyStats(Resource):
         if dateString in dbStatsApiData:
             return dbStatsApiData[dateString]
         abort(404,f"Day {dateString} not found")
-
+# API endpoints used for dynamic page actions (no reload needed)
 @api.route('/validation-email/',doc=False)
 class SendValidationEmail(Resource):
     def post(self):
@@ -207,7 +207,7 @@ class SubmitAlerts(Resource):
         return {"submitAlertsStatus":status}
 #################################
 
-# Force https, does not work for local host
+
 @app.before_request
 def before_request():
     if not API_limiter.submit(request.remote_addr,request.url,request.method):
@@ -215,23 +215,12 @@ def before_request():
             "error:":"Limit reached.",
             "IP":request.remote_addr,
         })
+    # Force https, does not work for local host
     if not localEnvironment:
         if not request.is_secure:
             url = request.url.replace('http://', 'https://', 1)
             code = 301
             return redirect(url, code=code)
-
-# @app.after_request
-# def add_header(r):
-#     """
-#     Add headers to both force latest IE rendering engine or Chrome Frame,
-#     and also to cache the rendered page for 10 minutes.
-#     """
-#     r.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
-#     r.headers["Pragma"] = "no-cache"
-#     r.headers["Expires"] = "0"
-#     r.headers['Cache-Control'] = 'public, max-age=0'
-#     return r
 
 ##ROUTES
 ##NAVIGATIONAL
@@ -241,15 +230,19 @@ highlightsSubCats = ["tops","lows"]
 @app.route("/index")
 @app.route("/home")
 def index():
+    # get product ids from current highlights
     targetIds = recurr_pullIdsFromHighlights(highlightsData)
+    # pull products (image and title needed)
     dbPull = mongo_db.products.find({"id": {"$in": targetIds}},{"id":1,"image":1,"title":1},batch_size=len(targetIds))
     dbPull = list(dbPull)
+    # create hashmap for easier recall
     hashMap = dict()
     for product in dbPull:
         hashMap[ product['id'] ] = {
             "image":product['image'],
             "title":product['title']
         }
+    # insert and ammend data for final table view
     for cat in highlightsCats:
         for subCat in highlightsSubCats:
             for product in highlightsData[cat][subCat]:
@@ -279,7 +272,6 @@ def products():
     data = list()
     page = request.args.get('page', None)
     cat = request.args.get('cat', None)
-    
     q = request.args.get('q', None)
     cookie_id = request.cookies.get('userID')
     userLoginStatus = users.validateUserCookie(cookie_id)
@@ -290,7 +282,7 @@ def products():
     }
     page = 1 if (page == None) else int(page)
     basePageUrl = '/products?'
-    ## retreiving product data
+    ## retreiving product data q=search query, 
     if q:
         q = q.strip()
         targetIds = mongo_db.products.find({"title":{"$regex" : q, "$options":"i"}},{"id":1}).distinct('id')
@@ -302,14 +294,15 @@ def products():
     else:
         targetIds = getCategoryIDs(cat) if cat else ids
         basePageUrl += 'cat=' + cat + '&page=' if cat else 'page='
-    
+    # get pagination last page
     productsMaxPageCount = math.ceil(len(targetIds)/productsPerPage)
+    # get product data, only visible retreived
     data = getProductsPage(targetIds,page,productsPerPage)
     for productObj in data:
         productObj["link"] = getProductUrlLink(productObj["title"])
         productObj["analyzeLink"] = '/analyze?id=' + productObj['id']
         productObj["imageLarge"] = productObj["image"][0:-5] + "m.png"
-    
+    # get final pagination data
     paginationSubmit = dict({
         "page":page,
         "basePageUrl":basePageUrl,
@@ -318,16 +311,15 @@ def products():
         "productsPerPage":productsPerPage
     })
     pagination = getProductPagination(paginationSubmit)
-    
+    # catArr needed for view/highlight current categories
     catArr = cat.split('-') if cat else []
-    
     
     return render_template("products.html",activePage=activePage,footerData=footerData, catArr = catArr,categories=categoryPathing, pagination=pagination, data=data)
 
 @app.route("/login",methods = ['GET', 'POST'])
 @limiter.limit("10/minute")
 def login():
-    
+    # rc - reason code - list of possible user messages, encrypted url parameter
     rc = request.args.get('rc', None)
     displayMessages = urlParser.decode(rc) if rc else [] 
         
@@ -335,8 +327,6 @@ def login():
     cookie_id = request.cookies.get('userID')
     userLoginStatus = users.validateUserCookie(cookie_id)
     activePage={
-        # "link":"login",
-        # "label":"Login",
         "login":userLoginStatus
     }
     return render_template("login.html",displayMessages=displayMessages,activePage=activePage,footerData=footerData)
@@ -348,8 +338,9 @@ def updatePassword():
     errorMessages = []
     if not userLoginStatus:
         return redirect("/index")
-    
+    # GET method displays default reset pwd ui if validated cookie
     if request.method == "POST":
+        # form POST for password reset
         current_pwd = request.form.get('current_pwd')
         new_pwd1 = request.form.get('new_pwd1')
         new_pwd2 = request.form.get('new_pwd2')
@@ -389,12 +380,12 @@ def profile():
             rc = urlParser.encode( ['Your profile has been deleted.'] )
             return redirect(f"/login?rc={rc}")
         if (logOutUser == "execute"):
-            users.logOut(cookie_id) #reset cookie id in db (logout hence applies on multiple devices)
+            users.logOut(cookie_id) #reset cookie id in db
             resp = make_response(redirect("/index")) 
             resp.set_cookie('userID', '', expires=0) #remove cookie from user's browser
             return resp
         
-    else: #POST coming from login form
+    else: #POST coming from login/create form
         email = request.form.get('uemail')
         password = request.form.get('pwd')
         login = request.form.get('login') #true/None
@@ -450,10 +441,10 @@ def profile():
     }
     user = users.getUserByCookie(cookie_id)
     profileViewData = {
-        # "emailValidated":False if "validation_code" in user else True,
         "emailValidated":user["validation_status"],
         "email":user["email"]
     }
+    # jsPayload must never contain user cookie in unencrypted form
     jsPayload = {}
     if not profileViewData["emailValidated"]:
         token = users.setOneTimeToken(cookie_id,"sendEmailValidation")
@@ -499,17 +490,17 @@ def analyze_product():
         Message404 = f"Product ID {product_id} not found."
         return render_template("404.html",activePage=activePage,footerData=footerData,Message404=Message404)
     
-    graphData = {
+    pageData = {
         "data":data['history'],
         "title":data['title'],
-        "img":data["image"][0:-5] + "m.png"
+        "img":data["image"][0:-5] + "m.png" # large img file name ends with 'm' instead of 's' in url
     }
     productHandle = ProductAnalyzer(data['history'])
     analyzeResults = productHandle.getResultsAsDict()
     link = getProductUrlLink(data["title"])
-    graphData["tableData"] = appendDataToTableData(data['history'],26)
-    graphData["title"] = data["title"]
-    graphData["descriptiveTableData"] = [
+    pageData["tableData"] = appendDataToTableData(data['history'],26)
+    pageData["title"] = data["title"]
+    pageData["descriptiveTableData"] = [
         {
             "title":"Brand Name",
             "value":data["brand_name"] if data["brand_name"] else "N/A",
@@ -537,7 +528,7 @@ def analyze_product():
         }
     ]
     
-    return render_template("analyze.html",jsPayload=jsPayload,activePage=activePage,footerData=footerData, graphData=graphData)
+    return render_template("analyze.html",jsPayload=jsPayload,activePage=activePage,footerData=footerData, graphData=pageData)
 
 @app.route("/password-reset",methods = ['GET', 'POST'])
 @limiter.limit("5/minute")

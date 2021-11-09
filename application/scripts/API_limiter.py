@@ -2,6 +2,8 @@ from datetime import datetime, timedelta
 import hashlib
 class API_Limiter:
     def __init__(self):
+        """checks IP of requestor and logs timestamps, declines requests if exceeded
+        """
         self.apiLimits = {
             "default":{
                 "endPoint":"api",
@@ -71,6 +73,15 @@ class API_Limiter:
 
 
     def loginAttemptSubmit(self,ipAddress,email):
+        """login limit agains brute force (hooked to both IP and email)
+
+        Args:
+            ipAddress (string): requestor IP
+            email (string): any
+
+        Returns:
+            [boolean]: pass status (True=proceed|False=block)
+        """
         key = email if email else ipAddress
         key = hashlib.sha256(key.encode('utf-8')).hexdigest()
         return self.checkAccess('login',key)

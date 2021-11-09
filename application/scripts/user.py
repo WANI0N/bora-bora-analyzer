@@ -16,10 +16,7 @@ class User:
         self.saltLength = 10
         self.pendingValidationUserLimit = 5000
         self.serverUrl = os.environ.get("SERVER_ROOT_URL")
-        userCookieIds = self.users.find({},{"id_cookie":1})
-        # self.userCookieIds = dict()
-        # for obj in userCookieIds:
-        #     self.userCookieIds[ obj["id_cookie"] ] = True
+        
         self.alertKeys = dict({
             "productID":"string",
             "active":"boolean",
@@ -47,7 +44,6 @@ class User:
             "validation_status":False
         })
         self.users.insert_one(userPush)
-        # self.userCookieIds[ userPush["id_cookie"] ] = True
         return True
     
     def cleanUp(self):
@@ -69,7 +65,6 @@ class User:
         if not user:
             return False
         self.users.delete_one({"id_cookie":cookie_id})
-        # self.logOut( cookie_id )
         return True
 
     def sendPasswordResetEmail(self,email):
@@ -202,7 +197,6 @@ class User:
     def validateUserCookie(self,cookie_id = None):
         if not cookie_id:
             return False
-        # if cookie_id in self.userCookieIds:
         if self.users.find_one({"id_cookie":cookie_id},{"_id":1}):
             return True
         return False

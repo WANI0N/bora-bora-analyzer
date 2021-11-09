@@ -1,3 +1,7 @@
+.primary-nav{
+  font-family: 'Orbitron', sans-serif;
+  height: 50px;
+}
 .mobile-container {
     max-width: 480px;
     margin: auto;

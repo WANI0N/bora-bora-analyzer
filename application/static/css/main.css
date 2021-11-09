@@ -20,6 +20,7 @@
     }
 }
 body {
+    font-family: 'Sunflower', sans-serif;
     /* background-color: rgba(22, 21, 21, 0.863); */
     /* background: linear-gradient(to right,rgba(0, 0, 0, 0.945),rgba(44, 47, 44, 0.863)); */
     height:100vh;
@@ -50,7 +51,7 @@ nav {
 }
 
 .nav-link.active{
-    background-color: rgb(27, 35, 80);
+    background-color: rgb(80, 79, 27);
 }
 .nav-link:hover {
     background-color: rgb(54, 17, 28);

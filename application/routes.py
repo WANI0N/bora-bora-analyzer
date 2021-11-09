@@ -23,10 +23,10 @@ limiter = Limiter(
     key_func=get_remote_address,
     default_limits=["1000 per day", "500 per hour"]
 )
-# localEnvironment = True
-localEnvironment = False
-# if os.environ.get("WERKZEUG_RUN_MAIN") == "true":
-if True:
+localEnvironment = True
+# localEnvironment = False
+if os.environ.get("WERKZEUG_RUN_MAIN") == "true":
+# if True:
     userLoginStatus = False
     disable_onLoad = False
     footerData = {
@@ -389,7 +389,7 @@ def profile():
             rc = urlParser.encode( ['Your profile has been deleted.'] )
             return redirect(f"/login?rc={rc}")
         if (logOutUser == "execute"):
-            users.logOut(cookie_id) #reset cookie id in db
+            users.logOut(cookie_id) #reset cookie id in db (logout hence applies on multiple devices)
             resp = make_response(redirect("/index")) 
             resp.set_cookie('userID', '', expires=0) #remove cookie from user's browser
             return resp
@@ -407,7 +407,7 @@ def profile():
             if users.validateUser(email,password):
                 resp = make_response(redirect("/profile"))
                 cookieId = users.getUserCookie(email)
-                # users.userCookieIds[cookieId] = True #set cookie on server memory
+                
                 if remember == 'on':
                     resp.set_cookie('userID', cookieId,expires=datetime.now()+timedelta(days=9999),secure=True,httponly=True)
                 else:

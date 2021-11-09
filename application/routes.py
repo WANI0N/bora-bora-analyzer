@@ -23,10 +23,10 @@ limiter = Limiter(
     key_func=get_remote_address,
     default_limits=["1000 per day", "500 per hour"]
 )
-localEnvironment = True
-# localEnvironment = False
-if os.environ.get("WERKZEUG_RUN_MAIN") == "true":
-# if True:
+# localEnvironment = True
+localEnvironment = False
+# if os.environ.get("WERKZEUG_RUN_MAIN") == "true":
+if True:
     userLoginStatus = False
     disable_onLoad = False
     footerData = {

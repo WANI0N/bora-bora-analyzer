@@ -12,6 +12,7 @@ from datetime import datetime, timedelta
 
 from functions import getProductUrlLink
 
+from admin_notifier import AdminNotifier
 
 
 class SendAlerts:
@@ -186,3 +187,6 @@ if __name__ == '__main__':
     mongo_db=client.db
     alerts = SendAlerts(mongo_db)
     alerts.execute()
+    
+    notifier = AdminNotifier(mongo_db)
+    notifier.execute()

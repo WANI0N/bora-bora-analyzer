@@ -88,6 +88,7 @@ if True:
         highlightsData_cursor = mongo_db.highlights.find_one()
         highlightsData = parseMongoCollection(highlightsData_cursor,'dict')
     
+    dbStats = sorted(dbStats, key = lambda i: i['date'],reverse=True)
 
 ## API ##
 #################################

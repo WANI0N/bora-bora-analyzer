@@ -32,7 +32,6 @@ class SendAlerts:
         self.updateDbStatusCollection()
         self.adminNotify()
         if not self.dbPullStatusNotification: #no db error
-            print('doing alerts')
             self.getUserAlerts()
             # print( self.notificationData )
             for recipient in self.notificationData:
@@ -200,8 +199,6 @@ class SendAlerts:
         }
     
     def checkDbPullStatus(self):
-        # ck = self.db.products.find_one({'history.0.date':self.currentDate},{'id':1})
-        # if ck:
         if self.db.products.find_one({'history.0.date':self.currentDate},{'id':1}):
             return
         self.dbPullStatusNotification = True

@@ -12,26 +12,32 @@ from datetime import datetime, timedelta
 
 from functions import getProductUrlLink
 
-from admin_notifier import AdminNotifier
-
-
 class SendAlerts:
     def __init__(self,db):
         self.db = db
         self.sender_email = os.environ.get("EMAIL_USERNAME")
         self.password = os.environ.get("EMAIL_PASSWORD")
-        
-        self.login_smtpServer()
 
         self.currentDate = datetime.now().strftime("%Y-%m-%d")
         yesterdayDate = datetime.now()-timedelta(days=1)
         self.yesterdayDate = yesterdayDate.strftime("%Y-%m-%d")
+        
+        self.userChangeNotification = False
+        self.dbPullStatusNotification = False
 
     def execute(self):
-        self.getUserAlerts()
-        # print( self.notificationData )
-        for recipient in self.notificationData:
-            self.sendAlertsToUser(recipient['email'],recipient['unsubToken'],recipient['alerts'])
+        self.login_smtpServer()
+        self.checkDbPullStatus()
+        self.checkUserCountChange()
+        self.updateDbStatusCollection()
+        self.adminNotify()
+        if not self.dbPullStatusNotification: #no db error
+            print('doing alerts')
+            self.getUserAlerts()
+            # print( self.notificationData )
+            for recipient in self.notificationData:
+                self.sendAlertsToUser(recipient['email'],recipient['unsubToken'],recipient['alerts'])
+        self.smtpServer.quit()
 
     def login_smtpServer(self):
         context = ssl.create_default_context()
@@ -130,7 +136,6 @@ class SendAlerts:
         jsonString = json.dumps( data,indent='\t' )
         text += f"{jsonString}"
         
-
         f = open('application/static/html/email_productAlert.html','r')
         html = f.read()
         f.close()
@@ -175,10 +180,54 @@ class SendAlerts:
         b = message.as_string().encode('utf-8')
         self.smtpServer.sendmail(self.sender_email,receiver_email, b)
         # self.smtpServer.sendmail(self.sender_email,receiver_email, message.as_string())
-        self.smtpServer.quit()
-
-
         
+    def updateDbStatusCollection(self):
+        content = dict({
+            "userCount":self.db.user.count_documents({})
+        })
+        self.db.dbStatus.drop()
+        self.db.dbStatus.insert_one( content )
+    
+    def checkUserCountChange(self):
+        dbStatus = self.db.dbStatus.find_one({})        
+        userCount = self.db.user.count_documents({})
+        
+        if (dbStatus["userCount"] == userCount):
+            return
+        self.userChangeNotification = {
+            "from":dbStatus["userCount"],
+            "to":userCount
+        }
+    
+    def checkDbPullStatus(self):
+        # ck = self.db.products.find_one({'history.0.date':self.currentDate},{'id':1})
+        # if ck:
+        if self.db.products.find_one({'history.0.date':self.currentDate},{'id':1}):
+            return
+        self.dbPullStatusNotification = True
+    
+    def adminNotify(self):
+        if not self.userChangeNotification and not self.dbPullStatusNotification:
+            return
+        adminUser = self.db.user.find_one({"admin":True},{"email":1})
+        if not adminUser:
+            return
+        recipientEmail = adminUser['email']
+        message = """\
+        Activity Log [borabora-analyzer]
+                    """
+        message += "\n"
+        if self.userChangeNotification: #dict
+            message += f"User count changed from {self.userChangeNotification['from']} to {self.userChangeNotification['to']}"
+            message += "\n\n"
+        if self.dbPullStatusNotification: #string
+            message += f"Database failed to update! Date - {self.currentDate}"
+            message += "\n\n"
+        
+        message += f"Report Generated at: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"
+        
+        self.smtpServer.sendmail(self.sender_email, recipientEmail, message)
+    
 if __name__ == '__main__':
     DATABASE_URL=f'mongodb+srv://user:{os.environ.get("DB_PASSWORD")}'\
               f'@cluster0.zgmnh.mongodb.net/{os.environ.get("DB_NAME")}?'\
@@ -188,5 +237,3 @@ if __name__ == '__main__':
     alerts = SendAlerts(mongo_db)
     alerts.execute()
     
-    notifier = AdminNotifier(mongo_db)
-    notifier.execute()

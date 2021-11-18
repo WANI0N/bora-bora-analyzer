@@ -1,3 +1,15 @@
+function dynamicSort(property) {
+    var sortOrder = 1;
+    if(property[0] === "-") {
+        sortOrder = -1;
+        property = property.substr(1);
+    }
+    return function (a,b) {
+        var result = (a[property] < b[property]) ? -1 : (a[property] > b[property]) ? 1 : 0;
+        return result * sortOrder;
+    }
+}
+
 // Create chart instance
 am4core.ready(function() {
 
@@ -15,7 +27,10 @@ am4core.ready(function() {
 
     // chart.maxPrecision = 1;
     
-    chart.data = dbStatsData
+    
+    chart.data = dbStatsData.sort(dynamicSort("date"));
+    
+    
     // Set input format for the dates
     chart.dateFormatter.inputDateFormat = "yyyy-MM-dd";
     

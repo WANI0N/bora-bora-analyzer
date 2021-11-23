@@ -7,7 +7,6 @@ import time
 import os
 import pymongo
 from datetime import datetime #, timedelta
-from dotenv import load_dotenv
 #from bson.json_util import dumps, loads
 import os.path
 # import math
@@ -15,12 +14,15 @@ import os.path
 from mongodb import MongoDatabase
 # from TEST_mongodb import MongoDatabase
 
-
+import certifi
+ca = certifi.where()
+from dotenv import load_dotenv
 load_dotenv()
 
 class BarboraCrawler:
     def __init__(self):
-        self.baseUrl = 'https://pagrindinis.barbora.lt'
+        # self.baseUrl = 'https://pagrindinis.barbora.lt'
+        self.baseUrl = 'https://barbora.lt'
         self.topLinks = list()
         self.productPages = dict()
         self.needleKeys = [
@@ -33,6 +35,8 @@ class BarboraCrawler:
     
     def urlToSoup(self,url = None):
         targetUrl = self.baseUrl
+        if not url: ## change: root url on it's own now shows select county page (same redirect for https://pagrindinis.barbora.lt, if route added: works)
+            targetUrl = 'https://barbora.lt/darzoves-ir-vaisiai'
         if url:
             targetUrl = targetUrl + url
         try:
@@ -51,7 +55,9 @@ class BarboraCrawler:
     def analyze(self):
         
         self.getTopLinks()
-        
+        if not self.topLinks:
+            print('Failed to export Top Links')
+            return
         for baseLink in self.topLinks:
             self.productPages[baseLink] = False
         
@@ -163,9 +169,6 @@ class BarboraCrawler:
 
 #updating db if current date not present, manual for now
 if __name__ == "__main__":
-    
-    
-
     crawler = BarboraCrawler()
     crawler.analyze()
 
@@ -182,7 +185,7 @@ if __name__ == "__main__":
     # DATABASE_URL=f'mongodb+srv://user:{os.environ.get("DB_PASSWORD")}'\
     #           f'@cluster0.zgmnh.mongodb.net/{os.environ.get("DB_NAME")}?'\
     #           'retryWrites=true&w=majority'
-    # client=pymongo.MongoClient(DATABASE_URL) # establish connection with database
+    # client=pymongo.MongoClient(DATABASE_URL,tlsCAFile=ca) # establish connection with database
     # mongo_db=client.db
     # mongoHandle = MongoDatabase(mongo_db)
     # mongoHandle.update(data)

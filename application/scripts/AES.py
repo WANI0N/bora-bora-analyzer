@@ -34,7 +34,11 @@ if __name__ == "__main__":
     fmd = AESCipher('pwd')
     encBin = fmd.encrypt('content')
     print(encBin)
-    print(fmd.decrypt(encBin))
+    try:
+        decrypted = fmd.decrypt("asdasd")
+    except:
+        decrypted = False
+    print(decrypted)
     # token = "w1_w2_w3_w4"
     # arr = token.split("_")
     # timestamp = arr[0]

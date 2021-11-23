@@ -17,6 +17,7 @@ class MongoDatabase:
         #call all product ids from db
         self.dbIds = list()
         self.dbIds = self.db.products.find({},{"id":1}).distinct('id')
+        print( self.dbIds )
 
     def update(self,uploadDB,threads_set = False):
         #check for submit data validity

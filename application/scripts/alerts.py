@@ -17,7 +17,7 @@ class SendAlerts:
         self.db = db
         self.sender_email = os.environ.get("EMAIL_USERNAME")
         self.password = os.environ.get("EMAIL_PASSWORD")
-
+        
         self.currentDate = datetime.now().strftime("%Y-%m-%d")
         yesterdayDate = datetime.now()-timedelta(days=1)
         self.yesterdayDate = yesterdayDate.strftime("%Y-%m-%d")

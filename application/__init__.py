@@ -16,6 +16,13 @@ api = Api(blueprint,default="Product",default_label="Retreive product/db stats",
 app.register_blueprint(blueprint)
 api.init_app(app,add_specs=False,debug=True)
 
+# app.secret_key = os.environ.get("SESSION_COOKIE_PWD")
+
+
+# app.config.update({
+#     "SECRET_KEY":os.environ.get("SESSION_COOKIE_PWD"),
+#     "SESSION_COOKIE_SECURE":True,
+# })
 
 mail_settings = {
     "MAIL_SERVER": 'smtp.gmail.com',

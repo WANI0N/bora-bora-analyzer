@@ -1,6 +1,7 @@
 from flask_mail import Message
 import certifi, json, hashlib, string, secrets
 from datetime import datetime, timedelta
+from application.scripts.functions import URL_parser
 ca = certifi.where()
 from dotenv import load_dotenv
 import os
@@ -15,6 +16,7 @@ class User:
             mail (email class): declared on app
             AES (encryption class): declared with static pwd
         """
+        self.url_parser = URL_parser(AES)
         self.AES = AES
         self.mail = mail
         self.serverEmailAddress = os.environ.get("EMAIL_USERNAME")
@@ -112,6 +114,8 @@ class User:
             return
 
         reset_code = self.hash( self.getSalt(20) )
+        
+        
         expiration_timestamp = datetime.now()+timedelta(hours=24)
         expiration_timestamp = expiration_timestamp.strftime("%Y-%m-%d %H:%M:%S")
         pwdReset = {
@@ -124,7 +128,7 @@ class User:
                 "pwdReset":pwdReset
             }
         })
-
+        reset_code = self.url_parser.encode( reset_code )
         link = self.serverUrl + "/password-reset?reset_code=" + reset_code
         subject = "Password Reset [borabora-analyzer]"
         
@@ -153,6 +157,10 @@ class User:
         Returns:
             False or user's cookie_id
         """
+        try:
+            reset_code = self.url_parser.decode( reset_code )
+        except:
+            return False
         user = self.users.find_one({ "pwdReset.reset_code": reset_code },{"pwdReset":1,"id_cookie":1})
         if not user:
             return False

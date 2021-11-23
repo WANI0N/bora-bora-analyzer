@@ -16,6 +16,9 @@ from application import server_mail
 
 from application.scripts.API_limiter import API_Limiter
 
+from application.scripts.cookieHandler import CookieHandler
+
+
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 limiter = Limiter(
@@ -41,7 +44,7 @@ if True:
     users = User(mongo_db.user,server_mail,AES)
     users.cleanUp()
     urlParser = URL_parser(AES)
-
+    cookieHandler = CookieHandler()
     API_limiter = API_Limiter()
 
     ids = list()
@@ -223,6 +226,27 @@ def before_request():
             code = 301
             return redirect(url, code=code)
 
+def getSession(request):
+    callBack = {}
+    userLoginStatus = False
+    cookie_id = cookieHandler.validateSession( request.cookies.get('session',None) )
+    if not cookie_id:
+        try:
+            cookie_id = AES.decrypt( request.cookies.get('userID',None) )
+            userLoginStatus = users.validateUserCookie(cookie_id)
+            if userLoginStatus:
+                resp = make_response(redirect(request.url)) 
+                resp.set_cookie('session', cookieHandler.createSession(cookie_id),secure=True,httponly=True)
+                return {"resp":resp}
+        except:
+            cookie_id = None
+            userLoginStatus = False
+    else:
+        userLoginStatus = True
+    callBack["cookie_id"] = cookie_id
+    callBack["userLoginStatus"] = userLoginStatus
+    return callBack
+
 ##ROUTES
 ##NAVIGATIONAL
 highlightsCats = ["var_stdDev","var_perc","topToday","availability_perc"]
@@ -257,8 +281,11 @@ def index():
     
 
     pieChartData = categoryCounts
-    cookie_id = request.cookies.get('userID')
-    userLoginStatus = users.validateUserCookie(cookie_id)
+    cb = getSession( request )
+    if "resp" in cb:
+        return cb['resp']
+    cookie_id = cb["cookie_id"]
+    userLoginStatus = cb["userLoginStatus"]
     activePage={
         "link":"index",
         "label":"Home",
@@ -274,8 +301,11 @@ def products():
     page = request.args.get('page', None)
     cat = request.args.get('cat', None)
     q = request.args.get('q', None)
-    cookie_id = request.cookies.get('userID')
-    userLoginStatus = users.validateUserCookie(cookie_id)
+    cb = getSession( request )
+    if "resp" in cb:
+        return cb['resp']
+    cookie_id = cb["cookie_id"]
+    userLoginStatus = cb["userLoginStatus"]
     activePage={
         "link":"products",
         "label":"Products",
@@ -325,8 +355,12 @@ def login():
     displayMessages = urlParser.decode(rc) if rc else [] 
         
     ##login does not appear unless user is not logged in
-    cookie_id = request.cookies.get('userID')
-    userLoginStatus = users.validateUserCookie(cookie_id)
+
+    cb = getSession( request )
+    if "resp" in cb:
+        return cb['resp']
+    cookie_id = cb["cookie_id"]
+    userLoginStatus = cb["userLoginStatus"]
     activePage={
         "login":userLoginStatus
     }
@@ -334,8 +368,11 @@ def login():
 
 @app.route("/updatePassword",methods = ['GET', 'POST'])
 def updatePassword():
-    cookie_id = request.cookies.get('userID')
-    userLoginStatus = users.validateUserCookie(cookie_id)
+    cb = getSession( request )
+    if "resp" in cb:
+        return cb['resp']
+    cookie_id = cb["cookie_id"]
+    userLoginStatus = cb["userLoginStatus"]
     errorMessages = []
     if not userLoginStatus:
         return redirect("/index")
@@ -355,7 +392,8 @@ def updatePassword():
             if status['success'] == True:
                 rc = urlParser.encode( ['Your password has been reset, please login with your new password.'] )
                 resp = make_response(redirect(f"/login?rc={rc}")) 
-                resp.set_cookie('userID', '', expires=0) #remove cookie from user's browser
+                resp.set_cookie('session', '', expires=0) #remove cookie from user's browser
+                resp.set_cookie('userID', '', expires=0) 
                 return resp
             else:
                 errorMessages.append( status['reason'] )
@@ -369,8 +407,13 @@ def updatePassword():
 @app.route("/profile",methods = ['GET', 'POST'])
 @limiter.limit("20/minute")
 def profile():
-    cookie_id = request.cookies.get('userID')
-    userLoginStatus = users.validateUserCookie(cookie_id)
+    
+    cb = getSession( request )
+    if "resp" in cb:
+        return cb['resp']
+    cookie_id = cb["cookie_id"]
+    userLoginStatus = cb["userLoginStatus"]
+    
     if request.method == "GET": #normal click on profile
         if not userLoginStatus:
             return redirect("/login")
@@ -383,7 +426,8 @@ def profile():
         if (logOutUser == "execute"):
             users.logOut(cookie_id) #reset cookie id in db
             resp = make_response(redirect("/index")) 
-            resp.set_cookie('userID', '', expires=0) #remove cookie from user's browser
+            resp.set_cookie('session', '', expires=0) #remove cookie from user's browser
+            resp.set_cookie('userID', '', expires=0) 
             return resp
         
     else: #POST coming from login/create form
@@ -398,12 +442,13 @@ def profile():
         if login == 'true':
             if users.validateUser(email,password):
                 resp = make_response(redirect("/profile"))
-                cookieId = users.getUserCookie(email)
-                
+                cookie_id = users.getUserCookie(email)
+                cookieIdEncr = AES.encrypt( cookie_id )
                 if remember == 'on':
-                    resp.set_cookie('userID', cookieId,expires=datetime.now()+timedelta(days=9999),secure=True,httponly=True)
+                    resp.set_cookie('userID', cookieIdEncr,expires=datetime.now()+timedelta(days=9999),secure=True,httponly=True)
                 else:
-                    resp.set_cookie('userID', cookieId,secure=True,httponly=True)                
+                    resp.set_cookie('userID', cookieIdEncr,secure=True,httponly=True)
+                    resp.set_cookie('session', cookieHandler.createSession(cookie_id),secure=True,httponly=True)
                 return resp
             else:
                 rc = urlParser.encode( ['Email or password are incorrect.'] )
@@ -423,12 +468,14 @@ def profile():
 
             status = users.create(email,password)
             if status:
-                cookieId = users.getUserCookie(email)
+                cookie_id = users.getUserCookie(email)
                 resp = make_response(redirect("/profile"))
+                cookieIdEncr = AES.encrypt( cookie_id )
                 if remember == 'on':
-                    resp.set_cookie('userID', cookieId,expires=datetime.now()+timedelta(days=9999),secure=True,httponly=True)
+                    resp.set_cookie('userID', cookieIdEncr,expires=datetime.now()+timedelta(days=9999),secure=True,httponly=True)
                 else:
-                    resp.set_cookie('userID', cookieId,secure=True,httponly=True)                
+                    resp.set_cookie('userID', cookieIdEncr,secure=True,httponly=True)                
+                    resp.set_cookie('session', cookieHandler.createSession(cookie_id),secure=True,httponly=True)
                 users.sendValidationEmail(email)
                 return resp
             else:
@@ -440,6 +487,7 @@ def profile():
         "label":"Profile",
         "login":userLoginStatus
     }
+    
     user = users.getUserByCookie(cookie_id)
     profileViewData = {
         "emailValidated":user["validation_status"],
@@ -469,8 +517,11 @@ def profile():
 ##SUBMITS
 @app.route('/analyze')
 def analyze_product():
-    cookie_id = request.cookies.get('userID')
-    userLoginStatus = users.validateUserCookie(cookie_id)
+    cb = getSession( request )
+    if "resp" in cb:
+        return cb['resp']
+    cookie_id = cb["cookie_id"]
+    userLoginStatus = cb["userLoginStatus"]
     activePage={
         # "link":"products",
         # "label":"Products",
@@ -583,8 +634,11 @@ def passwordReset():
                     formData['renderType'] = 'submitSendEmail'
                     formData['userMessages'].append( "Something went wrong, please submit a new reset password request." )
 
-    cookie_id = request.cookies.get('userID')
-    userLoginStatus = users.validateUserCookie(cookie_id)
+    cb = getSession( request )
+    if "resp" in cb:
+        return cb['resp']
+    cookie_id = cb["cookie_id"]
+    userLoginStatus = cb["userLoginStatus"]
     activePage={
         "login":userLoginStatus
     }
@@ -594,8 +648,12 @@ def passwordReset():
 @limiter.limit("5/minute")
 def emailValidation(validation_code):
     status = users.validateUserEmail(validation_code)
-    cookie_id = request.cookies.get('userID')
-    userLoginStatus = users.validateUserCookie(cookie_id)
+    
+    cb = getSession( request )
+    if "resp" in cb:
+        return cb['resp']
+    cookie_id = cb["cookie_id"]
+    userLoginStatus = cb["userLoginStatus"]
     
     if not status:
         Message404 = "Unfortunately it has not been possible to validate email. If you haven't validated your email within 48h, your account is automatically deleted. Please create an account again."
@@ -618,7 +676,12 @@ def unsubscribe():
             Message404 = "Invalid token"
         if Message404:
             cookie_id = request.cookies.get('userID')
-            activePage={"login":users.validateUserCookie(cookie_id)}
+            try:
+                cookie_id = AES.decrypt( cookie_id )    
+                userLoginStatus = users.validateUserCookie(cookie_id)
+            except:
+                userLoginStatus = False
+            activePage={"login":userLoginStatus}
             return render_template("404.html",activePage=activePage,footerData=footerData,Message404=Message404)
         formData['formToken'] = token
     else: #POST
@@ -647,10 +710,15 @@ def unsubscribe():
     
     return render_template("unsubscribe.html",formData=formData)
 
+
+
 @app.route("/about")
 def about():
-    cookie_id = request.cookies.get('userID')
-    userLoginStatus = users.validateUserCookie(cookie_id)
+    cb = getSession( request )
+    if "resp" in cb:
+        return cb['resp']
+    cookie_id = cb["cookie_id"]
+    userLoginStatus = cb["userLoginStatus"]
     activePage={
         "link":"about",
         "label":"About",

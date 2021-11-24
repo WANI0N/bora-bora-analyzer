@@ -14,6 +14,17 @@
 		</div>
 	</div>
 	<p id="plusSignPressMessage" style="display:none;color:white;">This product has been added to your watchlist! Click <a href="/profile">here</a> to see your alerts.</p>
+	<div id="categories-wrapper">
+		{% set categoryParam = [] %}
+		{% for cat in graphData.categoryList %}
+			{% if categoryParam %}
+				/
+			{% endif %}
+			{% set _ = categoryParam.append(cat) %} 
+			{% set link = categoryParam|join('-') %}
+			<a href="/products?cat={{ link }}">{{ cat }}</a>
+		{% endfor %}
+	</div>
 	<div class="analyze-content-container">
 		<div class="analyze-product-description">
 			<table class="analyze-product-description-table">

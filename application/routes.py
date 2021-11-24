@@ -545,6 +545,7 @@ def analyze_product():
     pageData = {
         "data":data['history'],
         "title":data['title'],
+        "categoryList":data["category_name_full_path"].split('/'),
         "img":data["image"][0:-5] + "m.png" # large img file name ends with 'm' instead of 's' in url
     }
     productHandle = ProductAnalyzer(data['history'])
@@ -675,7 +676,7 @@ def unsubscribe():
         elif not users.checkUnsubToken(token):
             Message404 = "Invalid token"
         if Message404:
-            cookie_id = request.cookies.get('userID')
+            cookie_id = request.cookies.get('userID',None)
             try:
                 cookie_id = AES.decrypt( cookie_id )    
                 userLoginStatus = users.validateUserCookie(cookie_id)

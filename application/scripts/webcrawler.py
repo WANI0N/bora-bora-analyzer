@@ -171,10 +171,6 @@ class BarboraCrawler:
 if __name__ == "__main__":
     crawler = BarboraCrawler()
     crawler.analyze()
-
-    # mongoHandle = MongoDatabase()
-    # mongoHandle.update(crawler.database)
-
     crawler.outputDatabase()
     
     # now = datetime.now()

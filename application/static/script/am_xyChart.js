@@ -106,8 +106,10 @@ am4core.ready(function() {
     chart.scrollbarX.series.push(series);
     chart.scrollbarX.parent = chart.bottomAxesContainer;
 
+    const maxRangeView = 100
+    if (chart.data.length > maxRangeView){
+        dateAxis.start = (chart.data.length-maxRangeView)/chart.data.length
+    }
     
-    
-    // dateAxis.start = 0.79;
     dateAxis.keepSelection = true;
 });

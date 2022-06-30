@@ -30,7 +30,7 @@ mail_settings = {
     "MAIL_USE_TLS": False,
     "MAIL_USE_SSL": True,
     "MAIL_USERNAME": os.environ.get("EMAIL_USERNAME"),
-    "MAIL_PASSWORD": os.environ.get("EMAIL_PASSWORD")
+    "MAIL_PASSWORD": os.environ.get("EMAIL_APP_PASSWORD")
 }
 
 app.config.update(mail_settings)

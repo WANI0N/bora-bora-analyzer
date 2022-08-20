@@ -26,7 +26,7 @@ if __name__ == "__main__":
     mongoHandle = MongoDatabase(mongo_db)
     mongoHandle.update(crawler.database)
     mongoHandle.checkForDuplicatesAndFix()
-    
+    mongoHandle.trim_to_limit()
     # from datetime import datetime
     # import json
     # now = datetime.now()

@@ -1,5 +1,6 @@
-import pymongo, math, threading, os
+import pymongo, math, threading
 import certifi
+from datetime import datetime, timedelta
 ca = certifi.where()
 from dotenv import load_dotenv
 load_dotenv()
@@ -17,7 +18,7 @@ class MongoDatabase:
         #call all product ids from db
         self.dbIds = list()
         self.dbIds = self.db.products.find({},{"id":1}).distinct('id')
-        print( self.dbIds )
+        # print( self.dbIds )
 
     def update(self,uploadDB,threads_set = False):
         #check for submit data validity
@@ -140,3 +141,27 @@ class MongoDatabase:
             print( "\n".join(productDuplicatesErrorLog) )
         else:
             print("No product duplicates found.")
+        
+    def trim_to_limit(self, limit=365):
+        limit_breach_date_string = (datetime.now()-timedelta(days = limit + 1)).strftime("%Y-%m-%d")
+        ck = self.db.products.find_one(
+            {"history": {"$elemMatch": {"date": limit_breach_date_string}}}, {"id": 1})
+        if not ck:
+            print(f"no breach within limit of {limit} days was found")
+            return
+        self.drop_date_fm_db(limit_breach_date_string)
+    
+    def drop_date_fm_db(self, target_datestring):
+        for prod_i, product in enumerate(
+            self.db.products.find(
+                {"history": {"$elemMatch": {"date": target_datestring}}},
+                {"id": 1, "history": 1})):
+            for flip_i, o in enumerate(reversed(product['history'])):
+                i = len(product['history'])-flip_i-1
+                if o["date"] == target_datestring:
+                    del product['history'][i]
+                    break
+            if prod_i % 100 == 0:
+                print(prod_i)
+            self.db.products.update_one(
+                {"id": product['id']}, {"$set": {"history": product['history']}})

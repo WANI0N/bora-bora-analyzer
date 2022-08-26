@@ -152,16 +152,18 @@ class MongoDatabase:
         self.drop_date_fm_db(limit_breach_date_string)
     
     def drop_date_fm_db(self, target_datestring):
-        for prod_i, product in enumerate(
-            self.db.products.find(
+        for product in self.db.products.find(
                 {"history": {"$elemMatch": {"date": target_datestring}}},
-                {"id": 1, "history": 1})):
+                {"id": 1, "history": 1}):
+            if len(product['history']) == 1:
+                self.db.products.delete_one({"id": product['id']})
+                continue
             for flip_i, o in enumerate(reversed(product['history'])):
                 i = len(product['history'])-flip_i-1
                 if o["date"] == target_datestring:
                     del product['history'][i]
                     break
-            if prod_i % 100 == 0:
-                print(prod_i)
             self.db.products.update_one(
                 {"id": product['id']}, {"$set": {"history": product['history']}})
+
+                

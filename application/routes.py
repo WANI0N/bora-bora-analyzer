@@ -105,7 +105,7 @@ productAPIKeys = [
     'brand_name'
 ]
 productAPIKeysString = ", ".join(productAPIKeys)
-@api.route('/product',doc={"description": f"Returns product(s) with full history based on url parameters: {productAPIKeysString}.\nLimit 400 products per request.\n\nRate limit: 15/min\n\nExample: product?brand_name=AROSO"})
+@api.route('/product',doc={"description": f"Returns product(s) with full history based on query parameters: {productAPIKeysString}.\nLimit 400 products per request.\n\nRate limit: 15/min\n\nExample: /api/product?brand_name=AROSO"})
 class GetProduct(Resource):
     def get(self):
         needleParams = {}
@@ -116,14 +116,16 @@ class GetProduct(Resource):
         try:
             results = mongo_db.products.find( needleParams ).limit(400)
         except Exception as e:
-            abort(404,str(e))
+            abort(500, str(e))
         callBack = parseMongo(results)
+        if callBack == 0:
+            abort(404,"Product not found")
         for prod in callBack:
             del prod["_id"]
         if isinstance(callBack,list):
             return callBack
         else:
-            abort(401,"Product not found")
+            abort(404,"Product not found")
 
         
 @api.route('/product-ids/',doc={"description": "Returns an array of all product ids.\n\nRate limit: 1/min"})

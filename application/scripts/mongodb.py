@@ -1,4 +1,6 @@
-import pymongo, math, threading
+from operator import mod
+from traceback import print_tb
+import pymongo, math, threading, json
 import certifi
 from datetime import datetime, timedelta
 ca = certifi.where()
@@ -152,10 +154,12 @@ class MongoDatabase:
         self.drop_date_fm_db(limit_breach_date_string)
     
     def drop_date_fm_db(self, target_datestring):
+        deleted_products = []
         for product in self.db.products.find(
                 {"history": {"$elemMatch": {"date": target_datestring}}},
                 {"id": 1, "history": 1}):
             if len(product['history']) == 1:
+                deleted_products.append(product['id'])
                 self.db.products.delete_one({"id": product['id']})
                 continue
             for flip_i, o in enumerate(reversed(product['history'])):
@@ -165,5 +169,24 @@ class MongoDatabase:
                     break
             self.db.products.update_one(
                 {"id": product['id']}, {"$set": {"history": product['history']}})
+        
+        # drop from user alerts
+        if deleted_products:
+            for user in self.db.user.find(
+                {"validation_status": True},
+                {"alerts": 1, "id": 1}):
+                if 'alerts' not in user:
+                    continue
+                updatedAlerts = []
+                modify = False
+                for alert in user["alerts"]:
+                    if alert["productID"] in deleted_products:
+                        modify = True
+                        continue
+                    updatedAlerts.append(alert)
+                if modify:
+                    self.db.user.update_one(
+                        {"id": user["id"]}, {"$set": {"alerts": updatedAlerts}})
+        
 
                 

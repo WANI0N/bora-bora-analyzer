@@ -169,24 +169,25 @@ class MongoDatabase:
                     break
             self.db.products.update_one(
                 {"id": product['id']}, {"$set": {"history": product['history']}})
-        
+    
+    def clean_user_alerts(self):
         # drop from user alerts
-        if deleted_products:
-            for user in self.db.user.find(
-                {"validation_status": True},
-                {"alerts": 1, "id": 1}):
-                if 'alerts' not in user:
+        for user in self.db.user.find(
+            {"validation_status": True},
+            {"alerts": 1, "id_cookie": 1}):
+            if 'alerts' not in user:
+                continue
+            updatedAlerts = []
+            modify = False
+            for alert in user["alerts"]:
+                ck = self.db.products.find_one({"id": alert["productID"]}, {"id": 1})
+                if not ck:
+                    modify = True
                     continue
-                updatedAlerts = []
-                modify = False
-                for alert in user["alerts"]:
-                    if alert["productID"] in deleted_products:
-                        modify = True
-                        continue
-                    updatedAlerts.append(alert)
-                if modify:
-                    self.db.user.update_one(
-                        {"id": user["id"]}, {"$set": {"alerts": updatedAlerts}})
+                updatedAlerts.append(alert)
+            if modify:
+                self.db.user.update_one(
+                    {"id_cookie": user["id_cookie"]}, {"$set": {"alerts": updatedAlerts}})
         
 
                 

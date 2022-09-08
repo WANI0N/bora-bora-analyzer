@@ -1,6 +1,4 @@
-from db_analyzer import DbAnalyzer
 from webcrawler import BarboraCrawler
-# from TEST_mongodb import MongoDatabase
 from mongodb import MongoDatabase
 import pymongo, os
 
@@ -10,10 +8,8 @@ ca = certifi.where()
 from dotenv import load_dotenv
 load_dotenv()
 
-# import json
-# from functions import *
 
-if __name__ == "__main__":
+def Main():
     #scrape barbora
     crawler = BarboraCrawler()
     crawler.analyze()
@@ -27,15 +23,8 @@ if __name__ == "__main__":
     mongoHandle.update(crawler.database)
     mongoHandle.checkForDuplicatesAndFix()
     mongoHandle.trim_to_limit()
-    # from datetime import datetime
-    # import json
-    # now = datetime.now()
-    # current_date = now.strftime("%Y-%m-%d")
-    # f = open(current_date + '.json','a') #1203075,867412
-    # f.write( json.dumps( crawler.database, indent='\t' ) )
-    # f.close()
+    mongoHandle.clean_user_alerts()
 
-    #recalculate
-    analyzer = DbAnalyzer(mongo_db)
-    analyzer.executeAndDiscard(True)
-    
+if __name__ == "__main__":
+    Main()
+

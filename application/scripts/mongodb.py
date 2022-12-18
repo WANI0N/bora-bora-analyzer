@@ -7,6 +7,8 @@ ca = certifi.where()
 from dotenv import load_dotenv
 load_dotenv()
 
+import time, random
+
 class MongoDatabase:
     def __init__(self,db):
         # #connect to db
@@ -46,7 +48,7 @@ class MongoDatabase:
 
         #execute upload
         if threads_set:
-            threadCount = 20
+            threadCount = 50
             threadPayload = math.floor(len(uploadDB)/threadCount)
             padding = len(uploadDB) % threadPayload
             threads = []
@@ -151,24 +153,55 @@ class MongoDatabase:
         if not ck:
             print(f"no breach within limit of {limit} days was found")
             return
-        self.drop_date_fm_db(limit_breach_date_string)
+        self.drop_date_fm_db_threaded_caller(limit_breach_date_string)
     
-    def drop_date_fm_db(self, target_datestring):
-        deleted_products = []
+    def drop_date_fm_db_threaded_caller(self, target_datestring):
+        target_products = list()
         for product in self.db.products.find(
                 {"history": {"$elemMatch": {"date": target_datestring}}},
                 {"id": 1, "history": 1}):
+            target_products.append({
+                    "id": product['id'],
+                    "history": product['history'],
+                })
+        if len(target_products) == 0:
+            print(f"No products with date: {target_datestring} were found.")
+            return
+        thread_count = 50
+        thread_payload = math.floor(len(target_products)/thread_count)
+        padding = len(target_products) % thread_payload
+        threads = []
+        for i in range(thread_count):
+            start_index = i*thread_payload
+            end_index = start_index+thread_payload
+            if (i == thread_count-1):
+                end_index += padding
+            t = threading.Thread(target=self.drop_date_fm_db_threaded_thread, args=[i, target_datestring, target_products[start_index:end_index]])
+            t.start()
+            print(f"thread started-> {str(start_index)}-{str(end_index)}=>{end_index-start_index}")
+            threads.append(t)
+        for thread in threads:
+            thread.join()
+        print(f"{len(target_products)} were deleted/altered.")
+
+    def drop_date_fm_db_threaded_thread(self, thread_index, target_datestring, products):
+        rem_count, altered_count = 0, 0
+        for product in products:
             if len(product['history']) == 1:
-                deleted_products.append(product['id'])
+                # print(f"deleting item: {product['id']}...")
                 self.db.products.delete_one({"id": product['id']})
+                rem_count += 1
                 continue
             for flip_i, o in enumerate(reversed(product['history'])):
                 i = len(product['history'])-flip_i-1
                 if o["date"] == target_datestring:
                     del product['history'][i]
                     break
+            # print(f"updating item: {product['id']}...")
             self.db.products.update_one(
                 {"id": product['id']}, {"$set": {"history": product['history']}})
+            altered_count += 1
+        print(f"Thread #{thread_index} finished - deleted: {rem_count} - altered: {altered_count}")
     
     def clean_user_alerts(self):
         # drop from user alerts

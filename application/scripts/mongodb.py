@@ -48,7 +48,7 @@ class MongoDatabase:
 
         #execute upload
         if threads_set:
-            threadCount = 50
+            threadCount = 20
             threadPayload = math.floor(len(uploadDB)/threadCount)
             padding = len(uploadDB) % threadPayload
             threads = []
@@ -167,7 +167,7 @@ class MongoDatabase:
         if len(target_products) == 0:
             print(f"No products with date: {target_datestring} were found.")
             return
-        thread_count = 50
+        thread_count = 20
         thread_payload = math.floor(len(target_products)/thread_count)
         padding = len(target_products) % thread_payload
         threads = []

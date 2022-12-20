@@ -7,7 +7,7 @@ ca = certifi.where()
 from dotenv import load_dotenv
 load_dotenv()
 
-import time, random
+import copy
 
 class MongoDatabase:
     def __init__(self,db):
@@ -157,13 +157,26 @@ class MongoDatabase:
     
     def drop_date_fm_db_threaded_caller(self, target_datestring):
         target_products = list()
+        i = -1
         for product in self.db.products.find(
                 {"history": {"$elemMatch": {"date": target_datestring}}},
-                {"id": 1, "history": 1}):
-            target_products.append({
-                    "id": product['id'],
-                    "history": product['history'],
-                })
+                {"id": 1, "history.date": 1}):
+            i += 1
+            if i % 100 == 0:
+                print(f"drop_date_fm_db_threaded_caller - init - i: {i}/{len(self.dbIds)}")
+            if len(product['history']) == 1:
+                self.db.products.delete_one({"id": product['id']})
+                continue
+            for i, _ in enumerate(product['history']):
+                reversed_i = len(product['history'])-1-i
+                current_date = product['history'][reversed_i]['date']
+                if current_date == target_datestring:        
+                    target_products.append({
+                            "id": product['id'],
+                            "index": reversed_i,
+                        })
+                    break
+
         if len(target_products) == 0:
             print(f"No products with date: {target_datestring} were found.")
             return
@@ -176,7 +189,7 @@ class MongoDatabase:
             end_index = start_index+thread_payload
             if (i == thread_count-1):
                 end_index += padding
-            t = threading.Thread(target=self.drop_date_fm_db_threaded_thread, args=[i, target_datestring, target_products[start_index:end_index]])
+            t = threading.Thread(target=self.drop_date_fm_db_threaded_thread, args=[i, target_products[start_index:end_index]])
             t.start()
             print(f"thread started-> {str(start_index)}-{str(end_index)}=>{end_index-start_index}")
             threads.append(t)
@@ -184,24 +197,30 @@ class MongoDatabase:
             thread.join()
         print(f"{len(target_products)} were deleted/altered.")
 
-    def drop_date_fm_db_threaded_thread(self, thread_index, target_datestring, products):
-        rem_count, altered_count = 0, 0
+    def drop_date_fm_db_threaded_thread(self, thread_index, products):
         for product in products:
-            if len(product['history']) == 1:
-                # print(f"deleting item: {product['id']}...")
-                self.db.products.delete_one({"id": product['id']})
-                rem_count += 1
-                continue
-            for flip_i, o in enumerate(reversed(product['history'])):
-                i = len(product['history'])-flip_i-1
-                if o["date"] == target_datestring:
-                    del product['history'][i]
-                    break
-            # print(f"updating item: {product['id']}...")
+            tmp_product = self.db.products.find_one(
+                {"id": product['id']}, {"history": 1})
+            hist = tmp_product['history']
+            del hist[product['index']]
             self.db.products.update_one(
-                {"id": product['id']}, {"$set": {"history": product['history']}})
-            altered_count += 1
-        print(f"Thread #{thread_index} finished - deleted: {rem_count} - altered: {altered_count}")
+                {"id": product['id']}, {"$set": {"history": hist}})
+            
+            # if len(product['history']) == 1:
+            #     # print(f"deleting item: {product['id']}...")
+            #     self.db.products.delete_one({"id": product['id']})
+            #     rem_count += 1
+            #     continue
+            # for flip_i, o in enumerate(reversed(product['history'])):
+            #     i = len(product['history'])-flip_i-1
+            #     if o["date"] == target_datestring:
+            #         del product['history'][i]
+            #         break
+            # # print(f"updating item: {product['id']}...")
+            # self.db.products.update_one(
+            #     {"id": product['id']}, {"$set": {"history": product['history']}})
+            # altered_count += 1
+        print(f"Thread #{thread_index} finished - altered: {len(products)}")
     
     def clean_user_alerts(self):
         # drop from user alerts

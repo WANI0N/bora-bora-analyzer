@@ -26,8 +26,8 @@ limiter = Limiter(
     default_limits=["1000 per day", "500 per hour"]
 )
 # set localEnvironment and activate if statement: os.environ.get("WERKZEUG_RUN_MAIN") to run only once for local host
-localEnvironment = True
-# localEnvironment = False
+# localEnvironment = True
+localEnvironment = False
 
 
 userLoginStatus = False

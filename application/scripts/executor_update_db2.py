@@ -14,7 +14,7 @@ def Main():
     crawler = BarboraCrawler()
     crawler.analyze()
     
-    crawler.outputDatabase()
+    # crawler.outputDatabase()
     
     #upload database
     DATABASE_URL=f'mongodb+srv://{os.environ.get("DB_NAME_2")}:{os.environ.get("DB_PASSWORD_2")}'\

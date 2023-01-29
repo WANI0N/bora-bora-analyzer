@@ -157,13 +157,11 @@ class MongoDatabase:
     
     def drop_date_fm_db_threaded_caller(self, target_datestring):
         target_products = list()
-        i = -1
-        for product in self.db.products.find(
+        for index, product in enumerate(self.db.products.find(
                 {"history": {"$elemMatch": {"date": target_datestring}}},
-                {"id": 1, "history.date": 1}):
-            i += 1
-            if i % 100 == 0:
-                print(f"drop_date_fm_db_threaded_caller - init - i: {i}/{len(self.dbIds)}")
+                {"id": 1, "history.date": 1})):
+            if index % 10 == 0:
+                print(f"drop_date_fm_db_threaded_caller - init - i: {index}")
             if len(product['history']) == 1:
                 self.db.products.delete_one({"id": product['id']})
                 continue

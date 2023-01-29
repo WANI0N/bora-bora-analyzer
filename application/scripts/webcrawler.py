@@ -75,8 +75,7 @@ class BarboraCrawler:
         ## removing keys out of target needle, trim id, add date
         now = datetime.now()
         current_date = now.strftime("%Y-%m-%d")
-        i = 0
-        for item in self.database:
+        for i, item in enumerate(self.database):
             self.database[i]["history"] = [{
                 # 'price':item['price'],
                 'price':round(item['price'], 2),
@@ -87,7 +86,6 @@ class BarboraCrawler:
             }]
             self.database[i] = { key: item[key] for key in self.needleKeys }
             self.database[i]["id"] = self.database[i]["id"].lstrip("0")
-            i += 1
         
     def threadLooper(self,index):
         exist = True
@@ -172,48 +170,3 @@ if __name__ == "__main__":
     crawler = BarboraCrawler()
     crawler.analyze()
     crawler.outputDatabase()
-    
-    # now = datetime.now()
-    # current_date = now.strftime("%Y-%m-%d")
-    # f = open(current_date + '.json','r') #1203075,867412
-    # string = f.read()
-    # data = json.loads( string )
-    # DATABASE_URL=f'mongodb+srv://user:{os.environ.get("DB_PASSWORD")}'\
-    #           f'@cluster0.zgmnh.mongodb.net/{os.environ.get("DB_NAME")}?'\
-    #           'retryWrites=true&w=majority'
-    # client=pymongo.MongoClient(DATABASE_URL,tlsCAFile=ca) # establish connection with database
-    # mongo_db=client.db
-    # mongoHandle = MongoDatabase(mongo_db)
-    # mongoHandle.update(data)
-    
-
-    
-    
-
-    
-    # now = datetime.now()
-    # current_date = now.strftime("%Y-%m-%d")
-    # # mongo_db.pushToTest.drop()
-    # ck = mongo_db.products.find_one({'history.0.date':current_date},{'id':1})
-    # # print(ck)
-    # if ck:
-    #     print('update not needed')
-    #     pass
-    # else:
-    #     print('update needed')
-    #     userInput = input("Execute upload? Y/N: ")
-    #     if (userInput == "Y"):
-    #         print('pushing update')
-    #         f = open(current_date + '.json','r') #1203075,867412
-    #         string = f.read()
-    #         data = json.loads( string )
-    #         mongo_db.pullFromTest.insert_many( data )
-    #     print('skipping update')
-    #1139947
-    # f = open("2021-09-01" + '.json','r')
-    # string = f.read()
-    # data = json.loads( string )
-    # mongoHandle = MongoDatabase()
-    # mongoHandle.update(data)
-    
-    print('done')

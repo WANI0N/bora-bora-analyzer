@@ -18,7 +18,6 @@ from application.scripts.API_limiter import API_Limiter
 
 from application.scripts.cookieHandler import CookieHandler
 
-
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 limiter = Limiter(
@@ -27,71 +26,71 @@ limiter = Limiter(
     default_limits=["1000 per day", "500 per hour"]
 )
 # set localEnvironment and activate if statement: os.environ.get("WERKZEUG_RUN_MAIN") to run only once for local host
-# localEnvironment = True
-localEnvironment = False
-# if os.environ.get("WERKZEUG_RUN_MAIN") == "true":
-if True:
-    userLoginStatus = False
-    
-    footerData = {
-        "productCount":0,
-        "dbAge":0,
-    }
-    productsPerPage = 24
-    
-    from application import AES
+localEnvironment = True
+# localEnvironment = False
 
-    users = User(mongo_db.user,server_mail,AES)
-    users.cleanUp()
-    urlParser = URL_parser(AES)
-    cookieHandler = CookieHandler()
-    API_limiter = API_Limiter()
 
-    ids = list()
-    ids = mongo_db.products.find({},{"id":1}).distinct('id')
+userLoginStatus = False
+footerData = {
+    "productCount":0,
+    "dbAge":0,
+}
+productsPerPage = 24
+
+from application import AES
+
+users = User(mongo_db.user,server_mail,AES)
+users.cleanUp()
+urlParser = URL_parser(AES)
+cookieHandler = CookieHandler()
+API_limiter = API_Limiter()
+
+ids = list()
+ids = mongo_db.products.find({},{"id":1}).distinct('id')
+
+footerData["productCount"] = len(ids)
+# footerData["dbAge"] = getDbAge(mongo_db.products)
+footerData["dbAge"] = mongo_db.dbStatsDataFinal.count_documents({})
     
-    footerData["productCount"] = len(ids)
-    footerData["dbAge"] = getDbAge(mongo_db.products)
-    
-    if localEnvironment:
-        # load from local temp file (data can be manually generated in db_analyzer.py)
-        f = open('temp/dbStatsDataFinal.json','r')
-        dbStats = json.loads( f.read() )
-        f.close()
-        dbStatsApiData = dict()
-        for item in dbStats:
-            dbStatsApiData[ item["date"] ] = item
+    # if localEnvironment:
+    #     # load from local temp file (data can be manually generated in db_analyzer.py)
+    #     f = open('temp/dbStatsDataFinal.json','r')
+    #     dbStats = json.loads( f.read() )
+    #     f.close()
+    #     dbStatsApiData = dict()
+    #     for item in dbStats:
+    #         dbStatsApiData[ item["date"] ] = item
         
-        f=open( 'temp/categoryCounts.json','r' )
-        categoryCounts = json.loads(f.read())
-        f.close()
+    #     f=open( 'temp/categoryCounts.json','r' )
+    #     categoryCounts = json.loads(f.read())
+    #     f.close()
         
-        f=open( 'temp/categoryPathing.json','r' )
-        categoryPathing = json.loads(f.read())
-        f.close()
+    #     f=open( 'temp/categoryPathing.json','r' )
+    #     categoryPathing = json.loads(f.read())
+    #     f.close()
         
-        f = open('temp/highlights.json','r')
-        string = f.read()
-        f.close()
-        highlightsData = json.loads( string )
-    else:
-        # production, load from db
-        dbStats_cursor = mongo_db.dbStatsDataFinal.find()
-        dbStats = parseMongoCollection(dbStats_cursor,'list')
-        dbStatsApiData = dict()
-        for item in dbStats:
-            dbStatsApiData[ item["date"] ] = item
+    #     f = open('temp/highlights.json','r')
+    #     string = f.read()
+    #     f.close()
+    #     highlightsData = json.loads( string )
+    # else:
+    # production, load from db
+dbStats_cursor = mongo_db.dbStatsDataFinal.find()
+dbStats = parseMongoCollection(dbStats_cursor,'list')
+dbStatsApiData = dict()
+for item in dbStats:
+    dbStatsApiData[ item["date"] ] = item
 
-        categoryCounts_cursor = mongo_db.categoryCounts.find_one()
-        categoryCounts = parseMongoCollection(categoryCounts_cursor,'dict')
+categoryCounts_cursor = mongo_db.categoryCounts.find_one()
+categoryCounts = parseMongoCollection(categoryCounts_cursor,'dict')
 
-        categoryPathing_cursor = mongo_db.categoryPathing.find_one()
-        categoryPathing = parseMongoCollection(categoryPathing_cursor,'dict')
+categoryPathing_cursor = mongo_db.categoryPathing.find_one()
+categoryPathing = parseMongoCollection(categoryPathing_cursor,'dict')
 
-        highlightsData_cursor = mongo_db.highlights.find_one()
-        highlightsData = parseMongoCollection(highlightsData_cursor,'dict')
-    
-    dbStats = sorted(dbStats, key = lambda i: i['date'],reverse=True)
+highlightsData_cursor = mongo_db.highlights.find_one()
+highlightsData = parseMongoCollection(highlightsData_cursor,'dict')
+
+dbStats = sorted(dbStats, key = lambda i: i['date'],reverse=True)
 
 ## API ##
 #################################
@@ -105,7 +104,7 @@ productAPIKeys = [
     'brand_name'
 ]
 productAPIKeysString = ", ".join(productAPIKeys)
-@api.route('/product',doc={"description": f"Returns product(s) with full history based on query parameters: {productAPIKeysString}.\nLimit 400 products per request.\n\nRate limit: 15/min\n\nExample: /api/product?brand_name=AROSO"})
+@api.route('/product',doc={"description": f"Returns product(s) with full history based on query parameters: {productAPIKeysString}.\nLimit 100 products per request.\n\nRate limit: 15/min\n\nExample: /api/product?brand_name=AROSO"})
 class GetProduct(Resource):
     def get(self):
         needleParams = {}
@@ -114,7 +113,7 @@ class GetProduct(Resource):
             if value:
                 needleParams[k] = value
         try:
-            results = mongo_db.products.find( needleParams ).limit(400)
+            results = mongo_db.products.find( needleParams ).limit(100)
         except Exception as e:
             abort(500, str(e))
         callBack = parseMongo(results)
@@ -133,9 +132,9 @@ class GetAllProducts(Resource):
     def get(self):
         ids = list()
         try:
-            ids = mongo_db.products.find({},{"id":1})
+            ids = mongo_db.products.find({},{"id":1}).distinct('id')
         except Exception as e:
-            abort(400,str(e))
+            abort(500,str(e))
         if not ids:
             abort(401,"Not Found")
         else:
@@ -278,7 +277,7 @@ def index():
                 product["trimedTitle"] = product["title"][0:35]
                 if (len( product["trimedTitle"] ) == 35):
                     product["trimedTitle"] += "..."
-                product["link"] = getProductUrlLink(product["title"])
+                product["link"] = get_product_url_link(product["title"])
                 product["analyzeLink"] = "/analyze?id=" + product['id']
     
 
@@ -332,7 +331,7 @@ def products():
     # get product data, only visible retreived
     data = getProductsPage(targetIds,page,productsPerPage)
     for productObj in data:
-        productObj["link"] = getProductUrlLink(productObj["title"])
+        productObj["link"] = get_product_url_link(productObj["title"])
         productObj["analyzeLink"] = '/analyze?id=' + productObj['id']
         productObj["imageLarge"] = productObj["image"][0:-5] + "m.png"
     # get final pagination data
@@ -424,7 +423,10 @@ def profile():
         if (deleteUser == "execute"):
             users.delete(cookie_id)
             rc = urlParser.encode( ['Your profile has been deleted.'] )
-            return redirect(f"/login?rc={rc}")
+            resp = make_response(redirect(f"/login?rc={rc}")) 
+            resp.set_cookie('session', '', expires=0) #remove cookie from user's browser
+            resp.set_cookie('userID', '', expires=0)
+            return resp
         if (logOutUser == "execute"):
             users.logOut(cookie_id) #reset cookie id in db
             resp = make_response(redirect("/index")) 
@@ -540,6 +542,7 @@ def analyze_product():
         jsPayload = {"tmp_token":token,"product_id":product_id}
 
     data = mongo_db.products.find_one({"id":product_id})
+    data['history'] = convert_history_to_old_format(data['history'])
     if not data:
         Message404 = f"Product ID {product_id} not found."
         return render_template("404.html",activePage=activePage,footerData=footerData,Message404=Message404)
@@ -552,7 +555,7 @@ def analyze_product():
     }
     productHandle = ProductAnalyzer(data['history'])
     analyzeResults = productHandle.getResultsAsDict()
-    link = getProductUrlLink(data["title"])
+    link = get_product_url_link(data["title"])
     pageData["tableData"] = appendDataToTableData(data['history'],26)
     pageData["title"] = data["title"]
     pageData["descriptiveTableData"] = [

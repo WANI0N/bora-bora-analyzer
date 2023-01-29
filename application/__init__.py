@@ -37,10 +37,11 @@ app.config.update(mail_settings)
 server_mail = Mail(app)
 
 #connecting to db
-DATABASE_URL=f'mongodb+srv://user:{os.environ.get("DB_PASSWORD")}'\
-              f'@cluster0.zgmnh.mongodb.net/{os.environ.get("DB_NAME")}?'\
-              'retryWrites=true&w=majority'
-
+# DATABASE_URL=f'mongodb+srv://user:{os.environ.get("DB_PASSWORD")}'\
+#               f'@cluster0.zgmnh.mongodb.net/{os.environ.get("DB_NAME")}?'\
+#               'retryWrites=true&w=majority'
+DATABASE_URL=f'mongodb+srv://{os.environ.get("DB_NAME_2")}:{os.environ.get("DB_PASSWORD_2")}'\
+        '@cluster0.ichgboc.mongodb.net/?retryWrites=true&w=majority'
 client=pymongo.MongoClient(DATABASE_URL,tlsCAFile=ca) # establish connection with database
 mongo_db=client.db # assign database to mongo_db
 

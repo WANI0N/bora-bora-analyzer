@@ -106,7 +106,8 @@ am4core.ready(function() {
     chart.scrollbarX.series.push(series);
     chart.scrollbarX.parent = chart.bottomAxesContainer;
 
-    const maxRangeView = 100
+    const maxRangeView = Math.round(window.innerWidth/20)
+    
     if (chart.data.length > maxRangeView){
         dateAxis.start = (chart.data.length-maxRangeView)/chart.data.length
     }

@@ -20,6 +20,62 @@ except:
     mongo_db=client.db
 import math
 
+def get_daycount_subtract_dates(datestring1: str, datestring2: str) -> int:
+    d0 = convert_date_string_to_obj(datestring1)
+    d1 = convert_date_string_to_obj(datestring2)
+    return (d0 - d1).days
+
+def calculate_day(date_string: str, diff: int) -> datetime:
+    array = date_string.split("-")
+    date = datetime(int(array[0]), int(array[1]), int(array[2]))
+    next_date = date+timedelta(days=diff)
+    return next_date.strftime("%Y-%m-%d")  
+
+def convert_date_string_to_obj(input_date: str) -> datetime:
+    array = input_date.split("-")
+    return datetime(int(array[0]), int(array[1]), int(array[2]))
+
+def get_date_range(end_date: str, start_date: str) -> list:
+    output = []
+    ed_obj = convert_date_string_to_obj(end_date)
+    sd_obj = convert_date_string_to_obj(start_date)
+    current_date = ed_obj
+    while current_date:
+        output.append(current_date.strftime("%Y-%m-%d"))
+        if current_date == sd_obj:
+            current_date = ""
+            continue
+        current_date = current_date-timedelta(days=1)
+    return output
+
+def convert_products_to_old_format(products: list) -> list:
+    for product in products:
+        if 'history' not in product:
+            return []
+        product['history'] = convert_history_to_old_format(product['history'])
+    return products
+
+def convert_history_to_old_format(input_history: list) -> list:
+    output = []
+    for item in input_history:
+        if item['end-date'] == item['start-date']:
+            output.append({
+                'price': item['price'],
+                'comparative_unit_price': item['comparative_unit_price'],
+                'date': item['end-date'],
+                'active': item['availability'][0],
+            })
+            continue
+        date_range = get_date_range(item['end-date'], item['start-date'])
+        for i, date in enumerate(date_range):
+            # print(f"i={i} availability={item['availability']}")
+            output.append({
+                'price': item['price'],
+                'comparative_unit_price': item['comparative_unit_price'],
+                'date': date,
+                'active': item['availability'][i],
+            })
+    return output
 
 def recurr_insertDbDataToHighlights(data,dbDataHashMap):
     for k, content in data.items():
@@ -111,31 +167,34 @@ def getCategoryIDs(categoryString):
         ids.append(_id)
     return ids
 
-def getDbAge(products):
-    for i in range(50):
-        ckDate = datetime.now()-timedelta(days=i)
-        ckDateString = ckDate.strftime("%Y-%m-%d")
-        ck = products.find_one({'history.0.date':ckDateString},{'id':1})
-        if ck:
-            lastDay = ckDate
-            _id = ck['id']
-            break
+# def getDbAge(products):
+#     for i in range(50):
+#         ckDate = datetime.now()-timedelta(days=i)
+#         ckDateString = ckDate.strftime("%Y-%m-%d")
+#         # ck = products.find_one({'history.0.date':ckDateString},{'id':1})
+#         ck = products.find_one({'history.0.end-date': ckDateString},{'id':1})
+#         if ck:
+#             lastDay = ckDate
+#             _id = ck['id']
+#             break
     
-    baseDate = products.find_one({'id':_id},{'id':1,"history": {"$slice": -1 }})
-    baseDate = baseDate['history'][0]['date']
-    array = baseDate.split('-')
-    baseDate = datetime(int(array[0]),int(array[1]),int(array[2]))
+#     baseDate = products.find_one({'id':_id},{'id':1,"history": {"$slice": -1 }})
+#     # baseDate = baseDate['history'][0]['date']
+#     baseDate = baseDate['history'][0]['start-date']
+#     array = baseDate.split('-')
+#     baseDate = datetime(int(array[0]),int(array[1]),int(array[2]))
 
-    for i in range(1,50):
-        ckDate = baseDate-timedelta(days=i)
-        ckDateString = ckDate.strftime("%Y-%m-%d")
-        ck = products.find_one({"history": {"$elemMatch": {"date": ckDateString}}},{"id":1})
-        if not ck:
-            # firstDay = ckDate+timedelta(days=1)
-            firstDay = ckDate
-            break
-    delta = lastDay - firstDay
-    return delta.days
+#     for i in range(1,50):
+#         ckDate = baseDate-timedelta(days=i)
+#         ckDateString = ckDate.strftime("%Y-%m-%d")
+#         # ck = products.find_one({"history": {"$elemMatch": {"date": ckDateString}}},{"id":1})
+#         ck = products.find_one({"history": {"$elemMatch": {"start-date": ckDateString}}},{"id":1})
+#         if not ck:
+#             # firstDay = ckDate+timedelta(days=1)
+#             firstDay = ckDate
+#             break
+#     delta = lastDay - firstDay
+#     return delta.days
 
 class URL_parser:
     def __init__(self,AES):
@@ -332,7 +391,7 @@ def appendDataToTableData(data,tableRangeMinimum):
 
 import unicodedata, re
 
-def getProductUrlLink(title):
+def get_product_url_link(title):
     """converts product title to barbora url
 
     Args:

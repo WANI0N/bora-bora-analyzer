@@ -1,15 +1,12 @@
-import threading
 import json
-import time
 import os
 import pymongo
-# from pymongo.errors import AutoReconnect, ConnectionFailure
 from datetime import datetime, timedelta
 from dotenv import load_dotenv
-from bson.json_util import dumps, loads
+# from bson.json_util import dumps, loads
 import math
-#from application.routes import parseMongo
-#from application import routes.parseMongo
+
+from functions import convert_history_to_old_format
 
 from product_analyzer import ProductAnalyzer
 
@@ -61,13 +58,11 @@ def recurrsion_sort(data,_id,pushData, submitKey = None):
                     data[k] = sorted(content, key=lambda k: k['sortingValue'])
     return data
 
-def translateCats(targetArr,sourceData):
+def translate_cats(targetArr: list, sourceData: list) -> list:
     if not sourceData:
         return targetArr
     returnArr = list()
     for w in targetArr:
-        # appendWord = sourceData[w] if w in sourceData else w
-        # returnArr.append( appendWord )
         returnArr.append( sourceData[w] if w in sourceData else w )
         
     return returnArr
@@ -94,46 +89,31 @@ class DbAnalyzer:
                 "lows":[]
             },
         }
-        # self.dayCount = dayCount
-        # self.dateCutOff = datetime.now()-timedelta(days=dayCount)
-        # self.totalMeansData = dict()
-        self.dbStatsData = dict()
-        for i in range(50):
+        self.db_stats_data = dict()
+        for i in range(100):
             today = datetime.now()-timedelta(days=i)
             today = today.strftime("%Y-%m-%d")
-            if self.db.products.find_one({'history.0.date':today},{'id':1}):
-                self.dbUpdateDate = today
+            if self.db.products.find_one({'history.0.end-date': today}, {'id': 1}):
+                self.db_update_date = today
                 break
-        
-        # self.TEST_DuplicateList = []
 
     def analyze(self):
-        batchSize = 200
-        dbSubmitCount = math.floor(len(self.dbIds)/batchSize)
-        dbSubmitPadding = len(self.dbIds) % batchSize
-        
-        threads = []
-        i = 0
-        for i in range(dbSubmitCount):
-            # if (i == 1):
-            #     break
-            startIndex = i*batchSize
-            endIndex = startIndex+batchSize
-            if (i == dbSubmitCount-1):
-                endIndex += dbSubmitPadding
-            products = self.db.products.find({"id": {"$in": self.dbIds[startIndex:endIndex]}},{"history":1,"id":1},batch_size=batchSize)
+        batch_size = 500
+        db_submit_count = math.floor(len(self.dbIds)/batch_size)
+        db_submit_padding = len(self.dbIds) % batch_size
+        for i in range(db_submit_count):
+            start_index = i*batch_size
+            end_index = start_index+batch_size
+            if (i == db_submit_count-1):
+                end_index += db_submit_padding
+            
+            products = self.db.products.find({"id": {"$in": self.dbIds[start_index:end_index]}},{"history": 1, "id": 1},batch_size=batch_size)
             products = list(products)
-            t = threading.Thread(target=self.threadSubmit, args=[products])
-            # t = threading.Thread(target=self.threadSubmitTEST, args=[products])
-            t.start()
-            print("thread started-> " + str(startIndex) + "-" + str(endIndex))
-            threads.append(t)
-            i += 1
-        i = 0
-        for thread in threads:
-            print("thread #" + str(i) + " finished")
-            thread.join()
-            i += 1
+            
+            self.analyze_batch(products)
+            
+            print(f"finished -> {str(start_index)} - {str(end_index)}")
+            
         
         self.highlights["var_stdDev"]["tops"] = self.highlights["var_stdDev"]["tops"][::-1]
         self.highlights["var_perc"]["tops"] = self.highlights["var_perc"]["tops"][::-1]
@@ -141,36 +121,29 @@ class DbAnalyzer:
         self.highlights["topToday"]["tops"] = self.highlights["topToday"]["tops"][::-1]
         self.highlights["topToday"]["lows"] = self.highlights["topToday"]["lows"][::-1]
 
-    # def threadSubmitTEST(self,products):
-    #     for product in products:
-    #         listOfElems = []
-    #         for o in product['history']:
-    #             listOfElems.append( o['date'] )
-    #         if len(listOfElems) == len(set(listOfElems)):
-    #             continue
-    #         self.TEST_DuplicateList.append({
-    #             "id:":product['id'],
-    #             "data":product['history']
-    #         })
-
-    def threadSubmit(self,products):
+    def analyze_batch(self, products: list):
         for product in products:
-            prodAnalyzer = ProductAnalyzer(product['history'],self.dbUpdateDate)
+            old_hist_format = convert_history_to_old_format(product['history'])
+            
+            prodAnalyzer = ProductAnalyzer(
+                old_hist_format,
+                self.db_update_date
+                )
             results = prodAnalyzer.getResultsAsDict()
             self.highlights = recurrsion_sort(self.highlights,product['id'],results)
             
             productDbStats = prodAnalyzer.getDifferenceToMeanList()
             for item in productDbStats:
-                if item['date'] not in self.dbStatsData:
-                    self.dbStatsData[ item['date'] ] = list()
-                self.dbStatsData[ item['date'] ].append( item['perc_diff'] )
+                if item['date'] not in self.db_stats_data:
+                    self.db_stats_data[ item['date'] ] = list()
+                self.db_stats_data[ item['date'] ].append( item['perc_diff'] )
     
-    def getDbStatsDataFinal(self):
+    def get_final_db_stats(self):
         
-        self.dbStatsDataFinal = []
-        for date,list in self.dbStatsData.items():
+        self.db_stats_data_final = []
+        for date,list in self.db_stats_data.items():
             diff_perc = sum(list)/len(list)
-            self.dbStatsDataFinal.append(dict({
+            self.db_stats_data_final.append(dict({
                 "date":date,
                 "diff_perc":diff_perc,
                 "count":len(list),
@@ -178,18 +151,20 @@ class DbAnalyzer:
                 "perCent":len(list)/len(self.dbIds)*100
             }))
         ##sort by date ensures graph consistency
-        self.dbStatsDataFinal = sorted(self.dbStatsDataFinal, key = lambda i: i['date'],reverse=True)
-        self.dbStatsData = {}
+        self.db_stats_data_final = sorted(self.db_stats_data_final, key = lambda i: i['date'],reverse=True)
+        self.db_stats_data = {}
     
-    def executeAndDiscard(self, updateCategories=False, localUpdate=False):
+    def analyze_and_push(self, update_categories: bool = False, local_update: bool = False):
+        print("analyzing products...")
         self.analyze()
-        self.getDbStatsDataFinal()
-
-        if localUpdate:
+        print("compiling final stats...")
+        self.get_final_db_stats()
+        print("pushing results to db...")
+        if local_update:
             if (os.path.exists('temp/dbStatsDataFinal.json')):
                 os.remove('temp/dbStatsDataFinal.json')
             f = open('temp/dbStatsDataFinal.json','a')
-            f.write( json.dumps(self.dbStatsDataFinal,indent="\t") )
+            f.write( json.dumps(self.db_stats_data_final,indent="\t") )
             f.close()
 
             if (os.path.exists('temp/highlights.json')):
@@ -197,130 +172,81 @@ class DbAnalyzer:
             f = open('temp/highlights.json','a')
             f.write( json.dumps(self.highlights,indent="\t") )
             f.close()
-            if updateCategories:
-                self.getCategories()
+            if update_categories:
+                self.get_categories()
                 if (os.path.exists('temp/categoryPathing.json')):
                     os.remove('temp/categoryPathing.json')
                 f = open('temp/categoryPathing.json','a')
-                f.write( json.dumps(self.categoryPathing,indent="\t") )
+                f.write( json.dumps(self.category_pathing,indent="\t") )
                 f.close()
 
                 if (os.path.exists('temp/categoryCounts.json')):
                     os.remove('temp/categoryCounts.json')
                 f = open('temp/categoryCounts.json','a')
-                f.write( json.dumps(self.categoryCounts,indent="\t") )
+                f.write( json.dumps(self.category_counts,indent="\t") )
                 f.close()
         else:
             self.db.dbStatsDataFinal.drop()
-            self.db.dbStatsDataFinal.insert_many(self.dbStatsDataFinal)
+            self.db.dbStatsDataFinal.insert_many(self.db_stats_data_final)
         
             self.db.highlights.drop()
             self.db.highlights.insert_one(self.highlights)
-            if updateCategories:
-                self.getCategories()
+            if update_categories:
+                self.get_categories()
                 self.db.categoryPathing.drop()
-                self.db.categoryPathing.insert_one(self.categoryPathing)
+                self.db.categoryPathing.insert_one(self.category_pathing)
         
                 self.db.categoryCounts.drop()
-                self.db.categoryCounts.insert_one(self.categoryCounts)
+                self.db.categoryCounts.insert_one(self.category_counts)
         
 
-    def getCategories(self):
-        categoryList = list()
-        categoryList = self.db.products.find({},{"category_name_full_path":1}).distinct('category_name_full_path')
+    def get_categories(self):
+        category_list = list()
+        category_list = self.db.products.find({},{"category_name_full_path":1}).distinct('category_name_full_path')
         
-        catsTranslation = {}
-        if (os.path.exists('application/static/catsTranslation.json')):
-            f=open('application/static/catsTranslation.json','r',encoding='utf-8')
-            catsTranslation = json.loads( f.read() )
+        cats_translation = {}
+        if (os.path.exists('application/static/cats_translation.json')):
+            f=open('application/static/cats_translation.json','r',encoding='utf-8')
+            cats_translation = json.loads( f.read() )
             f.close()
         
-        self.categoryPathing = dict()
-        self.categoryCounts = dict()
+        self.category_pathing = dict()
+        self.category_counts = dict()
 
-        for path in categoryList:
+        for path in category_list:
             arr = path.split('/')
             if arr[0]:
-                if arr[0] not in self.categoryPathing:
-                    self.categoryPathing[ arr[0] ] = dict()
+                if arr[0] not in self.category_pathing:
+                    self.category_pathing[ arr[0] ] = dict()
             if (len(arr) == 1): # for path repeating in name, e.g. cat a/milks/milks
                 continue
             if arr[1]:
-                if arr[1] not in self.categoryPathing[ arr[0] ]:
-                    self.categoryPathing[ arr[0] ][ arr[1] ] = list()
+                if arr[1] not in self.category_pathing[ arr[0] ]:
+                    self.category_pathing[ arr[0] ][ arr[1] ] = list()
             if (len(arr) == 2): # for path repeating in name, e.g. cat a/milks/milks
                 continue
             if arr[2]:
-                if arr[2] not in self.categoryPathing[ arr[0] ][ arr[1] ]:
-                    self.categoryPathing[ arr[0] ][ arr[1] ].append( arr[2] )
-                    submitPath = arr[0] + "/" + arr[1] + "/" + arr[2]
-                    translatedCatArr = translateCats(arr,catsTranslation)
-                    self.categoryCounts[ translatedCatArr[2] ] = dict({
-                        "top":translatedCatArr[0],
-                        "mid":translatedCatArr[1],
-                        # "count":submitPath
-                        "count":self.db.products.count_documents({"category_name_full_path":submitPath})
+                if arr[2] not in self.category_pathing[ arr[0] ][ arr[1] ]:
+                    self.category_pathing[ arr[0] ][ arr[1] ].append( arr[2] )
+                    submit_path = arr[0] + "/" + arr[1] + "/" + arr[2]
+                    translated_cat_arr = translate_cats(arr, cats_translation)
+                    self.category_counts[ translated_cat_arr[2] ] = dict({
+                        "top":translated_cat_arr[0],
+                        "mid":translated_cat_arr[1],
+                        "count":self.db.products.count_documents({"category_name_full_path":submit_path})
                     })
-        
-        # threads = []
-        # for k in self.categoryCounts:
-        #     t = threading.Thread(target=self.catThreadSubmit, args=[k])
-        #     t.start()
-        #     threads.append(t)
-        # for thread in threads:
-        #     thread.join()
-        
-
-    def catThreadSubmit(self,key):
-        self.categoryCounts[key]["count"] = self.db.products.count_documents({"category_name_full_path":self.categoryCounts[key]["count"]})
-        
     
 
 if __name__ == "__main__":
-    # def parseMongo(data,method='api'):
-    #     list_cur = list(data)
-    #     json_data = dumps(list_cur, indent = 2)
-    #     if (method == 'api'):
-    #         return json.loads(json_data)
-    #     else:
-    #         return json_data
-    
     import certifi
     ca = certifi.where()
-    DATABASE_URL=f'mongodb+srv://user:{os.environ.get("DB_PASSWORD")}'\
-              f'@cluster0.zgmnh.mongodb.net/{os.environ.get("DB_NAME")}?'\
-              'retryWrites=true&w=majority'
+    DATABASE_URL=f'mongodb+srv://{os.environ.get("DB_NAME_2")}:{os.environ.get("DB_PASSWORD_2")}'\
+        '@cluster0.ichgboc.mongodb.net/?retryWrites=true&w=majority'
     client=pymongo.MongoClient(DATABASE_URL,tlsCAFile=ca) # establish connection with database
     mongo_db=client.db
 
     analyzer = DbAnalyzer(mongo_db)
-    # analyzer.getCategories()
-    # analyzer.executeAndDiscard(True)
-    analyzer.executeAndDiscard(True,True)    
-    
-    
+    analyzer.analyze_and_push(True, False)
     print('done')
-    
 
-    # analyzer = DbAnalyzer("",[])
-    # f = open('gigant.json','r') #1203075,867412
-    # string = f.read()
-    # data = json.loads(string)
-    # analyzer.totalMeans = data
-    
-    
-    # if (os.path.exists('gigant.json')):
-    #     os.remove('gigant.json')
-    # f=open('gigant.json','a')
-    # f.write(json.dumps( analyzer.totalMeans,indent='\t' ))
-    # f.close()
-    # if (os.path.exists('temp/highlights.json')):
-    #     os.remove('temp/highlights.json')
-    # f = open('temp/highlights.json','a')
-    # f.write( json.dumps(analyzer.highlights,indent="\t") )
-    # f.close()
-    # print(
-    #     # json.dumps(analyzer.highlights["topToday"],indent="\t")
-    #     json.dumps(analyzer.highlights,indent="\t")
-    # )
     

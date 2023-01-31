@@ -1,5 +1,5 @@
 from webcrawler import BarboraCrawler
-from mongodb import MongoDatabase
+from db_handler import MongoDatabase
 import pymongo, os
 
 import certifi
@@ -13,16 +13,17 @@ def Main():
     #scrape barbora
     crawler = BarboraCrawler()
     crawler.analyze()
+    
+    # crawler.outputDatabase()
+    
     #upload database
-    DATABASE_URL=f'mongodb+srv://user:{os.environ.get("DB_PASSWORD")}'\
-              f'@cluster0.zgmnh.mongodb.net/{os.environ.get("DB_NAME")}?'\
-              'retryWrites=true&w=majority'
+    DATABASE_URL=f'mongodb+srv://{os.environ.get("DB_NAME_2")}:{os.environ.get("DB_PASSWORD_2")}'\
+        '@cluster0.ichgboc.mongodb.net/?retryWrites=true&w=majority'
     client=pymongo.MongoClient(DATABASE_URL,tlsCAFile=ca) # establish connection with database
     mongo_db=client.db
     mongoHandle = MongoDatabase(mongo_db)
-    mongoHandle.update(crawler.database)
-    mongoHandle.checkForDuplicatesAndFix()
-    mongoHandle.trim_to_limit()
+    mongoHandle.update_day(crawler.database)
+    mongoHandle.trim_db_submit(limit=int(os.environ.get("DB_PRODUCTS_DAY_LIMIT")))
     mongoHandle.clean_user_alerts()
 
 if __name__ == "__main__":

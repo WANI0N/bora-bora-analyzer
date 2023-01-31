@@ -1,4 +1,3 @@
-# return {'var_stdDev': 0.2748939189335891, 'var_perc': 44.337728860256306, 'min': False, 'max': 0.99, 'availability_perc': 100.0}
 import math
 from datetime import datetime, date, timedelta
 
@@ -25,7 +24,7 @@ class ProductAnalyzer:
         self.dbUpdateDate = dbUpdateDate if dbUpdateDate else self.current_date
         d0 = date(int(self.dbUpdateDate[0:4]),int(self.dbUpdateDate[5:7]),int(self.dbUpdateDate[8:10]))
         d1 = date(int(self.dates[len(self.dates)-1][0:4]),int(self.dates[len(self.dates)-1][5:7]),int(self.dates[len(self.dates)-1][8:10]))
-        # self.baseDate = d1
+
         delta = d0 - d1
         self.dayRange = (delta.days)+1
         self.getProductVariation()
@@ -47,16 +46,7 @@ class ProductAnalyzer:
         })
 
     def getDifferenceToMeanList(self):
-        # self.getProductMean()
         returnArr = []
-        # for o in self.pricesPadded:
-        #     diff = o['price']-self.mean
-        #     perc_diff = diff/self.mean*100
-        #     returnArr.append({
-        #         "perc_diff":perc_diff,
-        #         "date":o['date']
-        #     })
-        # return returnArr
         for o in self.data:
             diff = o['price']-self.mean
             perc_diff = diff/self.mean*100
@@ -103,12 +93,8 @@ class ProductAnalyzer:
                     break
         
     def getProductAvailability(self):
-        # d0 = date(int(self.dates[0][0:4]),int(self.dates[0][5:7]),int(self.dates[0][8:10]))
-        # d0 = date(int(self.dbUpdateDate[0:4]),int(self.dbUpdateDate[5:7]),int(self.dbUpdateDate[8:10]))
-        # d1 = date(int(self.dates[len(self.dates)-1][0:4]),int(self.dates[len(self.dates)-1][5:7]),int(self.dates[len(self.dates)-1][8:10]))
-        # delta = d0 - d1
         self.availability_perc = self.activeCount/((self.dayRange)/100)
-        # self.availability_perc = self.activeCount/(len(self.prices)/100)
+
 
 if __name__ == "__main__":
     pass

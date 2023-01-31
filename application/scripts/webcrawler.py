@@ -5,14 +5,9 @@ import threading
 import json
 import time
 import os
-import pymongo
-from datetime import datetime #, timedelta
-#from bson.json_util import dumps, loads
+from datetime import datetime
 import os.path
-# import math
 
-from mongodb import MongoDatabase
-# from TEST_mongodb import MongoDatabase
 
 import certifi
 ca = certifi.where()
@@ -165,7 +160,6 @@ class BarboraCrawler:
         f.close()
 
 
-#updating db if current date not present, manual for now
 if __name__ == "__main__":
     crawler = BarboraCrawler()
     crawler.analyze()

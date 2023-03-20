@@ -25,10 +25,9 @@ limiter = Limiter(
     key_func=get_remote_address,
     default_limits=["1000 per day", "500 per hour"]
 )
-# set localEnvironment and activate if statement: os.environ.get("WERKZEUG_RUN_MAIN") to run only once for local host
-# localEnvironment = True
-localEnvironment = False
 
+localEnvironment = False
+load_stats_from_file = False
 
 userLoginStatus = False
 footerData = {
@@ -52,45 +51,45 @@ footerData["productCount"] = len(ids)
 # footerData["dbAge"] = getDbAge(mongo_db.products)
 footerData["dbAge"] = mongo_db.dbStatsDataFinal.count_documents({})
     
-    # if localEnvironment:
-    #     # load from local temp file (data can be manually generated in db_analyzer.py)
-    #     f = open('temp/dbStatsDataFinal.json','r')
-    #     dbStats = json.loads( f.read() )
-    #     f.close()
-    #     dbStatsApiData = dict()
-    #     for item in dbStats:
-    #         dbStatsApiData[ item["date"] ] = item
-        
-    #     f=open( 'temp/categoryCounts.json','r' )
-    #     categoryCounts = json.loads(f.read())
-    #     f.close()
-        
-    #     f=open( 'temp/categoryPathing.json','r' )
-    #     categoryPathing = json.loads(f.read())
-    #     f.close()
-        
-    #     f = open('temp/highlights.json','r')
-    #     string = f.read()
-    #     f.close()
-    #     highlightsData = json.loads( string )
-    # else:
+if load_stats_from_file:
+    # load from local temp file (data can be manually generated in db_analyzer.py)
+    f = open('temp/dbStatsDataFinal.json','r')
+    dbStats = json.loads( f.read() )
+    f.close()
+    dbStatsApiData = dict()
+    for item in dbStats:
+        dbStatsApiData[ item["date"] ] = item
+    
+    f=open( 'temp/categoryCounts.json','r' )
+    categoryCounts = json.loads(f.read())
+    f.close()
+    
+    f=open( 'temp/categoryPathing.json','r' )
+    categoryPathing = json.loads(f.read())
+    f.close()
+    
+    f = open('temp/highlights.json','r')
+    string = f.read()
+    f.close()
+    highlightsData = json.loads( string )
+else:
     # production, load from db
-dbStats_cursor = mongo_db.dbStatsDataFinal.find()
-dbStats = parseMongoCollection(dbStats_cursor,'list')
-dbStatsApiData = dict()
-for item in dbStats:
-    dbStatsApiData[ item["date"] ] = item
+    dbStats_cursor = mongo_db.dbStatsDataFinal.find()
+    dbStats = parseMongoCollection(dbStats_cursor,'list')
+    dbStatsApiData = dict()
+    for item in dbStats:
+        dbStatsApiData[ item["date"] ] = item
 
-categoryCounts_cursor = mongo_db.categoryCounts.find_one()
-categoryCounts = parseMongoCollection(categoryCounts_cursor,'dict')
+    categoryCounts_cursor = mongo_db.categoryCounts.find_one()
+    categoryCounts = parseMongoCollection(categoryCounts_cursor,'dict')
 
-categoryPathing_cursor = mongo_db.categoryPathing.find_one()
-categoryPathing = parseMongoCollection(categoryPathing_cursor,'dict')
+    categoryPathing_cursor = mongo_db.categoryPathing.find_one()
+    categoryPathing = parseMongoCollection(categoryPathing_cursor,'dict')
 
-highlightsData_cursor = mongo_db.highlights.find_one()
-highlightsData = parseMongoCollection(highlightsData_cursor,'dict')
+    highlightsData_cursor = mongo_db.highlights.find_one()
+    highlightsData = parseMongoCollection(highlightsData_cursor,'dict')
 
-dbStats = sorted(dbStats, key = lambda i: i['date'],reverse=True)
+    dbStats = sorted(dbStats, key = lambda i: i['date'],reverse=True)
 
 ## API ##
 #################################

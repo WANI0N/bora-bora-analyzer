@@ -246,7 +246,7 @@ if __name__ == "__main__":
     mongo_db=client.db
 
     analyzer = DbAnalyzer(mongo_db)
-    analyzer.analyze_and_push(True, False)
+    analyzer.analyze_and_push(True, True)
     print('done')
 
     

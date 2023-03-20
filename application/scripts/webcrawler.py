@@ -123,6 +123,8 @@ class BarboraCrawler:
                 obj['active'] = False
             else:
                 obj['active'] = True
+            if round(obj['price'], 2) == 0:
+                continue
             self.database.append(obj)
         pageLinks = []
         for container in soup.find_all('ul', "pagination"):

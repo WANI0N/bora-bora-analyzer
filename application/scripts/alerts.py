@@ -193,9 +193,11 @@ class SendAlerts:
         }
     
     def check_db_pull_status(self):
-        if self.db.products.find_one({'history.0.end-date': self.current_date},{'id':1}):
+        if not self.db.products.find_one({'history.0.end-date': self.current_date},{'id':1}):
+            self.db_pull_status_notification = True
             return
-        self.db_pull_status_notification = True
+        if not self.db.dbStatsDataFinal.find_one({'date': self.current_date}, {'date': 1}):
+            self.db_pull_status_notification = True
     
     def admin_notify(self):
         if not self.user_change_notification and not self.db_pull_status_notification:

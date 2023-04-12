@@ -16,7 +16,6 @@ load_dotenv()
 
 class BarboraCrawler:
     def __init__(self):
-        # self.baseUrl = 'https://pagrindinis.barbora.lt'
         self.baseUrl = 'https://barbora.lt'
         self.topLinks = list()
         self.productPages = dict()
@@ -28,24 +27,24 @@ class BarboraCrawler:
         ]
         self.database = []
     
-    def urlToSoup(self,url = None):
+    def get_url_data(self, url = None, soap: bool = True):
         targetUrl = self.baseUrl
-        if not url: ## change: root url on it's own now shows select county page (same redirect for https://pagrindinis.barbora.lt, if route added: works)
+        if not url: 
             targetUrl = 'https://barbora.lt/darzoves-ir-vaisiai'
         if url:
             targetUrl = targetUrl + url
         try:
             page = urlopen(targetUrl)
         except HTTPError as err:
-            print(err)
-            raise
+            raise err
         except URLError as err:
-            print(err)
-            raise
+            raise err
         except:
-            print('Unexpected error')
-            raise
-        return BeautifulSoup(page, 'html.parser')
+            raise "Unknown error"
+        if soap:
+            return BeautifulSoup(page, 'html.parser')
+        else:
+            return page.read().decode("utf-8")
     
     def analyze(self):
         
@@ -72,9 +71,7 @@ class BarboraCrawler:
         current_date = now.strftime("%Y-%m-%d")
         for i, item in enumerate(self.database):
             self.database[i]["history"] = [{
-                # 'price':item['price'],
                 'price':round(item['price'], 2),
-                # 'comparative_unit_price':item['comparative_unit_price'],
                 'comparative_unit_price':round(item['comparative_unit_price'], 2),
                 'date':current_date,
                 'active':item['active'],
@@ -114,7 +111,7 @@ class BarboraCrawler:
 
     def getProductsFromPage(self,childLink):
         print('extracting... ' + childLink)
-        soup = self.urlToSoup(childLink)
+        soup = self.get_url_data(f"/{childLink}")
         for div in soup.select('div[class*="b-product--wrap clearfix b-product--js-hook"]'):
             string = div.get('data-b-for-cart')
             string = string.replace('&quot;',"\"")
@@ -139,18 +136,28 @@ class BarboraCrawler:
                 self.productPages[pageLink] = False
     
     def getNewThreadLink(self):
-        # for pageLink,status in self.productPages.items():
-        for pageLink,status in sorted(list(self.productPages.items()), reverse=True):
+        for pageLink, status in sorted(list(self.productPages.items()), reverse=True):
             if not status:
                 return pageLink
         return False
 
     def getTopLinks(self):
         # extracts top category product links from main page
-        soup = self.urlToSoup()
-        for container in soup.find_all('li', "b-categories-root-category"):
-            for link in container.find_all('a'):
-                self.topLinks.append( link.get('href') )
+        raw_html = self.get_url_data(None, False)
+        arr = raw_html.split("window.b_categories = ")
+        c_arr = arr[1].split(";")
+        try:
+            page_data = json.loads(c_arr[0])
+        except json.JSONDecodeError as err:
+            raise err
+        except TypeError as err:
+            raise err
+        if 'categories' not in page_data:
+            print("key 'categories' not present in json data")
+            return
+        for o in page_data['categories']:
+            self.topLinks.append( o['url'] )
+
 
     def outputDatabase(self, format='json'):
         now = datetime.now()
